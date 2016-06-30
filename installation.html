@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
+        <link rel="next" title="Toolbox Modules" href="modules.html"/>
+        <link rel="prev" title="WDRT Documentation and Users Guide" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-process">Installation Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">WDRT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/installation.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="downloading-wdrt">
+<h2>Downloading <cite>WDRT</cite><a class="headerlink" href="#downloading-wdrt" title="Permalink to this headline">¶</a></h2>
+<p><cite>WDRT</cite> is distributed through the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a>. The toolbox can either be downloaded via <code class="docutils literal"><span class="pre">git</span></code> or simply by visiting the the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a> and downloading it directly.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You may place the downloaded <cite>WDRT</cite> in any location you like; for the remainder of these instructions, the folder that contains the <cite>WDRT</cite> source code will be referred to as <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>.</p>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.python.org/downloads/">Python 2.7.x</a> and the following Python packages are required to run <cite>WDRT</cite>.
+These packages can easily be installed using using <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a>  or your preferred package installation method:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://www.numpy.org">numpy</a></li>
+<li><a class="reference external" href="http://www.scipy.org">scipy</a></li>
+<li><a class="reference external" href="http://matplotlib.org">matplotlib</a></li>
+<li><a class="reference external" href="http://www.h5py.org">h5py</a></li>
+<li><a class="reference external" href="http://scikit-learn.org/stable/">sklearn</a></li>
+<li><a class="reference external" href="http://docs.python-requests.org/en/master/">requests</a></li>
+<li><a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/">BeautifulSoup4</a></li>
+</ul>
+</div></blockquote>
+<p>Alternatively, if you&#8217;re new to Python, these packages can be obtained using one of following Python distributions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://python-xy.github.io">Python(x,y)</a></li>
+<li><a class="reference external" href="https://www.continuum.io/downloads">Anaconda</a></li>
+<li><a class="reference external" href="https://www.enthought.com/products/canopy/">Canopy</a></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="installation-process">
+<h2>Installation Process<a class="headerlink" href="#installation-process" title="Permalink to this headline">¶</a></h2>
+<p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code></p>
+<p><strong>Step 1:</strong> Clone or download a copy of <cite>WDRT</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
+</pre></div>
+</div>
+<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
+<p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples</span></code>.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="Toolbox Modules" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="WDRT Documentation and Users Guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia Corporation and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

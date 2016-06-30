@@ -1,0 +1,1 @@
+This directory contains the source for the WDRT's documentation. See http://www.sphinx-doc.org/en/stable/tutorial.html for build instructions.
