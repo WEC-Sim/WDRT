@@ -199,7 +199,7 @@ These environmental contours, characterized by combinations of significant wave 
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.</p>
 <p>For this example (<code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>), we will consider <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=46022">NDBC buoy 46022</a>.</p>
 <div class="figure align-center" id="id3">
-<a class="reference internal image-reference" href="../_static/example_envSampling.png"><img alt="../_static/example_envSampling.png" src="../_static/example_envSampling.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/example_envSampling.png"><img alt="_images/example_envSampling.png" src="_images/example_envSampling.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples</span></p>
 </div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -343,17 +343,17 @@ Some minimum time length is required to achieve convergence.</p>
 <p>In this example we start with a time-series of the quantity of interest at the desired sea-state.
 The global peaks are then identified.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/ste_peaks.png"><img alt="../_static/ste_peaks.png" src="../_static/ste_peaks.png" style="width: 600pt;" /></a>
+<a class="reference internal image-reference" href="_images/ste_peaks.png"><img alt="_images/ste_peaks.png" src="_images/ste_peaks.png" style="width: 600pt;" /></a>
 </div>
 <p>The desired short-term period is 1 hour.
 The 1-hour extreme distribution is estimated using the Weibull tail fit as described above.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/ste_distributions.png"><img alt="../_static/ste_distributions.png" src="../_static/ste_distributions.png" style="width: 600pt;" /></a>
+<a class="reference internal image-reference" href="_images/ste_distributions.png"><img alt="_images/ste_distributions.png" src="_images/ste_distributions.png" style="width: 600pt;" /></a>
 </div>
 <p>The goodness of fit plots are shown as a visual check.
 They show the quality of the agreement between the global peaks and the resulting Weibull tail fit.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/ste_gof.png"><img alt="../_static/ste_gof.png" src="../_static/ste_gof.png" style="width: 600pt;" /></a>
+<a class="reference internal image-reference" href="_images/ste_gof.png"><img alt="_images/ste_gof.png" src="_images/ste_gof.png" style="width: 600pt;" /></a>
 </div>
 <p>This example is shown below and can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -436,7 +436,7 @@ Typical percentiles used for marine structures range from 75 to 99%.</p>
 <p>The following steps demonstrate the execution of a <cite>contour approach</cite> to long-term extreme response analysis.
 These steps are also summarized in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_contourApproach.py</span></code>.</p>
 <div class="figure align-center" id="id4">
-<a class="reference internal image-reference" href="../_static/example_contourApproach.png"><img alt="../_static/example_contourApproach.png" src="../_static/example_contourApproach.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/example_contourApproach.png"><img alt="_images/example_contourApproach.png" src="_images/example_contourApproach.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
 </div>
 <div class="section" id="establish-environmental-data-and-sample-sea-stats">
@@ -638,7 +638,7 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the <em>
 <h4><a class="toc-backref" href="#id21">6. Plot and analyze results</a><a class="headerlink" href="#plot-and-analyze-results" title="Permalink to this headline">¶</a></h4>
 <p>The results can be plotted and used to determine the return level for a desired return period.</p>
 <div class="figure align-center" id="id5">
-<a class="reference internal image-reference" href="../_static/example_longTermFullSeaState.png"><img alt="../_static/example_longTermFullSeaState.png" src="../_static/example_longTermFullSeaState.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/example_longTermFullSeaState.png"><img alt="_images/example_longTermFullSeaState.png" src="_images/example_longTermFullSeaState.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Long term complementary cumulative distribution function (CCDF).</span></p>
 </div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s1">&#39;Sea state sampling&#39;</span><span class="p">)</span>
@@ -686,7 +686,7 @@ The <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve, which
 Mathematically, the behavior is described as, <span class="math">\(\log (N) = \log (K – m) \log (S)\)</span>.
 Where, <span class="math">\(S_{ult}\)</span>, is the ultimate strength; <span class="math">\(S_{end}\)</span>, is the endurance limit, below which, no failure occurs with constant amplitude loading; <span class="math">\(m\)</span> is the slope of the <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve; and, <span class="math">\(K\)</span> is an empirical material constant determining the level of the <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/S-N.png"><img alt="../_static/S-N.png" src="../_static/S-N.png" style="width: 300pt;" /></a>
+<a class="reference internal image-reference" href="_images/S-N.png"><img alt="_images/S-N.png" src="_images/S-N.png" style="width: 300pt;" /></a>
 </div>
 <p>WEC loads, however, are highly variable and by no means of constant amplitude.
 The most common method used to predict the cumulative damage of variable loading is the Palmgren-Miner rule, as given below.
@@ -747,7 +747,7 @@ The <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve slope,
 Then, for each sea state, the force histories are read, and using the WDRT fatigue module, 1 hour damage equivalent loads are calculated, as given below.
 And finally, the annual damage equivalent load is calculated by reapplying the Palmgren-Miner rule and taking advantage of the fact that the rainflow counts were already obtained in the 1 hour damage equivalent load computations, and only need to be adjusted and summed according to the probability of occurrence at each sea state.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/Feq.png"><img alt="../_static/Feq.png" src="../_static/Feq.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/Feq.png"><img alt="_images/Feq.png" src="_images/Feq.png" style="width: 400pt;" /></a>
 </div>
 </div>
 <div class="section" id="most-likely-extreme-response-mler">
@@ -820,7 +820,7 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 <p>In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016). The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the <a class="reference external" href="https://wec-sim.github.io/WEC-Sim/">Wave Energy Converter Simulator, or WEC- Sim</a>.</p>
 <p>Figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. The focused wave was designed to target maximum pitch motion. Note that a specific wave profile is required for different response of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile for pitch is different from the one for heave. This is expected because the max heave and pitch are most likely to occur at different time.</p>
 <div class="figure align-center">
-<a class="reference internal image-reference" href="../_static/MLER.png"><img alt="../_static/MLER.png" src="../_static/MLER.png" style="width: 500pt;" /></a>
+<a class="reference internal image-reference" href="_images/MLER.png"><img alt="_images/MLER.png" src="_images/MLER.png" style="width: 500pt;" /></a>
 </div>
 </div>
 </div>

@@ -12,7 +12,6 @@ Features
 The `WDRT` contains a number of code modules to assist in the major processes of WEC survival design analysis:
 
 * **environmental characterization** - metocean environmental analysis and statistics
-* **NDBCdata** - a tool for downloading and managing NDBC buoy data
 * **shortTermExtreme**  - analysis of short-term (sea-state specific) extreme responses
 * **longTermExtreme** - analysis of long-term (design life) extreme responses
 * **fatigue** - fatigue analysis
