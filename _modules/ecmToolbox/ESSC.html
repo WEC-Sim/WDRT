@@ -1,0 +1,928 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ecmToolbox.ESSC &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="WDRT 1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Toolbox Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">WDRT</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>ecmToolbox.ESSC</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ecmToolbox.ESSC</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="kn">as</span> <span class="nn">interp</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+
+
+<div class="viewcode-block" id="getContours"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getContours">[docs]</a><span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State Contour (ESSC) function</span>
+
+<span class="sd">    This function calculates environmental contours of extreme sea states using</span>
+<span class="sd">    principal component analysis and the inverse first-order reliability</span>
+<span class="sd">    method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        Hs : np.array</span>
+<span class="sd">            Vector of Hs values for each measurement in the input.</span>
+<span class="sd">        T : np.array</span>
+<span class="sd">            Vector of Te or Tp values for each measurement in the input.</span>
+<span class="sd">        depth : float</span>
+<span class="sd">            Water depth at buoy under analysis.</span>
+<span class="sd">        size_bin : float</span>
+<span class="sd">            Bin size that will be used to split Component 2 into bins</span>
+<span class="sd">            after ranking according to values of Component 1.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space used for</span>
+<span class="sd">            inverse FORM calculation.</span>
+<span class="sd">        Time_SS : float</span>
+<span class="sd">            Sea state duration (hours) of measurements in input.</span>
+<span class="sd">        Time_r : np.array</span>
+<span class="sd">            Desired return period (years) for calculation of environmental</span>
+<span class="sd">            contour, can be a scalar or a vector.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Hs_Return : np.array</span>
+<span class="sd">        Calculated Hs values along the contour boundary following</span>
+<span class="sd">        return to original input orientation.</span>
+<span class="sd">    T_Return : np.array</span>
+<span class="sd">       Calculated T values along the contour boundary following</span>
+<span class="sd">       return to original input orientation.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    To obtain the contours for a NDBC buoy::</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import ecmToolbox.NDBCdata as NDBCdata</span>
+<span class="sd">        import ecmToolbox.ESSC as ESSC</span>
+
+
+<span class="sd">        # Pull spectral data from NDBC website</span>
+<span class="sd">        url = &quot;http://www.ndbc.noaa.gov/station_history.php?station=46022&quot;</span>
+<span class="sd">        swdList, freqList, dateVals = NDBCdata.fetchFromWeb(46089, savePath=&#39;data&#39;)</span>
+
+<span class="sd">        # Find relevant stats (Hs and Te)</span>
+<span class="sd">        n = len(swdList)</span>
+<span class="sd">        Hs = []</span>
+<span class="sd">        T = []</span>
+<span class="sd">        DateNum = []</span>
+<span class="sd">        for ii in range(n):</span>
+<span class="sd">            tmp1, tmp2 = NDBCdata.getStats(swdList[ii], freqList[ii])</span>
+<span class="sd">            Hs.extend(tmp1)</span>
+<span class="sd">            T.extend(tmp2)</span>
+<span class="sd">            DateNum.extend(NDBCdata.getDateNums(dateVals[ii]))</span>
+<span class="sd">        Hs = np.array(Hs, dtype=np.float)</span>
+<span class="sd">        T = np.array(T, dtype=np.float)</span>
+<span class="sd">        DateNum = np.array(DateNum, dtype=np.float)</span>
+
+<span class="sd">        # Removing NaN data, assigning T label depending on input (Te or Tp)</span>
+<span class="sd">        Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))  # Find NaN data in Hs or T</span>
+<span class="sd">        DateNum = DateNum[Nanrem]  # Remove any NaN data from DateNum</span>
+<span class="sd">        Hs = Hs[Nanrem]  # Remove any NaN data from Hs</span>
+<span class="sd">        T = T[Nanrem]  # Remove any NaN data from T</span>
+
+<span class="sd">        # Declare required parameters</span>
+<span class="sd">        depth = 391.4  # Depth at measurement point (m)</span>
+<span class="sd">        size_bin = 250.  # Enter chosen bin size</span>
+<span class="sd">        nb_steps = 1000.  # Enter discretization of the circle in the normal space</span>
+<span class="sd">        # used for inverse FORM calculation</span>
+<span class="sd">        Time_SS = 1.  # Sea state duration (hrs)</span>
+<span class="sd">        Time_r = np.array([100])  # Return periods (yrs) of interest</span>
+<span class="sd">        SteepMax = 0.07  # Optional: enter estimate of breaking steepness</span>
+
+<span class="sd">        # Contour generation example</span>
+<span class="sd">        Hs_Return, T_Return, _, _, _, _, _ = ESSC.getContours(Hs, T, depth, size_bin, nb_steps, Time_SS,</span>
+<span class="sd">                                                       Time_r)</span>
+<span class="sd">        # Sample Generation Example</span>
+<span class="sd">        num_contour_points = 20  # Number of points to be sampled for each</span>
+<span class="sd">        # contour interval.</span>
+<span class="sd">        contour_probs = 10 ** (-1 * np.array([1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]))</span>
+<span class="sd">        # Probabilities defining sampling contour bounds.</span>
+<span class="sd">        random_seed = 2  # Random seed for sample generation</span>
+
+<span class="sd">        Hs_sample, T_sample, Weight_sample = ESSC.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">n_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Hs</span><span class="p">)</span>  <span class="c1"># Number of observations</span>
+
+    <span class="c1"># Principal Component Analysis (PCA)</span>
+    <span class="c1"># Perform PCA on significant wave height and energy period after first</span>
+    <span class="c1"># centering the data.</span>
+    <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">Hs</span> <span class="o">-</span> <span class="n">Hs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">T</span> <span class="o">-</span> <span class="n">T</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">coeff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">)</span>  <span class="c1"># Apply correct/expected sign convention</span>
+    <span class="n">coeff</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">coeff</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Apply correct/expected sign convention</span>
+    <span class="n">Comp1_Comp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">coeff</span><span class="p">)</span>
+
+    <span class="n">shift</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Comp1_Comp2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mf">0.1</span>  <span class="c1"># Calculate shift</span>
+    <span class="c1"># Apply shift to Component 2 to make all values positive</span>
+    <span class="n">Comp1_Comp2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Comp1_Comp2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">shift</span>
+
+    <span class="n">Comp1_Comp2_sort</span> <span class="o">=</span> <span class="n">Comp1_Comp2</span><span class="p">[</span><span class="n">Comp1_Comp2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">(),</span> <span class="p">:]</span>
+
+    <span class="c1"># Fitting distribution of component 1</span>
+    <span class="n">Comp1_params</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">invgauss</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Comp1_Comp2_sort</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">floc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Binning Component 2 by Component 1 and</span>
+    <span class="c1"># application of normal distribution fits for Component 2 in each bin</span>
+    <span class="c1"># Calculate location of bin edges</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size_bin</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_data</span> <span class="o">/</span> <span class="n">size_bin</span><span class="p">),</span>
+                                 <span class="n">size_bin</span><span class="p">),</span> <span class="n">n_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_data</span><span class="p">)</span>
+    <span class="n">hist_count</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span>
+    <span class="n">bin_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">Comp2_bins_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">bin_inds</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">Comp1_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="k">for</span> <span class="n">bin_loop</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">bin_inds</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">mask_bins</span> <span class="o">=</span> <span class="n">bin_inds</span> <span class="o">==</span> <span class="n">bin_loop</span>  <span class="c1"># Find location of bin values</span>
+        <span class="n">Comp2_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">Comp1_Comp2_sort</span><span class="p">[</span><span class="n">mask_bins</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">Comp1_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span>
+                               <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Comp1_Comp2_sort</span><span class="p">[</span><span class="n">mask_bins</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="c1"># Calcualte normal distribution parameters for C2 in each bin</span>
+        <span class="n">Comp2_bins_params</span><span class="p">[:,</span> <span class="n">bin_loop</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Comp2_bin</span><span class="p">))</span>
+
+    <span class="c1"># mu function mu_fcn defined outside of ESSC function</span>
+
+    <span class="c1"># Calculate mu parameters from linear fit function</span>
+
+    <span class="n">mu_param</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">mu_fcn</span><span class="p">,</span>
+                                     <span class="n">Comp1_mean</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">Comp2_bins_params</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="c1"># Sigma fitting fuction</span>
+    <span class="k">def</span> <span class="nf">betafcn</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Penalty calculation for sigma parameter fitting function to impose</span>
+<span class="sd">        positive value constraint.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sig_p: np.array</span>
+<span class="sd">               Array of sigma fitting function parameters.</span>
+<span class="sd">        rho: float</span>
+<span class="sd">             Penalty function variable that drives the solution towards</span>
+<span class="sd">             required constraint.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Beta1: float</span>
+<span class="sd">               Penalty function variable that applies the constraint requiring</span>
+<span class="sd">               the y-intercept of the sigma fitting function to be greater than</span>
+<span class="sd">               or equal to 0.</span>
+<span class="sd">        Beta2: float</span>
+<span class="sd">               Penalty function variable that applies the constraint requiring</span>
+<span class="sd">               the minimum of the sigma fitting function to be greater than or</span>
+<span class="sd">               equal to 0.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="o">-</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">Beta1</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Beta1</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="k">if</span> <span class="o">-</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">sig_p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">Beta2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Beta2</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="k">return</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span>
+
+    <span class="c1"># Sigma function sigma_fcn defined outside of ESSC function</span>
+
+    <span class="k">def</span> <span class="nf">objfun</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_actual</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sum of least square error objective function used in sigma</span>
+<span class="sd">        minimization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sig_p: np.array</span>
+<span class="sd">               Array of sigma fitting function parameters.</span>
+<span class="sd">        x: np.array</span>
+<span class="sd">           Array of values (Component 1 mean for each bin) at which to evaluate</span>
+<span class="sd">           the sigma fitting function.</span>
+<span class="sd">        y_actual: np.array</span>
+<span class="sd">                  Array of actual sigma values for each bin to use in least</span>
+<span class="sd">                  square error calculation with fitted values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        obj_fun_result: float</span>
+<span class="sd">                        Sum of least square error objective function for fitted</span>
+<span class="sd">                        and actual values.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">obj_fun_result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">sigma_fcn</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_actual</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj_fun_result</span>  <span class="c1"># Sum of least square error</span>
+
+    <span class="k">def</span> <span class="nf">objfun_penalty</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_actual</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Penalty function used for sigma function constrained optimization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sig_p: np.array</span>
+<span class="sd">               Array of sigma fitting function parameters.</span>
+<span class="sd">        x: np.array</span>
+<span class="sd">           Array of values (Component 1 mean for each bin) at which to evaluate</span>
+<span class="sd">           the sigma fitting function.</span>
+<span class="sd">        y_actual: np.array</span>
+<span class="sd">                  Array of actual sigma values for each bin to use in least</span>
+<span class="sd">                  square error calculation with fitted values.</span>
+<span class="sd">        Beta1: float</span>
+<span class="sd">               Penalty function variable that applies the constraint requiring</span>
+<span class="sd">               the y-intercept of the sigma fitting function to be greater than</span>
+<span class="sd">               or equal to 0.</span>
+<span class="sd">        Beta2: float</span>
+<span class="sd">               Penalty function variable that applies the constraint requiring</span>
+<span class="sd">               the minimum of the sigma fitting function to be greater than or</span>
+<span class="sd">               equal to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        penalty_fcn: float</span>
+<span class="sd">                     Objective function result with constraint penalties</span>
+<span class="sd">                     applied for out of bound solutions.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">penalty_fcn</span> <span class="o">=</span> <span class="p">(</span><span class="n">objfun</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_actual</span><span class="p">)</span> <span class="o">+</span> <span class="n">Beta1</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                       <span class="n">Beta2</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">sig_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">sig_p</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">penalty_fcn</span>
+
+    <span class="k">def</span> <span class="nf">sigma_fits</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sigma parameter fitting function using penalty optimization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Comp1_mean: np.array</span>
+<span class="sd">                    Mean value of Component 1 for each bin of Component 2.</span>
+<span class="sd">        sigma_vals: np.array</span>
+<span class="sd">                    Value of Component 2 sigma for each bin derived from normal</span>
+<span class="sd">                    distribution fit.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sig_final: np.array</span>
+<span class="sd">                   Final sigma parameter values after constrained optimization.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">sig_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>  <span class="c1"># Set initial guess</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Set initial penalty value</span>
+        <span class="c1"># Set tolerance, very small values (i.e.,smaller than 10^-5) may cause</span>
+        <span class="c1"># instabilities</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">5</span>
+        <span class="c1"># Set inital beta values using beta function</span>
+        <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span> <span class="o">=</span> <span class="n">betafcn</span><span class="p">(</span><span class="n">sig_0</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+        <span class="c1"># Initial search for minimum value using initial guess</span>
+        <span class="n">sig_1</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">objfun_penalty</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">sig_0</span><span class="p">,</span>
+                           <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="c1"># While either the difference between iterations or the difference in</span>
+        <span class="c1"># objective function evaluation is greater than the tolerance, continue</span>
+        <span class="c1"># iterating</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">sig_1</span> <span class="o">-</span> <span class="n">sig_0</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">epsilon</span> <span class="ow">and</span>
+               <span class="nb">abs</span><span class="p">(</span><span class="n">objfun</span><span class="p">(</span><span class="n">sig_1</span><span class="p">,</span> <span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">)</span> <span class="o">-</span>
+                   <span class="n">objfun</span><span class="p">(</span><span class="n">sig_0</span><span class="p">,</span> <span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">):</span>
+            <span class="n">sig_0</span> <span class="o">=</span> <span class="n">sig_1</span>
+            <span class="c1"># Calculate penalties for this iteration</span>
+            <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span> <span class="o">=</span> <span class="n">betafcn</span><span class="p">(</span><span class="n">sig_0</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+            <span class="c1"># Find a new minimum</span>
+            <span class="n">sig_1</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">objfun_penalty</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">sig_0</span><span class="p">,</span>
+                               <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">rho</span>  <span class="c1"># Increase penalization</span>
+        <span class="n">sig_final</span> <span class="o">=</span> <span class="n">sig_1</span>
+        <span class="k">return</span> <span class="n">sig_final</span>
+
+    <span class="n">sigma_param</span> <span class="o">=</span> <span class="n">sigma_fits</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">Comp2_bins_params</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="c1"># IFORM</span>
+    <span class="c1"># Failure probability for the desired return period (Time_r) given the</span>
+    <span class="c1"># duration of the measurements (Time_SS)</span>
+    <span class="n">p_f</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="p">(</span><span class="mi">24</span> <span class="o">/</span> <span class="n">Time_SS</span><span class="p">)</span> <span class="o">*</span> <span class="n">Time_r</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_f</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reliability</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nb_steps</span><span class="p">)</span>
+    <span class="c1"># Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta</span>
+    <span class="n">U1</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">U2</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="c1"># Calculate C1 values along the contour</span>
+    <span class="n">Comp1_R</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">invgauss</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                 <span class="n">mu</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                 <span class="n">scale</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="c1"># Calculate mu values at each point on the circle</span>
+    <span class="n">mu_R</span> <span class="o">=</span> <span class="n">mu_fcn</span><span class="p">(</span><span class="n">Comp1_R</span><span class="p">,</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># Calculate sigma values at each point on the circle</span>
+    <span class="n">sigma_R</span> <span class="o">=</span> <span class="n">sigma_fcn</span><span class="p">(</span><span class="n">sigma_param</span><span class="p">,</span> <span class="n">Comp1_R</span><span class="p">)</span>
+    <span class="c1"># Use calculated mu and sigma values to calculate C2 along the contour</span>
+    <span class="n">Comp2_R</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U2</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                             <span class="n">loc</span><span class="o">=</span><span class="n">mu_R</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma_R</span><span class="p">)</span>
+
+    <span class="c1"># Re-rotate</span>
+
+    <span class="c1"># Principal component rotation formula princomp_inv defined outside of ESSC</span>
+    <span class="c1"># function</span>
+
+    <span class="c1"># Calculate Hs and T along the contour</span>
+    <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">princomp_inv</span><span class="p">(</span><span class="n">Comp1_R</span><span class="p">,</span> <span class="n">Comp2_R</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+    <span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Hs_Return</span><span class="p">)</span>  <span class="c1"># Remove negative values</span>
+    <span class="k">return</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">Comp1_params</span><span class="p">,</span> <span class="n">mu_param</span><span class="p">,</span> <span class="n">sigma_param</span></div>
+
+
+<div class="viewcode-block" id="mu_fcn"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.mu_fcn">[docs]</a><span class="k">def</span> <span class="nf">mu_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu_p_1</span><span class="p">,</span> <span class="n">mu_p_2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Linear fitting function for the mean(mu) of Component 2 normal</span>
+<span class="sd">    distribution as a function of the Component 1 mean for each bin.</span>
+<span class="sd">    Used in the ESSC and getSamples functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu_p: np.array</span>
+<span class="sd">           Array of mu fitting function parameters.</span>
+<span class="sd">    x: np.array</span>
+<span class="sd">       Array of values (Component 1 mean for each bin) at which to evaluate</span>
+<span class="sd">       the mu fitting function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mu_fit: np.array</span>
+<span class="sd">            Array of fitted mu values.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mu_fit</span> <span class="o">=</span> <span class="n">mu_p_1</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">mu_p_2</span>
+    <span class="k">return</span> <span class="n">mu_fit</span></div>
+
+
+<div class="viewcode-block" id="sigma_fcn"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.sigma_fcn">[docs]</a><span class="k">def</span> <span class="nf">sigma_fcn</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Quadratic fitting formula for the standard deviation(sigma) of Component</span>
+<span class="sd">    2 normal distribution as a function of the Component 1 mean for each bin.</span>
+<span class="sd">    Used in the ESSC and getSamples functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sig_p: np.array</span>
+<span class="sd">           Array of sigma fitting function parameters.</span>
+<span class="sd">    x: np.array</span>
+<span class="sd">       Array of values (Component 1 mean for each bin) at which to evaluate</span>
+<span class="sd">       the sigma fitting function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sigma_fit: np.array</span>
+<span class="sd">               Array of fitted sigma values.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">sigma_fit</span> <span class="o">=</span> <span class="n">sig_p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sig_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sig_p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">sigma_fit</span></div>
+
+
+<div class="viewcode-block" id="princomp_inv"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.princomp_inv">[docs]</a><span class="k">def</span> <span class="nf">princomp_inv</span><span class="p">(</span><span class="n">princip_data1</span><span class="p">,</span> <span class="n">princip_data2</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Takes the inverse of the principal component rotation given data,</span>
+<span class="sd">    coefficients, and shift. Used in the ESSC and getSamples functions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    princip_data1: np.array</span>
+<span class="sd">                   Array of Component 1 values.</span>
+<span class="sd">    princip_data2: np.array</span>
+<span class="sd">                   Array of Component 2 values.</span>
+<span class="sd">    coeff: np.array</span>
+<span class="sd">           Array of principal component coefficients.</span>
+<span class="sd">    shift: float</span>
+<span class="sd">           Shift applied to Component 2 to make all values positive.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    original1: np.array</span>
+<span class="sd">               Hs values following rotation from principal component space.</span>
+<span class="sd">    original2: np.array</span>
+<span class="sd">               T values following rotation from principal component space.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">original1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">princip_data1</span><span class="p">))</span>
+    <span class="n">original2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">princip_data1</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">princip_data2</span><span class="p">)):</span>
+        <span class="n">original1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(((</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">princip_data2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">shift</span><span class="p">))</span> <span class="o">+</span>
+                         <span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">princip_data1</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                                                              <span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">original2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(((</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">princip_data1</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">-</span>
+                         <span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">princip_data2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span>
+                                         <span class="n">shift</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">coeff</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">original1</span><span class="p">,</span> <span class="n">original2</span></div>
+
+
+<div class="viewcode-block" id="getSamples"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getSamples">[docs]</a><span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">num_contour_points</span><span class="p">,</span> <span class="n">contour_probs</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span>
+               <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State Contour (ESSC) Sampling function</span>
+
+<span class="sd">    This function calculates samples of Hs and T using the ESSC function to</span>
+<span class="sd">    sample between contours of user-defined probabilities.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Hs : np.array</span>
+<span class="sd">        Vector of Hs values for each measurement in the input.</span>
+<span class="sd">    T : np.array</span>
+<span class="sd">        Vector of Te or Tp values for each measurement in the input.</span>
+<span class="sd">    num_contour_points : int</span>
+<span class="sd">        Number of sample points to be calculated per contour interval.</span>
+<span class="sd">    contour_probs: np.array</span>
+<span class="sd">        Vector of probabilities that define the contour intervals in</span>
+<span class="sd">        which samples will be taken. Values must be greater than zero and</span>
+<span class="sd">        less than 1.</span>
+<span class="sd">    random_seed: int</span>
+<span class="sd">        Random seed for sample generation, required for sample</span>
+<span class="sd">        repeatability.</span>
+<span class="sd">    depth : float</span>
+<span class="sd">        Water depth at buoy under analysis.</span>
+<span class="sd">    size_bin : float</span>
+<span class="sd">        Bin size that will be used to split Component 2 into bins</span>
+<span class="sd">        after ranking according to values of Component 1.</span>
+<span class="sd">    nb_steps : float</span>
+<span class="sd">        Discretization of the circle in the normal space used for</span>
+<span class="sd">        inverse FORM calculation.</span>
+<span class="sd">    Time_SS : float</span>
+<span class="sd">        Sea state duration (hours) of measurements in input.</span>
+<span class="sd">    Time_r : np.array</span>
+<span class="sd">        Desired return period (years) for calculation of environmental</span>
+<span class="sd">        contour, can be a scalar or a vector.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Hs_samples: np.array</span>
+<span class="sd">        Vector of Hs values for each sample point.</span>
+<span class="sd">    Te_samples: np.array</span>
+<span class="sd">        Vector of Te values for each sample point.</span>
+<span class="sd">    Weight_points: np.array</span>
+<span class="sd">        Vector of probabilistic weights for each sampling point</span>
+<span class="sd">        to be used in risk calculations.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    To get weighted samples from a set of contours::</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import ESSC</span>
+
+<span class="sd">        # Load data from existing text files</span>
+<span class="sd">        # swdList, freqList, dateVals = NDBCdata.loadFromText(</span>
+<span class="sd">        #     os.path.join(&#39;data&#39;, &#39;NDBC46022&#39;))</span>
+
+<span class="sd">        # Find relevant stats (Hs and Te)</span>
+<span class="sd">        n = len(swdList)</span>
+<span class="sd">        Hs = []</span>
+<span class="sd">        T = []</span>
+<span class="sd">        DateNum = []</span>
+<span class="sd">        for ii in range(n):</span>
+<span class="sd">            tmp1, tmp2 = NDBCdata.getStats(swdList[ii], freqList[ii])</span>
+<span class="sd">            Hs.extend(tmp1)</span>
+<span class="sd">            T.extend(tmp2)</span>
+<span class="sd">            DateNum.extend(NDBCdata.getDateNums(dateVals[ii]))</span>
+<span class="sd">        Hs = np.array(Hs, dtype=np.float)</span>
+<span class="sd">        T = np.array(T, dtype=np.float)</span>
+<span class="sd">        DateNum = np.array(DateNum, dtype=np.float)</span>
+
+<span class="sd">        # Removing NaN data, assigning T label depending on input (Te or Tp)</span>
+<span class="sd">        Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))  # Find NaN data in Hs or T</span>
+<span class="sd">        DateNum = DateNum[Nanrem]  # Remove any NaN data from DateNum</span>
+<span class="sd">        Hs = Hs[Nanrem]  # Remove any NaN data from Hs</span>
+<span class="sd">        T = T[Nanrem]  # Remove any NaN data from T</span>
+
+<span class="sd">        depth = float(675) # Depth at measurement point (m)</span>
+<span class="sd">        size_bin = float(250) # Enter chosen bin size</span>
+<span class="sd">        nb_steps = float(1000) # Enter discretization of the circle in the</span>
+<span class="sd">        # normal space. Used for inverse FORM calculation.</span>
+<span class="sd">        Time_SS = float(1) # Sea state duration (hrs)</span>
+<span class="sd">        Time_r = np.array([100]) # Return periods (yrs) of interest</span>
+
+<span class="sd">        # Removing NaN data, assigning T label depending on input (Te or Tp)</span>
+<span class="sd">        Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs)) # Find NaN data</span>
+<span class="sd">        DateNum = DateNum[Nanrem] #Remove any NaN data from DateNum</span>
+<span class="sd">        Hs = Hs[Nanrem] #Remove any NaN data from Hs</span>
+<span class="sd">        T = T[Nanrem] #Remove any NaN data from T</span>
+
+<span class="sd">        num_contour_points = 10 # Number of points to be sampled for each</span>
+<span class="sd">        # contour interval.</span>
+<span class="sd">        contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))</span>
+<span class="sd">        # Probabilities defining sampling contour bounds.</span>
+<span class="sd">        random_seed = 2 # Random seed for sample generation</span>
+
+<span class="sd">        Hs_sample,T_sample,Weight_points = ESSC.getSamples(Hs,T,</span>
+<span class="sd">        num_contour_points,contour_probs,random_seed,depth,size_bin,nb_steps,</span>
+<span class="sd">        Time_SS,Time_r)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Call getContours function to calculate required parameters for sampling</span>
+    <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">Comp1_params</span><span class="p">,</span> <span class="n">mu_param</span><span class="p">,</span> <span class="n">sigma_param</span> <span class="o">=</span> <span class="n">getContours</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">)</span>
+
+    <span class="c1"># Calculate line where Hs = 0 to avoid sampling Hs in negative space</span>
+    <span class="n">Te_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">Te_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">Te_zeroline</span><span class="p">)</span>
+    <span class="n">Hs_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Te_zeroline</span><span class="p">))</span>
+
+    <span class="c1"># Transform zero line into principal component space</span>
+    <span class="n">Comp_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">Hs_zeroline</span><span class="p">,</span> <span class="n">Te_zeroline</span><span class="p">])),</span>
+                           <span class="n">coeff</span><span class="p">)</span>
+    <span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">shift</span>
+
+    <span class="c1"># Find quantiles along zero line</span>
+    <span class="n">C1_zeroline_prob</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">invgauss</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                                          <span class="n">mu</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                          <span class="n">scale</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">mu_zeroline</span> <span class="o">=</span> <span class="n">mu_fcn</span><span class="p">(</span><span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">sigma_zeroline</span> <span class="o">=</span> <span class="n">sigma_fcn</span><span class="p">(</span><span class="n">sigma_param</span><span class="p">,</span> <span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">C2_zeroline_prob</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Comp_zeroline</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                                      <span class="n">loc</span><span class="o">=</span><span class="n">mu_zeroline</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma_zeroline</span><span class="p">)</span>
+    <span class="n">C1_normzeroline</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">C1_zeroline_prob</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">C2_normzeroline</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">C2_zeroline_prob</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Reliability contour generation</span>
+    <span class="n">beta_lines</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">contour_probs</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Calculate reliability</span>
+    <span class="n">beta_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_lines</span><span class="p">))</span>  <span class="c1"># Add zero as lower bound to first</span>
+    <span class="c1"># contour</span>
+    <span class="n">theta_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Discretize the circle</span>
+
+    <span class="n">contour_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">contour_probs</span><span class="p">))</span>  <span class="c1"># Add probablity of 1 to the</span>
+    <span class="c1"># reliability set, corresponding to probability of the center point of the</span>
+    <span class="c1"># normal space</span>
+
+    <span class="c1"># Vary U1,U2 along circle sqrt(U1^2+U2^2) = beta</span>
+    <span class="n">U1_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">U2_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="c1"># Removing values on the H_s = 0 line that are far from the circles in the</span>
+    <span class="c1"># normal space that will be evaluated to speed up calculations</span>
+    <span class="n">minval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">U1_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">C1_normzeroline</span> <span class="o">&gt;</span> <span class="n">minval</span>
+    <span class="n">C1_normzeroline</span> <span class="o">=</span> <span class="n">C1_normzeroline</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+    <span class="n">C2_normzeroline</span> <span class="o">=</span> <span class="n">C2_normzeroline</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+    <span class="c1"># Transform to polar coordinates</span>
+    <span class="n">Theta_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">C2_normzeroline</span><span class="p">,</span> <span class="n">C1_normzeroline</span><span class="p">)</span>
+    <span class="n">Rho_zeroline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">C1_normzeroline</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C2_normzeroline</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">Theta_zeroline</span><span class="p">[</span><span class="n">Theta_zeroline</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Theta_zeroline</span><span class="p">[</span>
+        <span class="n">Theta_zeroline</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="n">num_samples</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_contour_points</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="n">Alpha_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">Angular_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">Angular_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">Alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_contour_points</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">Sample_beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+    <span class="n">Sample_alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+    <span class="n">Weight_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">beta_lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># Loop over contour intervals</span>
+        <span class="c1"># Check if any of the radii for the</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">Rho_zeroline</span> <span class="o">-</span> <span class="n">beta_lines</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Hs=0, line are smaller than the radii of the contour, meaning</span>
+        <span class="c1"># that these lines intersect</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">))</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">))</span>
+            <span class="n">Alpha_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Theta_zeroline</span><span class="p">[</span><span class="n">left</span><span class="p">],</span> <span class="n">Theta_zeroline</span><span class="p">[</span><span class="n">right</span><span class="p">]</span> <span class="o">-</span>
+                                  <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># Save sampling bounds</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Alpha_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="c1"># Find the angular distance that will be covered by sampling the disc</span>
+        <span class="n">Angular_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Alpha_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="c1"># Calculate ratio of area covered for each contour</span>
+        <span class="n">Angular_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Angular_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="c1"># Discretize the remaining portion of the disc into 10 equally spaced</span>
+        <span class="c1"># areas to be sampled</span>
+        <span class="n">Alpha</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">Alpha_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+                                <span class="nb">max</span><span class="p">(</span><span class="n">Alpha_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">Angular_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_contour_points</span><span class="p">)</span>
+        <span class="c1"># Calculate the weight of each point sampled per contour</span>
+        <span class="n">Weight</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">contour_probs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">contour_probs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span>
+                     <span class="n">Angular_ratio</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_contour_points</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_contour_points</span><span class="p">):</span>
+            <span class="c1"># Generate sample radius by adding a randomly sampled distance to</span>
+            <span class="c1"># the &#39;disc&#39; lower bound</span>
+            <span class="n">Sample_beta</span><span class="p">[(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_contour_points</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span>
+                                                         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta_lines</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="c1"># Generate sample angle by adding a randomly sampled distance to</span>
+            <span class="c1"># the lower bound of the angle defining a discrete portion of the</span>
+            <span class="c1"># &#39;disc&#39;</span>
+            <span class="n">Sample_alpha</span><span class="p">[(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_contour_points</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Alpha</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span>
+                                                          <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">Alpha</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Alpha</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]))</span>
+            <span class="c1"># Save the weight for each sample point</span>
+            <span class="n">Weight_points</span><span class="p">[(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_contour_points</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Weight</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># Transform to cartesian coordinates</span>
+    <span class="n">Sample_U1</span> <span class="o">=</span> <span class="n">Sample_beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">Sample_alpha</span><span class="p">)</span>
+    <span class="n">Sample_U2</span> <span class="o">=</span> <span class="n">Sample_beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Sample_alpha</span><span class="p">)</span>
+
+    <span class="c1"># Sample transformation to principal component space</span>
+    <span class="n">Comp1_sample</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">invgauss</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Sample_U1</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                      <span class="n">mu</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                      <span class="n">scale</span><span class="o">=</span><span class="n">Comp1_params</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">mu_sample</span> <span class="o">=</span> <span class="n">mu_fcn</span><span class="p">(</span><span class="n">Comp1_sample</span><span class="p">,</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mu_param</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># Calculate sigma values at each point on the circle</span>
+    <span class="n">sigma_sample</span> <span class="o">=</span> <span class="n">sigma_fcn</span><span class="p">(</span><span class="n">sigma_param</span><span class="p">,</span> <span class="n">Comp1_sample</span><span class="p">)</span>
+    <span class="c1"># Use calculated mu and sigma values to calculate C2 along the contour</span>
+    <span class="n">Comp2_sample</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Sample_U2</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                  <span class="n">loc</span><span class="o">=</span><span class="n">mu_sample</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma_sample</span><span class="p">)</span>
+    <span class="c1"># Sample transformation into Hs-T space</span>
+    <span class="n">Hs_Sample</span><span class="p">,</span> <span class="n">T_Sample</span> <span class="o">=</span> <span class="n">princomp_inv</span><span class="p">(</span>
+        <span class="n">Comp1_sample</span><span class="p">,</span> <span class="n">Comp2_sample</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Hs_Sample</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">,</span> <span class="n">Weight_points</span></div>
+
+
+<div class="viewcode-block" id="getContourPoints"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getContourPoints">[docs]</a><span class="k">def</span> <span class="nf">getContourPoints</span><span class="p">(</span><span class="n">T_Return</span><span class="p">,</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Get points along a specified environmental contour.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        T_Return : nparray</span>
+<span class="sd">            points defining period of return contour</span>
+<span class="sd">        Hs_Return : nparray</span>
+<span class="sd">            points defining sig. wave height of return contour</span>
+<span class="sd">        T_Sample : nparray</span>
+<span class="sd">            points for sampling along return contour</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Hs_Sample : nparray</span>
+<span class="sd">            points sampled along return contour</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">amin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">T_Return</span><span class="p">)</span>
+    <span class="n">amax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">T_Return</span><span class="p">)</span>
+
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">Hs_Return</span><span class="p">[</span><span class="n">amin</span><span class="p">:</span><span class="n">amax</span><span class="p">]</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Hs_Return</span><span class="p">[</span><span class="n">amax</span><span class="p">:],</span> <span class="n">Hs_Return</span><span class="p">[:</span><span class="n">amin</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">w2</span><span class="p">)):</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">T_Return</span><span class="p">[</span><span class="n">amin</span><span class="p">:</span><span class="n">amax</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">Hs_Return</span><span class="p">[</span><span class="n">amin</span><span class="p">:</span><span class="n">amax</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">T_Return</span><span class="p">[</span><span class="n">amax</span><span class="p">:],</span> <span class="n">T_Return</span><span class="p">[:</span><span class="n">amin</span><span class="p">]))</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Hs_Return</span><span class="p">[</span><span class="n">amax</span><span class="p">:],</span> <span class="n">Hs_Return</span><span class="p">[:</span><span class="n">amin</span><span class="p">]))</span>
+
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x1</span><span class="p">[</span><span class="n">ms</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y1</span><span class="p">[</span><span class="n">ms</span><span class="p">]</span>
+
+    <span class="n">si</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">Hs_Sample</span> <span class="o">=</span> <span class="n">si</span><span class="p">(</span><span class="n">T_Sample</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Hs_Sample</span></div>
+
+
+<div class="viewcode-block" id="steepness"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.steepness">[docs]</a><span class="k">def</span> <span class="nf">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">T_vals</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;This function calculates a steepness curve to be plotted on an H vs. T</span>
+<span class="sd">    diagram.  First, the function calculates the wavelength based on the</span>
+<span class="sd">    depth and T. The T vector can be the input data vector, or will be</span>
+<span class="sd">    created below to cover the span of possible T values.</span>
+
+<span class="sd">    The function solves the dispersion relation for water waves</span>
+<span class="sd">    using the Newton-Raphson method. All outputs are solved for exactly</span>
+<span class="sd">    using: (w^2*h/g=kh*tanh(khG)</span>
+
+<span class="sd">    Approximations that could be used in place of this code for deep</span>
+<span class="sd">    and shallow water, as appropriate:</span>
+<span class="sd">    deep water:h/lambda &gt;= 1/2, tanh(kh)~1, lambda = (g.*T.^2)./(2*.pi)</span>
+<span class="sd">    shallow water:h/lambda &lt;= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    depth: float</span>
+<span class="sd">        Water depth at site [m].</span>
+<span class="sd">    SteepMax: float</span>
+<span class="sd">        Wave breaking steepness estimate (e.g., 0.07).</span>
+<span class="sd">    T_vals :np.array</span>
+<span class="sd">        Array of T values [sec] at which to calculate the breaking height.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    SteepH: np.array</span>
+<span class="sd">        H values [m] that correspond to the T_mesh values creating the</span>
+<span class="sd">        steepness curve.</span>
+<span class="sd">    T_steep: np.array</span>
+<span class="sd">        T values [sec] over which the steepness curve is defined.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    To find limit the steepness of waves on a contour by breaking::</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import BreakingSteepness</span>
+
+<span class="sd">        data_file = np.load(&#39;NDBC46022_1996_2012_Hs_Te.npz&#39;)</span>
+<span class="sd">        DateNum = data_file[&#39;DateNum&#39;]</span>
+<span class="sd">        T = data_file[&#39;T&#39;]</span>
+<span class="sd">        Hs = data_file[&#39;Hs&#39;]</span>
+
+<span class="sd">        depth = 391.1  # Depth at measurement point (m)</span>
+<span class="sd">        SteepMax = 0.07  # Optional: enter estimate of breaking steepness</span>
+
+<span class="sd">        # Removing NaN data, assigning T label depending on input (Te or Tp)</span>
+<span class="sd">        Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs)) #Find NaN data in Hs or T</span>
+<span class="sd">        DateNum = DateNum[Nanrem] #Remove any NaN data from DateNum</span>
+<span class="sd">        Hs = Hs[Nanrem] #Remove any NaN data from Hs</span>
+<span class="sd">        T = T[Nanrem] #Remove any NaN data from T</span>
+
+<span class="sd">        T_vals = np.arange(0.1,np.amax(T),0.1)</span>
+
+<span class="sd">        SteepH = BreakingSteepness.steepness(depth,SteepMax,T_vals)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Calculate the wavelength at a given depth at each value of T</span>
+    <span class="n">lambdaT</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span>  <span class="c1"># [m/s^2]</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="n">T_vals</span><span class="p">)</span>
+    <span class="n">lambdaT</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T_vals</span><span class="p">)):</span>
+        <span class="c1"># Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)</span>
+        <span class="n">kh</span> <span class="o">=</span> <span class="p">(</span><span class="n">omega</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">/</span> \
+            <span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">((</span><span class="n">omega</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">/</span> <span class="n">g</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span>
+        <span class="c1"># Find solution using the Newton-Raphson Method</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+            <span class="n">kh0</span> <span class="o">=</span> <span class="n">kh</span>
+            <span class="n">f0</span> <span class="o">=</span> <span class="p">(</span><span class="n">omega</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">/</span> <span class="n">g</span> <span class="o">-</span> <span class="n">kh0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kh0</span><span class="p">)</span>
+            <span class="n">df0</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kh</span><span class="p">)</span> <span class="o">-</span> <span class="n">kh</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kh</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">kh</span> <span class="o">=</span> <span class="o">-</span><span class="n">f0</span> <span class="o">/</span> <span class="n">df0</span> <span class="o">+</span> <span class="n">kh0</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">omega</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">/</span> <span class="n">g</span> <span class="o">-</span> <span class="n">kh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kh</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f0</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">):</span>
+                <span class="k">break</span>
+
+        <span class="n">lambdaT</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">kh</span> <span class="o">/</span> <span class="n">depth</span><span class="p">))</span>
+        <span class="k">del</span> <span class="n">kh</span><span class="p">,</span> <span class="n">kh0</span>
+
+    <span class="n">lambdaT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lambdaT</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">SteepH</span> <span class="o">=</span> <span class="n">lambdaT</span> <span class="o">*</span> <span class="n">SteepMax</span>
+    <span class="k">return</span> <span class="n">SteepH</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
