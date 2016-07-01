@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>WDRT.ESSC &mdash; WDRT 1.0 documentation</title>
+  <title>ecmToolbox.ESSC &mdash; WDRT 1.0 documentation</title>
   
 
   
@@ -119,7 +119,7 @@
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
       
-    <li>WDRT.ESSC</li>
+    <li>ecmToolbox.ESSC</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -131,7 +131,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for WDRT.ESSC</h1><div class="highlight"><pre>
+  <h1>Source code for ecmToolbox.ESSC</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stats</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">optim</span>
@@ -139,7 +139,7 @@
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
 
 
-<div class="viewcode-block" id="getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.getContours">[docs]</a><span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
+<div class="viewcode-block" id="getContours"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getContours">[docs]</a><span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State Contour (ESSC) function</span>
 
 <span class="sd">    This function calculates environmental contours of extreme sea states using</span>
@@ -180,8 +180,8 @@
 <span class="sd">    To obtain the contours for a NDBC buoy::</span>
 
 <span class="sd">        import numpy as np</span>
-<span class="sd">        import WDRT.NDBCdata as NDBCdata</span>
-<span class="sd">        import WDRT.ESSC as ESSC</span>
+<span class="sd">        import ecmToolbox.NDBCdata as NDBCdata</span>
+<span class="sd">        import ecmToolbox.ESSC as ESSC</span>
 
 
 <span class="sd">        # Pull spectral data from NDBC website</span>
@@ -444,7 +444,7 @@
     <span class="k">return</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">Comp1_params</span><span class="p">,</span> <span class="n">mu_param</span><span class="p">,</span> <span class="n">sigma_param</span></div>
 
 
-<div class="viewcode-block" id="mu_fcn"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.mu_fcn">[docs]</a><span class="k">def</span> <span class="nf">mu_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu_p_1</span><span class="p">,</span> <span class="n">mu_p_2</span><span class="p">):</span>
+<div class="viewcode-block" id="mu_fcn"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.mu_fcn">[docs]</a><span class="k">def</span> <span class="nf">mu_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu_p_1</span><span class="p">,</span> <span class="n">mu_p_2</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Linear fitting function for the mean(mu) of Component 2 normal</span>
 <span class="sd">    distribution as a function of the Component 1 mean for each bin.</span>
 <span class="sd">    Used in the ESSC and getSamples functions.</span>
@@ -466,7 +466,7 @@
     <span class="k">return</span> <span class="n">mu_fit</span></div>
 
 
-<div class="viewcode-block" id="sigma_fcn"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.sigma_fcn">[docs]</a><span class="k">def</span> <span class="nf">sigma_fcn</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="sigma_fcn"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.sigma_fcn">[docs]</a><span class="k">def</span> <span class="nf">sigma_fcn</span><span class="p">(</span><span class="n">sig_p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Quadratic fitting formula for the standard deviation(sigma) of Component</span>
 <span class="sd">    2 normal distribution as a function of the Component 1 mean for each bin.</span>
 <span class="sd">    Used in the ESSC and getSamples functions.</span>
@@ -488,7 +488,7 @@
     <span class="k">return</span> <span class="n">sigma_fit</span></div>
 
 
-<div class="viewcode-block" id="princomp_inv"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.princomp_inv">[docs]</a><span class="k">def</span> <span class="nf">princomp_inv</span><span class="p">(</span><span class="n">princip_data1</span><span class="p">,</span> <span class="n">princip_data2</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
+<div class="viewcode-block" id="princomp_inv"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.princomp_inv">[docs]</a><span class="k">def</span> <span class="nf">princomp_inv</span><span class="p">(</span><span class="n">princip_data1</span><span class="p">,</span> <span class="n">princip_data2</span><span class="p">,</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Takes the inverse of the principal component rotation given data,</span>
 <span class="sd">    coefficients, and shift. Used in the ESSC and getSamples functions.</span>
 
@@ -522,7 +522,7 @@
     <span class="k">return</span> <span class="n">original1</span><span class="p">,</span> <span class="n">original2</span></div>
 
 
-<div class="viewcode-block" id="getSamples"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.getSamples">[docs]</a><span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">num_contour_points</span><span class="p">,</span> <span class="n">contour_probs</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span>
+<div class="viewcode-block" id="getSamples"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getSamples">[docs]</a><span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">num_contour_points</span><span class="p">,</span> <span class="n">contour_probs</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span>
                <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State Contour (ESSC) Sampling function</span>
 
@@ -742,7 +742,7 @@
     <span class="k">return</span> <span class="n">Hs_Sample</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">,</span> <span class="n">Weight_points</span></div>
 
 
-<div class="viewcode-block" id="getContourPoints"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.getContourPoints">[docs]</a><span class="k">def</span> <span class="nf">getContourPoints</span><span class="p">(</span><span class="n">T_Return</span><span class="p">,</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">):</span>
+<div class="viewcode-block" id="getContourPoints"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.getContourPoints">[docs]</a><span class="k">def</span> <span class="nf">getContourPoints</span><span class="p">(</span><span class="n">T_Return</span><span class="p">,</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Get points along a specified environmental contour.</span>
 
 <span class="sd">    Parameters</span>
@@ -780,7 +780,7 @@
     <span class="k">return</span> <span class="n">Hs_Sample</span></div>
 
 
-<div class="viewcode-block" id="steepness"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.steepness">[docs]</a><span class="k">def</span> <span class="nf">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">T_vals</span><span class="p">):</span>
+<div class="viewcode-block" id="steepness"><a class="viewcode-back" href="../../modules.html#ecmToolbox.ESSC.steepness">[docs]</a><span class="k">def</span> <span class="nf">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">T_vals</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;This function calculates a steepness curve to be plotted on an H vs. T</span>
 <span class="sd">    diagram.  First, the function calculates the wavelength based on the</span>
 <span class="sd">    depth and T. The T vector can be the input data vector, or will be</span>
@@ -875,7 +875,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Sandia Corporation and The National Renewable Energy Laboratory.
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
 
     </p>
   </div>

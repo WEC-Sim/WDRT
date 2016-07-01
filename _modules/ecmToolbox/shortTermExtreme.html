@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>WDRT.shortTermExtreme &mdash; WDRT 1.0 documentation</title>
+  <title>ecmToolbox.shortTermExtreme &mdash; WDRT 1.0 documentation</title>
   
 
   
@@ -119,7 +119,7 @@
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
       
-    <li>WDRT.shortTermExtreme</li>
+    <li>ecmToolbox.shortTermExtreme</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -131,9 +131,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for WDRT.shortTermExtreme</h1><div class="highlight"><pre>
+  <h1>Source code for ecmToolbox.shortTermExtreme</h1><div class="highlight"><pre>
 <span></span>
-<span class="sd">&#39;&#39;&#39;WDRT shortTermExtreme module</span>
+<span class="sd">&#39;&#39;&#39;ecmToolbox shortTermExtreme module</span>
 
 <span class="sd">This module contains tools for analysis of short-term (sea-state specific)</span>
 <span class="sd">extremes, as well as some usefull statistical methods.</span>
@@ -147,7 +147,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 
-<div class="viewcode-block" id="ecmDist"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist">[docs]</a><span class="k">class</span> <span class="nc">ecmDist</span><span class="p">():</span>
+<div class="viewcode-block" id="ecmDist"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.ecmDist">[docs]</a><span class="k">class</span> <span class="nc">ecmDist</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;Class for extreme response distributions.</span>
 
 <span class="sd">    Class provides basic functionality for statistical distributions as needed</span>
@@ -212,7 +212,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ccdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ecmDist.getExpVal"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist.getExpVal">[docs]</a>    <span class="k">def</span> <span class="nf">getExpVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ecmDist.getExpVal"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.ecmDist.getExpVal">[docs]</a>    <span class="k">def</span> <span class="nf">getExpVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Expected value from ecmDist.</span>
 
 <span class="sd">        Finds expected value (mean) from distribution.</span>
@@ -233,7 +233,7 @@
         <span class="n">ev</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">/</span> <span class="n">m0</span>
         <span class="k">return</span> <span class="n">ev</span></div>
 
-<div class="viewcode-block" id="ecmDist.getRthVal"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist.getRthVal">[docs]</a>    <span class="k">def</span> <span class="nf">getRthVal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+<div class="viewcode-block" id="ecmDist.getRthVal"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.ecmDist.getRthVal">[docs]</a>    <span class="k">def</span> <span class="nf">getRthVal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Rth percentile value from ecmDist.</span>
 
 <span class="sd">        Finds value of cumulative distribution function for a given percentile.</span>
@@ -259,7 +259,7 @@
         <span class="k">return</span> <span class="n">xr</span></div></div>
 
 
-<div class="viewcode-block" id="empiricalPdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.empiricalPdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalPdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="empiricalPdf"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.empiricalPdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalPdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Returns an empirical probability density function.</span>
 
 <span class="sd">    Parameters</span>
@@ -291,7 +291,7 @@
     <span class="k">return</span> <span class="n">x_pdf</span><span class="p">,</span> <span class="n">pdf</span></div>
 
 
-<div class="viewcode-block" id="empiricalCdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.empiricalCdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalCdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="empiricalCdf"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.empiricalCdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalCdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Returns an empirical cumulative distribution function.</span>
 
 <span class="sd">    Parameters</span>
@@ -317,7 +317,7 @@
     <span class="k">return</span> <span class="n">x_cdf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">[</span><span class="n">m</span><span class="p">:]</span></div>
 
 
-<div class="viewcode-block" id="cdf2pdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.cdf2pdf">[docs]</a><span class="k">def</span> <span class="nf">cdf2pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
+<div class="viewcode-block" id="cdf2pdf"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.cdf2pdf">[docs]</a><span class="k">def</span> <span class="nf">cdf2pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Calculates a probability density function from the cumulative</span>
 <span class="sd">    distribution function via numerical differentiation.</span>
 
@@ -340,7 +340,7 @@
     <span class="k">return</span> <span class="n">pdf</span></div>
 
 
-<div class="viewcode-block" id="pdf2cdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.pdf2cdf">[docs]</a><span class="k">def</span> <span class="nf">pdf2cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">):</span>
+<div class="viewcode-block" id="pdf2cdf"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.pdf2cdf">[docs]</a><span class="k">def</span> <span class="nf">pdf2cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Calculates a cumulative distribution function from the probability</span>
 <span class="sd">    density function via numerical integration.</span>
 
@@ -363,7 +363,7 @@
     <span class="k">return</span> <span class="n">cdf</span></div>
 
 
-<div class="viewcode-block" id="loadtxt"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.loadtxt">[docs]</a><span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;ws&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="loadtxt"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.loadtxt">[docs]</a><span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;ws&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Loads data from a ASCII file.</span>
 <span class="sd">    First line is header with same delimiter as data, followed by data.</span>
 
@@ -397,7 +397,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="globalPeaks"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.globalPeaks">[docs]</a><span class="k">def</span> <span class="nf">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="globalPeaks"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.globalPeaks">[docs]</a><span class="k">def</span> <span class="nf">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Finds the global peaks (maxima between consecutive zero up-crossings)</span>
 <span class="sd">    of a zero-centered response time-series</span>
 
@@ -436,7 +436,7 @@
     <span class="k">return</span> <span class="n">t_peaks</span><span class="p">,</span> <span class="n">peaks</span></div>
 
 
-<div class="viewcode-block" id="blockMaxima"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.blockMaxima">[docs]</a><span class="k">def</span> <span class="nf">blockMaxima</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+<div class="viewcode-block" id="blockMaxima"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.blockMaxima">[docs]</a><span class="k">def</span> <span class="nf">blockMaxima</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Finds the block maxima of a time-series.</span>
 
 <span class="sd">    Parameters</span>
@@ -463,7 +463,7 @@
     <span class="k">return</span> <span class="n">block_maxima</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_Weibull"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_Weibull">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_Weibull</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">locFlag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_Weibull"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.extremeDistribution_Weibull">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_Weibull</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">locFlag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the all peaks</span>
 <span class="sd">    Weibull method.</span>
 
@@ -514,7 +514,7 @@
     <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">peaks_params</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_WeibullTailFit"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">avg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_WeibullTailFit"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.extremeDistribution_WeibullTailFit">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">avg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the Weibull tail</span>
 <span class="sd">    fit method.</span>
 
@@ -596,7 +596,7 @@
                <span class="n">subset_scale_params</span><span class="p">,</span> <span class="n">peaks_params</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_peaksOverThreshold"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_peaksOverThreshold">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_peaksOverThreshold</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_peaksOverThreshold"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.extremeDistribution_peaksOverThreshold">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_peaksOverThreshold</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the peaks over</span>
 <span class="sd">    threshold method.</span>
 
@@ -653,7 +653,7 @@
     <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">peaksOverThreshold_dist</span><span class="p">,</span> <span class="n">pot_params</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_blockMaximaGEV"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGEV">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGEV</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_blockMaximaGEV"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.extremeDistribution_blockMaximaGEV">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGEV</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the block maxima</span>
 <span class="sd">    method and the Generalized Extreme Value distribution.</span>
 
@@ -686,7 +686,7 @@
     <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">ste_parameters</span><span class="p">,</span> <span class="n">block_maxima</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_blockMaximaGumb"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGumb">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGumb</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_blockMaximaGumb"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.extremeDistribution_blockMaximaGumb">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGumb</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the block maxima</span>
 <span class="sd">    method and the Gumbel (right) distribution.</span>
 
@@ -719,7 +719,7 @@
     <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">ste_parameters</span><span class="p">,</span> <span class="n">block_maxima</span></div>
 
 
-<div class="viewcode-block" id="goodnessOfFitPlots"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.goodnessOfFitPlots">[docs]</a><span class="k">def</span> <span class="nf">goodnessOfFitPlots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">prob_func</span><span class="p">,</span> <span class="n">x_pdf</span><span class="p">,</span> <span class="n">bins_pdf</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">np_return</span><span class="o">=</span><span class="mi">100001</span><span class="p">,</span> <span class="n">m_prob</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">response_name</span><span class="o">=</span><span class="s1">&#39;Response&#39;</span><span class="p">,</span> <span class="n">response_name_2</span><span class="o">=</span><span class="s1">&#39;Peaks&#39;</span><span class="p">,</span> <span class="n">response_units</span><span class="o">=</span><span class="s1">&#39;Response Units&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="goodnessOfFitPlots"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.goodnessOfFitPlots">[docs]</a><span class="k">def</span> <span class="nf">goodnessOfFitPlots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">prob_func</span><span class="p">,</span> <span class="n">x_pdf</span><span class="p">,</span> <span class="n">bins_pdf</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">np_return</span><span class="o">=</span><span class="mi">100001</span><span class="p">,</span> <span class="n">m_prob</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">response_name</span><span class="o">=</span><span class="s1">&#39;Response&#39;</span><span class="p">,</span> <span class="n">response_name_2</span><span class="o">=</span><span class="s1">&#39;Peaks&#39;</span><span class="p">,</span> <span class="n">response_units</span><span class="o">=</span><span class="s1">&#39;Response Units&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Creates plots showing the goodness of fit of a probability model to the</span>
 <span class="sd">    actual data. The four subplots are: the probability plot, the quantile plot,</span>
 <span class="sd">    the return level plot, and probability density function (PDF) plot.</span>
@@ -747,7 +747,7 @@
 <span class="sd">            Figure containing the four goodness of fit subplots.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># nan instead of error if out-of-range</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;ecmToolbox.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
@@ -821,7 +821,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="c1"># revert to error instead of nan if out-of-range</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;ecmToolbox.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
         <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
@@ -829,7 +829,7 @@
     <span class="k">return</span> <span class="n">fgof</span></div>
 
 
-<div class="viewcode-block" id="compare_methods"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.compare_methods">[docs]</a><span class="k">def</span> <span class="nf">compare_methods</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span><span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">],</span><span class="n">lines</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">]):</span>
+<div class="viewcode-block" id="compare_methods"><a class="viewcode-back" href="../../modules.html#ecmToolbox.shortTermExtreme.compare_methods">[docs]</a><span class="k">def</span> <span class="nf">compare_methods</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span><span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">],</span><span class="n">lines</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">]):</span>
     <span class="sd">&#39;&#39;&#39;Compares the results obtained using different methods to approximate the</span>
 <span class="sd">    short-term extreme distribution. The methods are:</span>
 <span class="sd">    1 - All peaks Weibull,</span>
@@ -1006,7 +1006,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Sandia Corporation and The National Renewable Energy Laboratory.
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
 
     </p>
   </div>
