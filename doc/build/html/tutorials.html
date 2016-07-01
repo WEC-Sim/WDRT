@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorials &mdash; bemio v1.0a0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="bemio v1.0a0 documentation" href="index.html"/>
+        <link rel="next" title="WAMIT" href="wamit.html"/>
+        <link rel="prev" title="Using the bemio.io Module" href="api_io.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> bemio</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Downloading and Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing.html#downloading-bemio">Downloading bemio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html#installing-quick-start-for-python-beginners">Installing: Quick Start for Python Beginners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html#installing-for-experienced-python-users">Installing: For Experienced Python Users</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vtk.html">Installing VTK with Python Bindings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vtk.html#osx">OSX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vtk.html#linux">Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vtk.html#windows">Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_io.html">Using the bemio.io Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_io.html#loading-data">Loading Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_io.html#data-objects">Data Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_io.html#calculating-impulse-response-functions-and-sate-space-coefficients">Calculating Impulse Response Functions and Sate Space Coefficients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_io.html#writing-the-data-to-the-standard-bemio-format">Writing the Data to the Standard bemio Format</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-data-files">Tutorial Data Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-tutorials">Available Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_doc.html">bemio Module Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_doc.html#bemio-io">bemio.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_doc.html#bemio-data-structures">bemio.data_structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_doc.html#bemio-mesh-utilities">bemio.mesh_utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">bemio</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Tutorials</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/tutorials.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="tutorials">
+<span id="id1"></span><h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
+<p>This section provides tutorials that show how to use <span class="xref std std-ref">API</span> to read, process, and save NEMOH, WAMIT, and AQWA simulation data. Specifically, the tutorials show how to:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Create custom programs that read BEM simulation data</li>
+<li>Calculate impulse response functions</li>
+<li>Calculate state space coefficients from the impulse response functions</li>
+<li>Plot the data for visualization</li>
+<li>Save the data to the SHDF</li>
+</ol>
+</div></blockquote>
+<p><cite>bemio</cite> was developed so that users interact with the API in the same way regardless of the type of BEM data that is being read and processed. As such, we will present a thorough description of how to process WAMIT data in the &#8216;WAMIT&#8217;_ tutorial, and abbreviated versions of the NEMOH and AQWA tutorials.</p>
+<div class="section" id="tutorial-data-files">
+<span id="data-files"></span><h2>Tutorial Data Files<a class="headerlink" href="#tutorial-data-files" title="Permalink to this headline">¶</a></h2>
+<p>Tutorial files are distributed with the <cite>bemio</cite> code and can be found in the <code class="docutils literal"><span class="pre">$BEMIO_SOURCE/tutorials</span></code> folder. This location will be refereed to as <code class="docutils literal"><span class="pre">$BEMIO_TUTORIALS</span></code>.</p>
+</div>
+<div class="section" id="available-tutorials">
+<span id="wamit-tut"></span><h2>Available Tutorials<a class="headerlink" href="#available-tutorials" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="wamit.html">WAMIT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wamit.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nemoh.html">NEMOH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aqwa.html">AQWA</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="wamit.html" class="btn btn-neutral float-right" title="WAMIT">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_io.html" class="btn btn-neutral" title="Using the bemio.io Module"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, National Renewable Energy Laboratory and Sandia National Laboratories.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v1.0a0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
