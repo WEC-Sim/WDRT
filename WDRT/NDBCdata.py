@@ -65,7 +65,7 @@ def fetchFromWeb(buoyNum, savePath='./'):
     dateList = []
     freqList = []
     swdList = []
-    url = "http://www.ndbc.noaa.gov/station_history.php?station=%i" % (buoyNum)
+    url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (buoyNum)
     ndbcURL = requests.get(url)
     ndbcURL.raise_for_status()
     ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
@@ -78,9 +78,8 @@ def fetchFromWeb(buoyNum, savePath='./'):
 
     links = [a["href"] for a in b.find_next_siblings("a", href=True)]
     # Grab the device number so the filename is more specific
-    deviceNum = int(re.findall("[0-9]+", links[0])[0])
 
-    saveDir = os.path.join(savePath, 'NDBC%s' % (deviceNum))
+    saveDir = os.path.join(savePath, 'NDBC%s' % (buoyNum))
 
     if not os.path.exists(saveDir):
         os.mkdir(saveDir)
@@ -91,11 +90,11 @@ def fetchFromWeb(buoyNum, savePath='./'):
 
         #certain years have multiple files marked with the letter 'b'
         if ('b' + str(year)) not in link:
-            swdFile = open(os.path.join(saveDir, "SWD-%d-%d.txt" %
-                           (deviceNum, year)), 'w')
+            swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
+                           (buoyNum, year)), 'w')
         else:
-            swdFile = open(os.path.join(saveDir, "SWD-%d-%s.txt" %
-                           (deviceNum, str(year) + 'b')), 'w')
+            swdFile = open(os.path.join(saveDir, "SWD-%s-%s.txt" %
+                           (buoyNum, str(year) + 'b')), 'w')
 
         fileName = dataLink.replace('download_data', 'view_text_file')
         data = urllib2.urlopen(fileName)
