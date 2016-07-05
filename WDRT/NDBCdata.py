@@ -29,7 +29,7 @@ def fetchFromWeb(buoyNum, savePath='./'):
 
     Parameters
     ----------
-    buoyNum : int
+    buoyNum : string
         Buoy number to download data for. Can find the appropriate buoy at
         http://www.ndbc.noaa.gov. Only buoys with historical data (i.e. have a
         http://www.ndbc.noaa.gov/station_history.php?station=##### page) can be
