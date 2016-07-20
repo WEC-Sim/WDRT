@@ -10,13 +10,15 @@ print Test.sim
 
 # setup the wave information
 Test.waves.setup()
-Test.waves.plotSpectrum(show=True)
+Test.waves.plotSpectrum()#show=True)
 
 # setup the RAO information
-#TODO: call Test.RAOread(3,'RAO_data/RAO_heave_RM3float.dat');
-#TODO: call Test.RAOread(5,'RAO_data/RAO_pitch_RM3float.dat');
-#TODO: call Test.RAOplot(3);        # check the RAO
-#TODO: call Test.RAOplot(5);        # check the RAO
+RAOdir = 'RAO_data/'
+#RAOdir = '../RAO_data/'
+Test.readRAO(3,RAOdir+'RAO_heave_RM3float.dat')
+Test.readRAO(5,RAOdir+'RAO_pitch_RM3float.dat')
+Test.plotRAO(3)#,show=True)
+Test.plotRAO(5,show=True)
 
 # now that everything is setup, generate the MLER wave for heave.
 #TODO: call Test.MLERcoeffsGen(3,1);        # generate the wave profile, 1 meter response desired

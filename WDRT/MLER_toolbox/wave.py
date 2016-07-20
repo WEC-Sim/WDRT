@@ -67,14 +67,14 @@ class wave(object):
         self._waveNumber()
 
     def plotSpectrum(self,show=False):
-        import matplotlib.pyplot as plt
         if self.w is None:
             sys.exit('Call waves.waveSetup before plotting spectrum');
+        import matplotlib.pyplot as plt
         plt.figure()
         plt.plot(self.w,self.S)
         plt.title('{:s} spectrum for Hs = {:f} (m), Tp = {:f} (s)'.format(self.type,self.H,self.T))
-        plt.xlabel('Frequency [rad/s]')
-        plt.ylabel('Spectral amplitude [m^2]') #TODO: double check units
+        plt.xlabel('Frequency (rad/s)')
+        plt.ylabel('Spectral amplitude (m^2)') #TODO: double check units
         if show is True: plt.show()
 
     #
