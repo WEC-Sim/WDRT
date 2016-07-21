@@ -8,7 +8,7 @@ import wave
 import simulation
 import spectrum
 
-class focusedWave(object):
+class mler(object):
     """ Based on MLERclass.m
     """
 
@@ -160,7 +160,7 @@ class focusedWave(object):
         S_tmp[:] = 2.0*np.abs(self.RAO[:,DOFtoCalc])*self.waves.A     # Response spectrum.
 
         # calculate spectral moments and other important spectral values.
-        self.Spect = spectrum.info( S_tmp, self.waves.w, self.waves.dw )
+        self.Spect = spectrum.stats( S_tmp, self.waves.w, self.waves.dw )
        
         # calculate coefficient A_{R,n}
         self.CoeffA_Rn[:] = np.abs(self.RAO[:,DOFtoCalc]) * np.sqrt(self.waves.A*self.waves.dw) \

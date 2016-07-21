@@ -1,5 +1,9 @@
 #!/usr/bin/python
-import MLER
+import sys
+libpath = '/Users/equon/WDRT/WDRT/MLER_toolbox'
+if (libpath not in sys.path): sys.path.append(libpath)
+
+import mler
 
 #RAOdir = '../RAO_data/'
 #outputDir = 'TestData/'
@@ -7,7 +11,7 @@ RAOdir = 'RAO_data/'
 outputDir = 'example/TestData/'
 
 # Create the object
-Test = MLER.focusedWave(H=9.0, T=15.1, numFreq=500)
+Test = mler.mler(H=9.0, T=15.1, numFreq=500)
 Test.sim.setup()
 
 # Setup the wave information

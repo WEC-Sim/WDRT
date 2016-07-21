@@ -2,7 +2,7 @@
 import sys
 import numpy as np
 
-class info(object):
+class stats(object):
     """ Based on SpectralInfoClass.m
     """
     def __init__(self,S=None,w=None,dw=None):
