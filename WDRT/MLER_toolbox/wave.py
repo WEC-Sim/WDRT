@@ -90,10 +90,13 @@ class wave(object):
         Hs = self.H
         B = (1.057/Tp)**4
         A_irreg = B*(Hs/2)**2
+
+        orig_settings = np.seterr(divide='ignore',invalid='ignore')
         S_f = (A_irreg*freq**(-5)*np.exp(-B*freq**(-4)))
         if np.isnan( S_f[0] ): # defined to avoid a NaN
-            print 'DEBUG: correcting NaN in spectrum'
+            #print 'DEBUG: correcting NaN in spectrum'
             S_f[0] = 0.
+        np.seterr(**orig_settings)
         assert( len(np.nonzero( np.isnan(S_f) )[0]) == 0 )
 
         Sf = S_f / (2*np.pi);
@@ -103,13 +106,22 @@ class wave(object):
     def _waveNumber(self):
         """ Calculate wave number
         """
+        #TODO: FIFTH-ORDER WAVENUMBER
         self.k = self.w**2 / self.g # deep water approximation
         if not self.deepWaterWave:
+            lastk = self.k[:1]
+            orig_settings = np.seterr(divide='ignore',invalid='ignore')
             for i in range(100):
                 # TODO: more rigorous convergence
                 self.k = self.w**2 / (self.g * np.tanh(self.k*self.waterDepth) );
+
+                # check convergence
+                #print i,np.max(np.abs(self.k[1:]-lastk))
+                lastk = self.k[1:]
+            np.seterr(**orig_settings)
+
         if np.isnan( self.k[0] ): # defined to avoid a NaN
-            print 'DEBUG: correcting NaN'
+            #print 'DEBUG: correcting NaN'
             self.k[0] = 0.
         assert( len(np.nonzero( np.isnan(self.k) )[0]) == 0 )
 

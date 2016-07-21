@@ -65,7 +65,7 @@ class focusedWave(object):
         # Column 2:    response amplitude (m/m for DOF 1-3; or radians/m for DOF 4-6)
         # Column 3:    response phase (radians)
         #
-        print 'Reading RAO dof=',DOFread,'from',RAO_File_Name
+        print 'Reading RAO ( DOF=',DOFread,') from',RAO_File_Name
         # - get total number of lines
         with open(RAO_File_Name,'r') as f:
             for i,_ in enumerate(f.readlines()): pass
@@ -140,7 +140,7 @@ class focusedWave(object):
         """
         # check that we asked for something non-zero
         if respDesired == 0:
-            error('Desired response amplitude (respDesired) should be non-zero.');
+            sys.exit('Desired response amplitude (respDesired) should be non-zero.')
         self.desiredRespAmp = respDesired
 
         DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
@@ -274,7 +274,7 @@ class focusedWave(object):
                         np.cos( self.waves.w*(ti-self.sim.T0) - self.waves.k*(xi-self.sim.X0) )
                     )
             
-        print 'Exporting wave amplitude time series for DOF =',DOFexport,' at X0.'
+        print 'Exporting wave amplitude time series for DOF =',DOFexport,'at X0.'
         self._checkpath(FileNameWaveAmpTime)
         with open(FileNameWaveAmpTime,'w') as f:
             
