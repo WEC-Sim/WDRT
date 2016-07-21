@@ -35,11 +35,11 @@ Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (p
 # Now export the heave coefficients.
 Test.MLERexportCoeffs(outputDir+'Test_heave_MLER_heaveOpt_Coeffs.txt');
 
-# Export the wave amplitude time series at x=x0 for heave.
+# Export the wave amplitude time series at x=x0 and the heave response.
 Test.MLERexportWaveAmpTime(outputDir+'Test_heave_MLER_heaveOpt_heave_WaveAmpTime.txt',3)
 
-# export the spectral info for WEC-Sim
-#TODO: call Test.MLERexportWECSim('TestData/Test_heave_MLER_heaveOpt_WECSimInput.txt')
+# Export the spectral info for WEC-Sim.
+Test.MLERexportWECSim(outputDir+'Test_heave_MLER_heaveOpt_WECSimInput.txt')
 
 
 # TODO: animate, etc

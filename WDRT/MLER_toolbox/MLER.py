@@ -319,6 +319,24 @@ class focusedWave(object):
         
         print 'MLER wave amplitude time series written to',FileNameWaveAmpTime
 
+    def MLERexportWECSim(self,FileNameWEC):
+        """ Export the coefficients to a file that WEC-Sim can read in
+        """
+        # note that:
+        #   WaveElev = sum( sqrt(2*S * dw) * cos( -k*(x-X0) + w*(t-T0) + Phase) )
+        Freq = self.waves.w / (2*np.pi)
+
+        self._checkpath(FileNameWEC)
+        with open(FileNameWEC,'w') as f:
+            f.write(('{:8.6f}      '*self.waves.numFreq).format(*Freq))       # output in hertz
+            f.write('\n')
+            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self.S))
+            f.write('\n')
+            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self.phase))
+            f.write('\n')
+        
+        print 'MLER coefficients for WEC-Sim written to',FileNameWEC
+
     #
     # protected methods
     #
