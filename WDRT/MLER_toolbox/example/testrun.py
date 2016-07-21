@@ -26,18 +26,17 @@ Test.plotRAO(5,show=True)
 # Now that everything is set up, generate the MLER wave for heave.
 Test.MLERcoeffsGen(3,1.0) # generate the wave profile, 1 meter heave response desired
 
-# at this point we can export the coefficients.  The coefficients will
+# At this point we can export the coefficients.  The coefficients will
 # match a desired response height that was given as the second argument to
 # MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,
-# we can renormalize the wave amplitude now (AP)
+# we can renormalize the wave amplitude now. (AP)
 Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
 
-# now export the heave coefficients
+# Now export the heave coefficients.
 Test.MLERexportCoeffs(outputDir+'Test_heave_MLER_heaveOpt_Coeffs.txt');
 
-
-# export the wave amplitude time series at x=x0 for heave
-#TODO: call Test.MLERexportWaveAmpTime('TestData/Test_heave_MLER_heaveOpt_heave_WaveAmpTime.txt',3)
+# Export the wave amplitude time series at x=x0 for heave.
+Test.MLERexportWaveAmpTime(outputDir+'Test_heave_MLER_heaveOpt_heave_WaveAmpTime.txt',3)
 
 # export the spectral info for WEC-Sim
 #TODO: call Test.MLERexportWECSim('TestData/Test_heave_MLER_heaveOpt_WECSimInput.txt')
