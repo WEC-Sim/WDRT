@@ -12,9 +12,9 @@ class mler(object):
     """ Based on MLERclass.m
     """
 
-    def __init__(self,H,T,numFreq):
-        self.waves  = wave.wave(H,T,numFreq)
-        self.sim    = simulation.simulation()
+    def __init__(self,H=None,T=None,numFreq=10001):
+        self.sim   = simulation.simulation()
+        self.waves = wave.wave(H,T,numFreq)
 
         self.desiredRespAmp = 0.0                           # [-]   Desired response amplitude.  M_d in documentation.
 
@@ -53,12 +53,13 @@ class mler(object):
         if self.RAO is None:
             self.RAO = np.zeros( (self.waves.numFreq,6), dtype=complex ) # set the size of the RAO matrix
 
-        if self.RAOdataReadIn[DOFread] is True:
+        if self.RAOdataReadIn[DOFread-1] is True:
             print 'WARNING: RAO dof=',DOFread,'already read from',self.RAOdataFileName[DOFread]
-        
+
         # make sure we have setup the waves info first.
         if self.waves.w is None:
             sys.exit('Call waves.waveSetup before calling ReadRAO')
+
         
         # Format of file to read in:
         # Column 1:    period in seconds
@@ -197,6 +198,7 @@ class mler(object):
             sys.exit('Wave height desired during renormalization must be positive.')
         print 'Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired)
         
+        # TODO: HIGHER-ORDER CALCULATION
         tmpMaxAmp = self._MLERpeakvalue()
 
         # renormalization of wave amplitudes

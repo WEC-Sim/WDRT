@@ -10,10 +10,6 @@ class wave(object):
     def __init__(self, H=None, T=None, numFreq=10001):
         if numFreq <= 10:
             sys.exit('numFreq must be larger than 10')
-        if H <= 0:
-            sys.exit('Wave height (H) must be greater than zero to use MLER method')
-        if T <= 0:
-            sys.exit('Wave time period (T) must be greater than zero to use MLER method')
 
         # sea state definition
         self.H               = H                    # [m]       Hs: sea state wave height
@@ -55,6 +51,11 @@ class wave(object):
             sys.exit('The wave time period must be defined when using MLER');
         if self.H is None:
             sys.exit('The wave height must be defined when using MLER');
+
+        if self.H <= 0:
+            sys.exit('Wave height (H) must be greater than zero to use MLER method')
+        if self.T <= 0:
+            sys.exit('Wave time period (T) must be greater than zero to use MLER method')
 
         self.dw = (self.endW - self.startW) / (self.numFreq-1)
         self.w  = np.linspace( self.startW, self.endW, self.numFreq )
