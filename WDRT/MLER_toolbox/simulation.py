@@ -44,10 +44,10 @@ class simulation(object):
         if self.dT <= 1e-3:
             sys.exit('The timestep is too small. Use a value larger than 1e-3.')
             
-        self.maxIT = np.ceil( (self.endTime - self.startTime)/self.dT + 1 ) # maximum timestep index
+        self.maxIT = int(np.ceil( (self.endTime - self.startTime)/self.dT + 1 )) # maximum timestep index
         self.T = np.linspace( self.startTime, self.endTime, self.maxIT )
 
-        self.maxIX = np.ceil( (self.endX - self.startX)/self.dX + 1 )
+        self.maxIX = int(np.ceil( (self.endX - self.startX)/self.dX + 1 ))
         self.X = np.linspace( self.startX, self.endX, self.maxIX )
 
     #

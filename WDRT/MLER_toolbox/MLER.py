@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # TODO: put this in egg
 import sys
-import wave
-import simulation
 import numpy as np
 import scipy.interpolate
+
+import wave
+import simulation
+import spectrum
 
 class focusedWave(object):
     """ Based on MLERclass.m
@@ -14,7 +16,7 @@ class focusedWave(object):
         self.waves  = wave.wave(H,T,numFreq)
         self.sim    = simulation.simulation()
 
-        self.desiredRespAmp = -1                            # [-]   Desired response amplitude.  M_d in documentation.
+        self.desiredRespAmp = 0.0                           # [-]   Desired response amplitude.  M_d in documentation.
 
         # TODO: private set, public get
         self.RAO                = None                      # [-]   Complex RAO array  N x 6
@@ -24,7 +26,7 @@ class focusedWave(object):
         self.S                  = None                      # [m^2] New Wave spectrum vector
         self.A                  = None                      # [m^2] 2*(new wave spectrum vector)
         self.phase              = 0.0                       # [rad] Wave phase
-       #self.Spect              = spectralInfo.spectrum()   # [-]   Spectral info
+        self.Spect              = None                      # [-]   Spectral info
        #self.waveHeightDesired  = None                      # [m]   Height of wave desired if renormalizing amplitudes
        #self.rescaleFact        = None                      # [-]   Rescaling factor for renormalizing the amplitude
 
@@ -88,7 +90,7 @@ class focusedWave(object):
         # convert from period in seconds to frequency in rad/s
         T = tmpRAO[:,0]
         tmpRAO[:,0] = 2*np.pi / T
-        tmpRAO = tmpRAO[ np.argsort(tmpRAO[:,0]) ] # sort by frequency
+        tmpRAO = tmpRAO[ np.argsort(tmpRAO[:,0]) ]  # sort by frequency
         
         # Add at w=0, amp=0, phase=0
         # TODO check:
@@ -130,9 +132,143 @@ class focusedWave(object):
             plt.ylabel('Response amplitude (rad/m) / Response phase (rad)')
         if show is True: plt.show()
         
+    def MLERcoeffsGen(self,DOFtoCalc,respDesired):
+        """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
+        DOFtoCalc: 1 - 3 (translation DOFs)
+                   4 - 6 (rotation DOFs)
+        Sets self.S, self.A, self.CoeffA_Rn, self.phase
+        """
+        # check that we asked for something non-zero
+        if respDesired == 0:
+            error('Desired response amplitude (respDesired) should be non-zero.');
+        self.desiredRespAmp = respDesired
+
+        DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
+        
+        S_tmp          = np.zeros(self.waves.numFreq);
+        self.S         = np.zeros(self.waves.numFreq);
+        self.A         = np.zeros(self.waves.numFreq);
+        self.CoeffA_Rn = np.zeros(self.waves.numFreq);
+        self.phase     = np.zeros(self.waves.numFreq);
+        
+        # calculate the RAO times sqrt of spectrum
+        # TODO: add equation references
+        # note that we could define:  a_n=(waves.A*waves.dw).^0.5; (AP)
+        #S_tmp(:)=squeeze(abs(obj.RAO(:,DOFtoCalc))).*2 .* obj.waves.A;          % Response spectrum.
+        # note: self.A == 2*self.S  (EWQ)
+        #   i.e. S_tmp is 4 * RAO * calculatedWaveSpectrum
+        S_tmp[:] = 2.0*np.abs(self.RAO[:,DOFtoCalc])*self.waves.A     # Response spectrum.
+
+        # calculate spectral moments and other important spectral values.
+        self.Spect = spectrum.info( S_tmp, self.waves.w, self.waves.dw )
+       
+        # calculate coefficient A_{R,n}
+        self.CoeffA_Rn[:] = np.abs(self.RAO[:,DOFtoCalc]) \
+                * np.sqrt(self.waves.A*self.waves.dw) \
+                * ( (self.Spect.M2 - self.waves.w*self.Spect.M1) \
+                    + self.Spect.wBar*(self.waves.w*self.Spect.M0 - self.Spect.M1) ) \
+                / (self.Spect.M0*self.Spect.M2 - self.Spect.M1**2) # Drummen version.  Dietz has negative of this.
+        
+        # save the new spectral info to pass out
+        self.phase[:] = -np.unwrap( np.angle(self.RAO[:,DOFtoCalc]) ) # Phase delay should be a positive number in this convention (AP)
+        
+        # for negative values of Amp, shift phase by pi and flip sign
+        # TODO: verify this is legit
+        self.phase[self.CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
+        self.CoeffA_Rn[self.CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
+        
+        self.S[:] = self.waves.S * self.CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
+        self.A[:] = self.waves.A * self.CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
+        
+        # if the response amplitude we ask for is negative, we will add
+        # a pi phase shift to the phase information.  This is because
+        # the sign of self.desiredRespAmp is lost in the squaring above.
+        # Ordinarily this would be put into the final equation, but we
+        # are shaping the wave information so that it is buried in the
+        # new spectral information, S. (AP)
+        if self.desiredRespAmp < 0:
+            self.phase += np.pi
+
+    def MLERwaveAmpNormalize(self,peakHeightDesired):
+        """ Renormalize the wave amplitude to some desired height of the incoming wave. 
+        Uses the peak height (peak to MSL) desired rather than the full range height (peak to trough).
+        """
+        # check that we asked for a positive wave amplitude
+        if peakHeightDesired <=0:
+            sys.exit('Wave height desired during renormalization must be positive.')
+        print 'Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired)
+        
+        tmpMaxAmp = self._MLERpeakvalue()
+
+        # renormalization of wave amplitudes
+        self.rescaleFact = np.abs(peakHeightDesired) / np.abs(tmpMaxAmp)
+        self.S = self.S * self.rescaleFact**2 # rescale the wave spectral amplitude coefficients
+        self.A = self.A * self.rescaleFact**2 # rescale the wave amplitude coefficients
+        print 'Rescaled by {:f}'.format(self.rescaleFact)
+        
+    def MLERexportCoeffs(self,FileNameCoeff):
+        import os
+        import datetime
+
+        # check directory exists
+        dirname = os.path.dirname(FileNameCoeff)
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname)
+        
+        Phase =  self.phase + self.waves.w*self.sim.T0 - self.waves.k*self.sim.X0  # note sign: overall exported phase is still backwards (AP)
+
+        # Now export the coefficients to a file
+        with open(FileNameCoeff,'w') as f:
+        
+            # Header info
+            f.write('# MLER wave profile generated {:}\n'.format(datetime.datetime.now()))
+            f.write('#\n')
+            f.write('#\n')
+            f.write('### Setup \n')
+            f.write('# X0:         {:6.3f}   (m, peak position) \n'.format(self.sim.X0))
+            f.write('# g:          {:6.3f}   (m/s^2, gravity) \n'.format(self.waves.g))
+            f.write('# depth:      {:6.3f}   (m, water depth) \n'.format(self.waves.waterDepth))
+            f.write('# T0:         {:6.3f}   (s, response peak time) \n'.format(self.sim.T0))
+            f.write('#\n')
+            f.write('### Wave info:\n')
+            f.write('# NumFreq: {:6f}    (-, number of frequencies)\n'.format(self.waves.numFreq))
+            f.write('# dW:      {:8.5g}  (rad/s, frequency spacing)\n'.format(self.waves.dw))
+            f.write('# Hs:      {:6.3f}  (m, significant wave height) \n'.format(self.waves.H))
+            f.write('# Tp:      {:6.3f}  (s, wave period) \n'.format(self.waves.T))
+            f.write('#\n')
+            f.write('# Note: Phase is calculated at X0 and t0.  For starting at a different point along x or in time, phase must be adjusted.\n')
+            f.write('#\n')
+            f.write('#Form of equation for wave elevation:\n')
+            f.write('#   WaveElev = sum( sqrt(2*SpectAmp * dw) * cos( -k*(x-X0) + w*(t-T0) + Phase) ) \n')
+            f.write('#\n')
+            f.write('#\n')
+            f.write('#   frequency      SpectAmp      Phase     wavenumber\n')
+            f.write('#   (rad/s)          (m^2)       (rad)      (rad^2/m)\n')
+
+            # Write coefficients, etc
+            for ww in range(self.waves.numFreq):
+                f.write('{:8.6f}   {:12.8g}   {:12.8f}   {:12.8f}\n'.format(
+                        self.waves.w[ww], self.S[ww], Phase[ww], self.waves.k[ww] ) )
+        
 
     #
     # protected methods
     #
+    def _MLERpeakvalue(self):
+        """ the maximum may not occur at X0 or T0... 
+        So, we have to generate the entire time and space array, then find the maximum and minimum.
+        """
+        waveAmpTime = np.zeros((self.sim.maxIX,self.sim.maxIT))
+        for xx in range(self.sim.maxIX):
+            x = xx*self.sim.dX + self.sim.startX
+            
+            for tt in range(self.sim.maxIT):
+                t = tt*self.sim.dT + self.sim.startTime
+                
+                # conditioned wave
+                waveAmpTime[xx,tt] = np.sum( np.sqrt(self.A*self.waves.dw) * np.cos( 
+                    self.waves.w*(t-self.sim.T0) - self.waves.k*(x-self.sim.X0) + self.phase
+                    ) )
 
+        return np.max(np.abs(waveAmpTime))
 

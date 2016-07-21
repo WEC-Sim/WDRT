@@ -1,36 +1,39 @@
 #!/usr/bin/python
 import MLER
 
-# create the object
+#RAOdir = '../RAO_data/'
+#outputDir = 'TestData/'
+RAOdir = 'RAO_data/'
+outputDir = 'example/TestData/'
+
+# Create the object
 Test = MLER.focusedWave(H=9.0, T=15.1, numFreq=500)
 Test.sim.setup()
 print Test
 print Test.waves
 print Test.sim
 
-# setup the wave information
+# Setup the wave information
 Test.waves.setup()
 Test.waves.plotSpectrum()#show=True)
 
-# setup the RAO information
-RAOdir = 'RAO_data/'
-#RAOdir = '../RAO_data/'
+# Setup the RAO information
 Test.readRAO(3,RAOdir+'RAO_heave_RM3float.dat')
 Test.readRAO(5,RAOdir+'RAO_pitch_RM3float.dat')
 Test.plotRAO(3)#,show=True)
 Test.plotRAO(5,show=True)
 
-# now that everything is setup, generate the MLER wave for heave.
-#TODO: call Test.MLERcoeffsGen(3,1);        # generate the wave profile, 1 meter response desired
+# Now that everything is set up, generate the MLER wave for heave.
+Test.MLERcoeffsGen(3,1.0) # generate the wave profile, 1 meter heave response desired
 
 # at this point we can export the coefficients.  The coefficients will
 # match a desired response height that was given as the second argument to
 # MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,
-# we can renormalize the wave amplitude now
-#TODO: call Test.MLERwaveAmpNormalize(Test.waves.H /2  * 1.9)           # the peak height (peak to MSL) desired
+# we can renormalize the wave amplitude now (AP)
+Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
 
 # now export the heave coefficients
-#TODO: call Test.MLERexportCoeffs('TestData/Test_heave_MLER_heaveOpt_Coeffs.txt');
+Test.MLERexportCoeffs(outputDir+'Test_heave_MLER_heaveOpt_Coeffs.txt');
 
 
 # export the wave amplitude time series at x=x0 for heave
