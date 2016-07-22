@@ -1,12 +1,13 @@
 #!/usr/bin/python
-import sys
-libpath = '/Users/equon/WDRT/WDRT/MLER_toolbox'
-if (libpath not in sys.path): sys.path.append(libpath)
 
+libpath     = '/Users/equon/WDRT/WDRT/MLER_toolbox'
+RAOdir      = libpath+'/RAO_data/'
+outputDir   = libpath+'/example/TestData/'
+
+import sys
+if (libpath not in sys.path): sys.path.append(libpath)
 import mler
 
-RAOdir = '../RAO_data/'
-outputDir = 'TestData/'
 
 # Create the object
 Test = mler.mler(H=9.0, T=15.1, numFreq=500)
@@ -15,13 +16,15 @@ Test.sim.setup()
 # Setup the wave information
 Test.waves.setup()
 print Test.waves
-Test.waves.plotSpectrum()#show=True)
+Test.waves.plotSpectrum(show=False)
 
 # Setup the RAO information
 Test.readRAO(3,RAOdir+'RAO_heave_RM3float.dat')
 Test.readRAO(5,RAOdir+'RAO_pitch_RM3float.dat')
-Test.plotRAO(3)#,show=True)
-Test.plotRAO(5,show=True)
+
+# Check the input RAOs
+Test.plotRAO(3,show=False)
+Test.plotRAO(5)
 
 #
 # heave conditioned response
@@ -49,25 +52,4 @@ Test.MLERexportWECSim(outputDir+'Test_MLER_heaveOpt_WECSimInput.txt')
 Test.MLERanimate(3)
 #Test.MLERanimate(3,export='Movie_Heave')
 Test.MLERexportMovie(outputDir+'Movie_Heave')
-
-
-
-#
-# pitch conditioned response
-#
-
-# # Repeat procedure for DOF=5
-# Test.MLERcoeffsGen(5,1.0)
-# Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
-# Test.MLERexportCoeffs(outputDir+'Test_MLER_pitchOpt_Coeffs.txt');
-# Test.MLERexportWECSim(outputDir+'Test_MLER_pitchOpt_WECSimInput.txt')
-# Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_heave_WaveAmpTime.txt',3)
-# Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_pitch_WaveAmpTime.txt',5)
-# 
-# 
-# # make a movie of the sequence for pitch
-# MovieFramesPitch=Test.MLERanimate(5);
-# # export movie of pitch (don't add extension)
-# Test.MLERexportMovie('Movie_Pitch',MovieFramesPitch)
-# 
 

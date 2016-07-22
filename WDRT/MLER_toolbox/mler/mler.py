@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # TODO: put this in egg
-import sys
 import numpy as np
 import scipy.interpolate
 
@@ -16,26 +15,27 @@ class mler(object):
         self.sim   = simulation.simulation()
         self.waves = wave.wave(H,T,numFreq)
 
-        self.desiredRespAmp = 0.0                           # [-]   Desired response amplitude.  M_d in documentation.
+        self.desiredRespAmp     = 0.0                       # [-]   Desired response amplitude.  M_d in documentation.
+        self.waveHeightDesired  = None                      # [m]   Height of wave desired if renormalizing amplitudes
 
-        # TODO: private set, public get
-        self.RAO                = None                      # [-]   Complex RAO array  N x 6
-        self.RAOdataReadIn      = np.zeros(6,dtype=bool)    # [-]   What RAO dimensions did we read in?
-        self.RAOdataFileName    = ['','','','','','']       # [-]   Name of the data file read in for RAO
-        self.CoeffA_Rn          = None                      # [ ]   MLER coefficients A_{R,n}
-        self.S                  = None                      # [m^2] New Wave spectrum vector
-        self.A                  = None                      # [m^2] 2*(new wave spectrum vector)
-        self.phase              = 0.0                       # [rad] Wave phase
-        self.Spect              = None                      # [-]   Spectral info
-       #self.waveHeightDesired  = None                      # [m]   Height of wave desired if renormalizing amplitudes
-       #self.rescaleFact        = None                      # [-]   Rescaling factor for renormalizing the amplitude
+        # calculated variables
+        self._RAO               = None                      # [-]   Complex RAO array  N x 6
+        self._RAOdataReadIn     = np.zeros(6,dtype=bool)    # [-]   What RAO dimensions did we read in?
+        self._RAOdataFileName   = ['','','','','','']       # [-]   Name of the data file read in for RAO
+        self._CoeffA_Rn         = None                      # [ ]   MLER coefficients A_{R,n}
+        self._S                 = None                      # [m^2] Conditioned wave spectrum vector
+        self._A                 = None                      # [m^2] 2*(conditioned wave spectrum vector)
+        self._phase             = 0.0                       # [rad] Wave phase
+        self._Spect             = None                      # [-]   Spectral info
+        self._rescaleFact       = None                      # [-]   Rescaling factor for renormalizing the amplitude
 
-        self.animation          = None
+        self._animation         = None                      #       Object storing animation information
+        self._respExtremes      = None                      # [m]   Array containing min/max of the simulated response
 
     def __repr__(self):
         s = 'MLER focused wave (desired response amplitude= {:f})'.format(self.desiredRespAmp)
-        s+= '\n\tphase : {:f} deg'.format(self.phase*180./np.pi)
-        #s+= '\n\trescale factor : {:f}'.format(self.rescaleFact)
+        s+= '\n\tphase : {:f} deg'.format(self._phase*180./np.pi)
+        s+= '\n\trescale factor : {:f}'.format(self._rescaleFact)
         return s
 
     #
@@ -51,16 +51,17 @@ class mler(object):
         """ Read in the RAO from the specified file and assign it to a dimension
         DOFread : 1 - 3 (translational DOFs)
                   4 - 6 (rotational DOFs)
+        Sets: self._RAO, self._RAOdataReadIn[DOFread], self._RAOdataFileName[DOFread]
         """
-        if self.RAO is None:
-            self.RAO = np.zeros( (self.waves.numFreq,6), dtype=complex ) # set the size of the RAO matrix
+        if self._RAO is None:
+            self._RAO = np.zeros( (self.waves.numFreq,6), dtype=complex ) # set the size of the RAO matrix
 
-        if self.RAOdataReadIn[DOFread-1] is True:
-            print 'WARNING: RAO dof=',DOFread,'already read from',self.RAOdataFileName[DOFread]
+        if self._RAOdataReadIn[DOFread-1] is True:
+            print 'WARNING: RAO dof=',DOFread,'already read from',self._RAOdataFileName[DOFread-1]
 
         # make sure we have setup the waves info first.
-        if self.waves.w is None:
-            sys.exit('Call waves.waveSetup before calling ReadRAO')
+        if self.waves._w is None:
+            raise UnboundLocalError('Call waves.waveSetup before calling ReadRAO')
 
         
         # Format of file to read in:
@@ -109,25 +110,27 @@ class mler(object):
         tmpRAO = np.concatenate( (tmp,tmpRAO), axis=0 )
         
         # Now interpolate to find the values
-        Amp   = scipy.interpolate.pchip_interpolate( tmpRAO[:,0], tmpRAO[:,1], self.waves.w )
-        Phase = scipy.interpolate.pchip_interpolate( tmpRAO[:,0], tmpRAO[:,2], self.waves.w )
+        Amp   = scipy.interpolate.pchip_interpolate( tmpRAO[:,0], tmpRAO[:,1], self.waves._w )
+        Phase = scipy.interpolate.pchip_interpolate( tmpRAO[:,0], tmpRAO[:,2], self.waves._w )
 
         # create the complex value to return
-        self.RAO[:,DOFread-1] = Amp * np.exp(1j*Phase)
+        self._RAO[:,DOFread-1] = Amp * np.exp(1j*Phase)
         
         # set flag so we know that this dimension was read in, and save filename
-        self.RAOdataReadIn[DOFread-1] = True
-        self.RAOdataFileName[DOFread-1] = RAO_File_Name;
+        self._RAOdataReadIn[DOFread-1] = True
+        self._RAOdataFileName[DOFread-1] = RAO_File_Name;
 
-    def plotRAO(self,DOFtoPlot,show=False):
+    def plotRAO(self,DOFtoPlot,show=True):
         # make sure we have setup the waves info first.
-        if self.RAOdataReadIn[DOFtoPlot-1] is False:
-            sys.exit('Call waves.waveSetup and ReadRAO before RAOplot(DOF)');
+        if self._RAOdataReadIn[DOFtoPlot-1] is False:
+            raise UnboundLocalError('Call waves.waveSetup and ReadRAO before RAOplot(DOF)');
+        import os
         import matplotlib.pyplot as plt
         plt.figure()
-        plt.plot( self.waves.w,      abs(self.RAO[:,DOFtoPlot-1]), 'b-' , label='amplitude' )
-        plt.plot( self.waves.w, np.angle(self.RAO[:,DOFtoPlot-1]), 'r--', label='phase' )
-        plt.title( 'RAO for dimension {:d} from file {:s}'.format(DOFtoPlot,self.RAOdataFileName[DOFtoPlot-1]) )
+        plt.plot( self.waves._w,      abs(self._RAO[:,DOFtoPlot-1]), 'b-' , label='amplitude' )
+        plt.plot( self.waves._w, np.angle(self._RAO[:,DOFtoPlot-1]), 'r--', label='phase' )
+        basename = os.path.basename( self._RAOdataFileName[DOFtoPlot-1] )
+        plt.title( 'RAO for dimension {:d} from file {:s}'.format(DOFtoPlot,basename) )
         plt.xlabel('Frequency (rad/s)')
         if DOFtoPlot <=3:
             plt.ylabel('Response amplitude (m/m) / Response phase (rad)')
@@ -140,20 +143,21 @@ class mler(object):
         """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
         DOFtoCalc: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
-        Sets self.S, self.A, self.CoeffA_Rn, self.phase
+        Sets self._S, self._A, self._CoeffA_Rn, self._phase
+        Sets self._Spect containing spectral information
         """
         # check that we asked for something non-zero
         if respDesired == 0:
-            sys.exit('Desired response amplitude (respDesired) should be non-zero.')
+            raise ValueError('Desired response amplitude (respDesired) should be non-zero.')
         self.desiredRespAmp = respDesired
 
         DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
         
-        S_tmp          = np.zeros(self.waves.numFreq);
-        self.S         = np.zeros(self.waves.numFreq);
-        self.A         = np.zeros(self.waves.numFreq);
-        self.CoeffA_Rn = np.zeros(self.waves.numFreq);
-        self.phase     = np.zeros(self.waves.numFreq);
+        S_tmp           = np.zeros(self.waves.numFreq);
+        self._S         = np.zeros(self.waves.numFreq);
+        self._A         = np.zeros(self.waves.numFreq);
+        self._CoeffA_Rn = np.zeros(self.waves.numFreq);
+        self._phase     = np.zeros(self.waves.numFreq);
         
         # calculate the RAO times sqrt of spectrum
         # TODO: add equation references
@@ -161,27 +165,27 @@ class mler(object):
         #S_tmp(:)=squeeze(abs(obj.RAO(:,DOFtoCalc))).*2 .* obj.waves.A;          % Response spectrum.
         # note: self.A == 2*self.S  (EWQ)
         #   i.e. S_tmp is 4 * RAO * calculatedWaveSpectrum
-        S_tmp[:] = 2.0*np.abs(self.RAO[:,DOFtoCalc])*self.waves.A     # Response spectrum.
+        S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
 
         # calculate spectral moments and other important spectral values.
-        self.Spect = spectrum.stats( S_tmp, self.waves.w, self.waves.dw )
+        self._Spect = spectrum.stats( S_tmp, self.waves._w, self.waves._dw )
        
         # calculate coefficient A_{R,n}
-        self.CoeffA_Rn[:] = np.abs(self.RAO[:,DOFtoCalc]) * np.sqrt(self.waves.A*self.waves.dw) \
-                * ( (self.Spect.M2 - self.waves.w*self.Spect.M1) \
-                    + self.Spect.wBar*(self.waves.w*self.Spect.M0 - self.Spect.M1) ) \
-                / (self.Spect.M0*self.Spect.M2 - self.Spect.M1**2) # Drummen version.  Dietz has negative of this.
+        self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
+                * ( (self._Spect.M2 - self.waves._w*self._Spect.M1) \
+                    + self._Spect.wBar*(self.waves._w*self._Spect.M0 - self._Spect.M1) ) \
+                / (self._Spect.M0*self._Spect.M2 - self._Spect.M1**2) # Drummen version.  Dietz has negative of this.
         
         # save the new spectral info to pass out
-        self.phase[:] = -np.unwrap( np.angle(self.RAO[:,DOFtoCalc]) ) # Phase delay should be a positive number in this convention (AP)
+        self._phase[:] = -np.unwrap( np.angle(self._RAO[:,DOFtoCalc]) ) # Phase delay should be a positive number in this convention (AP)
         
         # for negative values of Amp, shift phase by pi and flip sign
         # TODO: verify this is legit
-        self.phase[self.CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
-        self.CoeffA_Rn[self.CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
+        self._phase[self._CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
+        self._CoeffA_Rn[self._CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
         
-        self.S[:] = self.waves.S * self.CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
-        self.A[:] = self.waves.A * self.CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
+        self._S[:] = self.waves._S * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
+        self._A[:] = self.waves._A * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
         
         # if the response amplitude we ask for is negative, we will add
         # a pi phase shift to the phase information.  This is because
@@ -190,7 +194,7 @@ class mler(object):
         # are shaping the wave information so that it is buried in the
         # new spectral information, S. (AP)
         if self.desiredRespAmp < 0:
-            self.phase += np.pi
+            self._phase += np.pi
 
     def MLERwaveAmpNormalize(self,peakHeightDesired):
         """ Renormalize the wave amplitude to some desired height of the incoming wave. 
@@ -198,22 +202,24 @@ class mler(object):
         """
         # check that we asked for a positive wave amplitude
         if peakHeightDesired <=0:
-            sys.exit('Wave height desired during renormalization must be positive.')
+            raise ValueError('Wave height desired during renormalization must be positive.')
+        self.waveHeightDesired = peakHeightDesired
+
         print 'Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired)
         
-        # TODO: HIGHER-ORDER CALCULATION
+        # TODO: higher-order calculation
         tmpMaxAmp = self._MLERpeakvalue()
 
         # renormalization of wave amplitudes
-        self.rescaleFact = np.abs(peakHeightDesired) / np.abs(tmpMaxAmp)
-        self.S = self.S * self.rescaleFact**2 # rescale the wave spectral amplitude coefficients
-        self.A = self.A * self.rescaleFact**2 # rescale the wave amplitude coefficients
-        print 'Rescaled by {:f}'.format(self.rescaleFact)
+        self._rescaleFact = np.abs(peakHeightDesired) / np.abs(tmpMaxAmp)
+        self._S = self._S * self._rescaleFact**2 # rescale the wave spectral amplitude coefficients
+        self._A = self._A * self._rescaleFact**2 # rescale the wave amplitude coefficients
+        print 'Rescaled by {:f}'.format(self._rescaleFact)
         
     def MLERexportCoeffs(self,FileNameCoeff):
         import datetime
         
-        Phase =  self.phase + self.waves.w*self.sim.T0 - self.waves.k*self.sim.X0  # note sign: overall exported phase is still backwards (AP)
+        Phase =  self._phase + self.waves._w*self.sim.T0 - self.waves._k*self.sim.X0  # note sign: overall exported phase is still backwards (AP)
 
         # Now export the coefficients to a file
         self._checkpath(FileNameCoeff)
@@ -231,7 +237,7 @@ class mler(object):
             f.write('#\n')
             f.write('### Wave info:\n')
             f.write('# NumFreq: {:6f}    (-, number of frequencies)\n'.format(self.waves.numFreq))
-            f.write('# dW:      {:8.5g}  (rad/s, frequency spacing)\n'.format(self.waves.dw))
+            f.write('# dW:      {:8.5g}  (rad/s, frequency spacing)\n'.format(self.waves._dw))
             f.write('# Hs:      {:6.3f}  (m, significant wave height) \n'.format(self.waves.H))
             f.write('# Tp:      {:6.3f}  (s, wave period) \n'.format(self.waves.T))
             f.write('#\n')
@@ -245,9 +251,9 @@ class mler(object):
             f.write('#   (rad/s)          (m^2)       (rad)      (rad^2/m)\n')
 
             # Write coefficients, etc
-            for i,wi in enumerate(self.waves.w):
+            for i,wi in enumerate(self.waves._w):
                 f.write('{:8.6f}   {:12.8g}   {:12.8f}   {:12.8f}\n'.format(
-                        wi, self.S[i], Phase[i], self.waves.k[i] ) )
+                        wi, self._S[i], Phase[i], self.waves._k[i] ) )
 
         print 'MLER coefficients written to',FileNameCoeff
 
@@ -259,24 +265,23 @@ class mler(object):
         import datetime
 
         # calculate the series
-        waveAmpTime = np.zeros((self.sim.maxIT,2))
-        t = np.arange(self.sim.maxIT)*self.sim.dT + self.sim.startTime
+        waveAmpTime = np.zeros( (self.sim._maxIT,2) )
         xi = self.sim.X0
-        for i,ti in enumerate(t):
+        for i,ti in enumerate(self.sim._T):
             
             # conditioned wave
             # TODO: check for factor of two in sqrt
             waveAmpTime[i,0] = np.sum( 
-                    np.sqrt(self.A*self.waves.dw) *
-                        np.cos( self.waves.w*(ti-self.sim.T0) + self.phase - self.waves.k*(xi-self.sim.X0) )
+                    np.sqrt(self._A*self.waves._dw) *
+                        np.cos( self.waves._w*(ti-self.sim.T0) + self._phase - self.waves._k*(xi-self.sim.X0) )
                     )
             
             # Response calculation
             # TODO: check for factor of two in sqrt
             # TODO: check for phase term?
             waveAmpTime[i,1] = np.sum( 
-                    np.sqrt(self.A*self.waves.dw) * np.abs(self.RAO[:,DOFexport-1]) *
-                        np.cos( self.waves.w*(ti-self.sim.T0) - self.waves.k*(xi-self.sim.X0) )
+                    np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,DOFexport-1]) *
+                        np.cos( self.waves._w*(ti-self.sim.T0) - self.waves._k*(xi-self.sim.X0) )
                     )
             
         print 'Exporting wave amplitude time series for DOF =',DOFexport,'at X0.'
@@ -298,7 +303,7 @@ class mler(object):
             f.write('#\n')
             f.write('### Wave info:\n')
             f.write('# NumFreq: {:6f}    (-, number of frequencies)\n'.format(self.waves.numFreq))
-            f.write('# dW:      {:8.5g}  (rad/s, frequency spacing)\n'.format(self.waves.dw))
+            f.write('# dW:      {:8.5g}  (rad/s, frequency spacing)\n'.format(self.waves._dw))
             f.write('# Hs:      {:6.3f}  (m, significant wave height) \n'.format(self.waves.H))
             f.write('# Tp:      {:6.3f}  (s, wave period) \n'.format(self.waves.T))
             f.write('#\n')
@@ -319,7 +324,7 @@ class mler(object):
             else:
                 f.write('#   (s)          (m)              (rad)\n')
 
-            for i,ti in enumerate(t):
+            for i,ti in enumerate(self.sim._T):
                 f.write('{:12.8f}   {:12.8f}   {:12.8f}\n'.format(ti,waveAmpTime[i,0],waveAmpTime[i,1]))
         
         print 'MLER wave amplitude time series written to',FileNameWaveAmpTime
@@ -329,15 +334,15 @@ class mler(object):
         """
         # note that:
         #   WaveElev = sum( sqrt(2*S * dw) * cos( -k*(x-X0) + w*(t-T0) + Phase) )
-        Freq = self.waves.w / (2*np.pi)
+        Freq = self.waves._w / (2*np.pi)
 
         self._checkpath(FileNameWEC)
         with open(FileNameWEC,'w') as f:
             f.write(('{:8.6f}      '*self.waves.numFreq).format(*Freq))       # output in hertz
             f.write('\n')
-            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self.S))
+            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self._S))
             f.write('\n')
-            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self.phase))
+            f.write(('{:8.6f}      '*self.waves.numFreq).format(*self._phase))
             f.write('\n')
         
         print 'MLER coefficients for WEC-Sim written to',FileNameWEC
@@ -354,29 +359,27 @@ class mler(object):
         print 'Generating animation of wave profile and response for DOF =',DOF
 
         # create the 2D dataset
-        waveAmpTime = np.zeros((self.sim.maxIX,self.sim.maxIT,2))
-        tarray = np.arange(self.sim.maxIT)*self.sim.dT + self.sim.startTime
-        xarray = np.arange(self.sim.maxIX)*self.sim.dX + self.sim.startX
-        for ix,x in enumerate(xarray):
-            for it,t in enumerate(tarray):
+        waveAmpTime = np.zeros( (self.sim._maxIX, self.sim._maxIT, 2) )
+        for ix,x in enumerate(self.sim._X):
+            for it,t in enumerate(self.sim._T):
                 
                 # conditioned wave
                 # TODO: check for factor of 2 in sqrt
-                waveAmpTime[ix,it,0] = np.sum( np.sqrt(self.A*self.waves.dw) * 
-                        np.cos( self.waves.w*(t-self.sim.T0) + self.phase - self.waves.k*(x-self.sim.X0) )
+                waveAmpTime[ix,it,0] = np.sum( np.sqrt(self._A*self.waves._dw) * 
+                        np.cos( self.waves._w*(t-self.sim.T0) + self._phase - self.waves._k*(x-self.sim.X0) )
                         )
                 
                 # Response calculation
                 # TODO: check for factor of 2 in sqrt
-                waveAmpTime[ix,it,1] = np.sum( np.sqrt(self.A*self.waves.dw) * np.abs(self.RAO[:,DOF-1]) *
-                        np.cos( self.waves.w*(t-self.sim.T0) - self.waves.k*(x-self.sim.X0) )
+                waveAmpTime[ix,it,1] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,DOF-1]) *
+                        np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
                         )
 
         maxval =      max( np.max(waveAmpTime[:,:,0]), np.max(waveAmpTime[:,:,1]) )
         minval = abs( min( np.min(waveAmpTime[:,:,0]), np.min(waveAmpTime[:,:,1]) ) )
 
         fig, ax = plt.subplots()
-        ax.axis( [ xarray[0], xarray[-1], -1.1*max(maxval,minval), 1.1*max(maxval,minval) ] )
+        ax.axis( [ self.sim.startX, self.sim.endX, -1.1*max(maxval,minval), 1.1*max(maxval,minval) ] )
         ax.set_autoscale_on(False)
         
         # labels
@@ -390,20 +393,20 @@ class mler(object):
         #ax.legend(ax,'MLER wave'); %,'MLER Response');
         
         # plot first timestep
-        waveElev, = ax.plot( xarray, waveAmpTime[:,0,0], 'b-' )
-        floatResp, = ax.plot( xarray, waveAmpTime[:,0,1], 'm--' )
+        waveElev,  = ax.plot( self.sim._X, waveAmpTime[:,0,0], 'b-' )
+        floatResp, = ax.plot( self.sim._X, waveAmpTime[:,0,1], 'm--' )
         ax.plot( [self.sim.X0, self.sim.X0], ax.get_ylim(), 'r-' ) # vertical line at X0
         
         # place a rectangle for the object on the plot
         dimX = 0.01 * np.diff(ax.get_xlim())[0]
         dimY = 0.01 * np.diff(ax.get_ylim())[0]
-        tmpZ0val = np.interp( self.sim.X0, xarray, waveAmpTime[:,0,1] )
+        tmpZ0val = np.interp( self.sim.X0, self.sim._X, waveAmpTime[:,0,1] )
         xy = [ (self.sim.X0-dimX), (tmpZ0val-dimY) ]
-        rect = mpatches.Rectangle(xy,2*dimX,2*dimY,edgecolor='r',fill=False) # represents the float
+        rect = mpatches.Rectangle( xy, 2*dimX, 2*dimY, edgecolor='r', fill=False ) # represents the float
         ax.add_patch(rect)
         
         # make horizontal line for the extreme values
-        self.Extremes = np.zeros(2)
+        self._respExtremes = np.zeros(2)
         floatMin, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
         floatMax, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
         
@@ -421,27 +424,27 @@ class mler(object):
             floatResp.set_ydata( waveAmpTime[:,it,1] )
 
             # udpate device position
-            tmpZ0val = np.interp( self.sim.X0, xarray, waveAmpTime[:,it,1] )
+            tmpZ0val = np.interp( self.sim.X0, self.sim._X, waveAmpTime[:,it,1] )
             rect.set_y(tmpZ0val-dimY)
 
             # update device extremes
-            self.Extremes[0] = min( self.Extremes[0], tmpZ0val )
-            self.Extremes[1] = max( self.Extremes[1], tmpZ0val )
-            floatMin.set_ydata( [self.Extremes[0],self.Extremes[0]] )
-            floatMax.set_ydata( [self.Extremes[1],self.Extremes[1]] )
+            self._respExtremes[0] = min( self._respExtremes[0], tmpZ0val )
+            self._respExtremes[1] = max( self._respExtremes[1], tmpZ0val )
+            floatMin.set_ydata( [self._respExtremes[0],self._respExtremes[0]] )
+            floatMax.set_ydata( [self._respExtremes[1],self._respExtremes[1]] )
 
             # update teimstamp
-            tstr = 't = {:5.2f} s'.format(tarray[it])
+            tstr = 't = {:5.2f} s'.format(self.sim._T[it])
             tstamp.set_text(tstr)
 
         def init_animate():
-            self.Extremes = np.zeros(2)
+            self._respExtremes = np.zeros(2)
 
         # notes:
         # init_func: def init() only required for blitting to give a clean slate
         # interval: screen udpate rate
         # blit: blitting redraws only updated portions of the screen; causes problems on OSX
-        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim.maxIT),
+        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim._maxIT),
                 init_func=init_animate, interval=1000/int(fps), repeat=False, blit=False )
 
         if export is None:
@@ -449,16 +452,15 @@ class mler(object):
         else:
             self.MLERexportMovie(export)
 
-        print 'Simulated extremes:',self.Extremes,'m'
+        print 'Simulated response extremes:',self._respExtremes,'m'
 
     def MLERexportMovie(self,exportName):
-        if self.animation:
-            # already run MLERanimate
+        if self.animation: # already run MLERanimate
             fname = exportName+'.mp4'
             print 'Exporting animation to',fname
             self.animation.save(fname)
         else:
-            sys.exit('Need to run MLERanimate first')
+            raise UnboundLocalError('Need to run MLERanimate first')
         
     #
     # protected methods
@@ -467,17 +469,15 @@ class mler(object):
         """ the maximum may not occur at X0 or T0... 
         So, we have to generate the entire time and space array, then find the maximum and minimum.
         """
-        waveAmpTime = np.zeros((self.sim.maxIX,self.sim.maxIT))
-        xarray = np.arange(self.sim.maxIX)*self.sim.dX + self.sim.startX
-        tarray = np.arange(self.sim.maxIT)*self.sim.dT + self.sim.startTime
-        for ix,x in enumerate(xarray):
-            for it,t in enumerate(tarray):
+        waveAmpTime = np.zeros( (self.sim._maxIX, self.sim._maxIT) )
+        for ix,x in enumerate(self.sim._X):
+            for it,t in enumerate(self.sim._T):
                 
                 # conditioned wave
                 # TODO: check factor of two in sqrt
                 waveAmpTime[ix,it] = np.sum(
-                        np.sqrt(self.A*self.waves.dw) * 
-                            np.cos( self.waves.w*(t-self.sim.T0) - self.waves.k*(x-self.sim.X0) + self.phase )
+                        np.sqrt(self._A*self.waves._dw) * 
+                            np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) + self._phase )
                         )
 
         return np.max(np.abs(waveAmpTime))

@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import sys
 import numpy as np
 
 class simulation(object):
@@ -19,11 +18,11 @@ class simulation(object):
         self.dX         = 1.0           # [m]       Horiontal spacing
         self.X0         = 0.0           # [m]       Position of maximum event
 
-        # TODO: private set, public get
-        self.maxIT      = []            # [-]       Index corresponding to last timestep
-        self.maxIX      = []            # [-]       Index corresponding to last spatial position
-        self.X          = []            # [m]       Array of spatial coordinates for simulation
-        self.T          = []            # [s]       Array of time coordinates for simulation
+        # calculated values
+        self._maxIT     = []            # [-]       Index corresponding to last timestep
+        self._maxIX     = []            # [-]       Index corresponding to last spatial position
+        self._X         = []            # [m]       Array of spatial coordinates for simulation
+        self._T         = []            # [s]       Array of time coordinates for simulation
 
     def __repr__(self):
         s = 'simulationClass'
@@ -34,21 +33,21 @@ class simulation(object):
     #
     def setup(self):
         """ Set up domain
-        Sets: self.maxIT, self.T
-        Sets: self.maxIX, self.X
+        Sets: self._maxIT, self._T
+        Sets: self._maxIX, self._X
         """
         if self.startTime >= self.endTime:
-            sys.exit('The starting time of the simulation must occur before the ending time.')
+            raise ValueError('The starting time of the simulation must occur before the ending time.')
         if self.T0 < self.startTime or self.T0 > self.endTime:
-            sys.exit('The time of T0 must be between the start and end times of the simulation.')
+            raise ValueError('The time of T0 must be between the start and end times of the simulation.')
         if self.dT <= 1e-3:
-            sys.exit('The timestep is too small. Use a value larger than 1e-3.')
+            raise ValueError('The timestep is too small. Use a value larger than 1e-3.')
             
-        self.maxIT = int(np.ceil( (self.endTime - self.startTime)/self.dT + 1 )) # maximum timestep index
-        self.T = np.linspace( self.startTime, self.endTime, self.maxIT )
+        self._maxIT = int(np.ceil( (self.endTime - self.startTime)/self.dT + 1 )) # maximum timestep index
+        self._T     = np.linspace( self.startTime, self.endTime, self._maxIT )
 
-        self.maxIX = int(np.ceil( (self.endX - self.startX)/self.dX + 1 ))
-        self.X = np.linspace( self.startX, self.endX, self.maxIX )
+        self._maxIX = int(np.ceil( (self.endX - self.startX)/self.dX + 1 ))
+        self._X     = np.linspace( self.startX, self.endX, self._maxIX )
 
     #
     # protected methods
