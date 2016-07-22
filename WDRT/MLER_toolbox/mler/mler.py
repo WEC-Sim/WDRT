@@ -408,8 +408,10 @@ class mler(object):
         
         # make horizontal line for the extreme values
         self._respExtremes = np.zeros(2)
-        floatMin, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
-        floatMax, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
+        floatMin, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'k', marker='.', linestyle='-')
+        floatMax, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'k', marker='.', linestyle='-')
+        minText = plt.text( 1.5*dimX, 0, '', fontsize=10, horizontalalignment='left', verticalalignment='top')
+        maxText = plt.text( 1.5*dimX, 0, '', fontsize=10, horizontalalignment='left', verticalalignment='bottom')
         
         # put timestamp on plot
         tstr = 't = {:5.2f} s'.format(0)
@@ -434,6 +436,11 @@ class mler(object):
             self._respExtremes[1] = max( self._respExtremes[1], tmpZ0val )
             floatMin.set_ydata( [self._respExtremes[0],self._respExtremes[0]] )
             floatMax.set_ydata( [self._respExtremes[1],self._respExtremes[1]] )
+
+            minText.set_text('{:f}'.format(self._respExtremes[0]))
+            maxText.set_text('{:f}'.format(self._respExtremes[1]))
+            minText.set_y(self._respExtremes[0]-dimY)
+            maxText.set_y(self._respExtremes[1]+dimY)
 
             # update teimstamp
             tstr = 't = {:5.2f} s'.format(self.sim.T[it])
