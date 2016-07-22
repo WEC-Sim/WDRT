@@ -18,11 +18,23 @@ class simulation(object):
         self.dX         = 1.0           # [m]       Horiontal spacing
         self.X0         = 0.0           # [m]       Position of maximum event
 
+        self.DOFnames   = ['surge','sway','heave','roll','pitch','yaw']
+        self.DOFunits   = ['(m)','(m)','(m)','(rad)','(rad)','(rad)']
+
         # calculated values
         self._maxIT     = []            # [-]       Index corresponding to last timestep
         self._maxIX     = []            # [-]       Index corresponding to last spatial position
         self._X         = []            # [m]       Array of spatial coordinates for simulation
         self._T         = []            # [s]       Array of time coordinates for simulation
+
+    @property
+    def maxIT(self): return self._maxIT
+    @property
+    def maxIX(self): return self._maxIX
+    @property
+    def X(self): return self._X
+    @property
+    def T(self): return self._T
 
     def __repr__(self):
         s = 'simulationClass'

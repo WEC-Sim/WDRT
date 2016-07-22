@@ -32,6 +32,9 @@ class mler(object):
         self._animation         = None                      #       Object storing animation information
         self._respExtremes      = None                      # [m]   Array containing min/max of the simulated response
 
+    @property
+    def Spect(self): return self._Spect
+
     def __repr__(self):
         s = 'MLER focused wave (desired response amplitude= {:f})'.format(self.desiredRespAmp)
         s+= '\n\tphase : {:f} deg'.format(self._phase*180./np.pi)
@@ -199,6 +202,8 @@ class mler(object):
     def MLERwaveAmpNormalize(self,peakHeightDesired):
         """ Renormalize the wave amplitude to some desired height of the incoming wave. 
         Uses the peak height (peak to MSL) desired rather than the full range height (peak to trough).
+        Sets: self._rescaleFact (for reference)
+        Sets: self._S, self._A
         """
         # check that we asked for a positive wave amplitude
         if peakHeightDesired <=0:
@@ -265,9 +270,9 @@ class mler(object):
         import datetime
 
         # calculate the series
-        waveAmpTime = np.zeros( (self.sim._maxIT,2) )
+        waveAmpTime = np.zeros( (self.sim.maxIT,2) )
         xi = self.sim.X0
-        for i,ti in enumerate(self.sim._T):
+        for i,ti in enumerate(self.sim.T):
             
             # conditioned wave
             # TODO: check for factor of two in sqrt
@@ -309,8 +314,10 @@ class mler(object):
             f.write('#\n')
             f.write('# Max wave elevation:  {:6.3f}  (m) \n'.format(np.max(waveAmpTime[:,0])))
             f.write('# Min wave elevation:  {:6.3f}  (m) \n'.format(np.min(waveAmpTime[:,0])))
-            f.write('# Max WEC Response:    {:6.3f}  (m) \n'.format(np.max(waveAmpTime[:,1])))
-            f.write('# Min WEC Response:    {:6.3f}  (m) \n'.format(np.min(waveAmpTime[:,1])))
+            f.write('# Max WEC Response:    {:6.3f}  {:s} \n'.format(np.max(waveAmpTime[:,1]),
+                self.sim.DOFunits[DOFexport-1]))
+            f.write('# Min WEC Response:    {:6.3f}  {:s} \n'.format(np.min(waveAmpTime[:,1]),
+                self.sim.DOFunits[DOFexport-1]))
             f.write('#\n')
             f.write('# Note: Phase is calculated at X0 and t0.  For starting at a different point along x or in time, phase must be adjusted.\n')
             f.write('#\n')
@@ -318,13 +325,10 @@ class mler(object):
             f.write('#   WaveElev = sum( sqrt(2*SpectAmp * dw) * cos( -k*(x-X0) + w*(t-T0) + Phase) ) \n')
             f.write('#\n')
             f.write('#\n')
-            f.write('#   time      WaveHeight      LinearResp\n')
-            if DOFexport==5:
-                f.write('#   (s)          (m)               (m)\n')
-            else:
-                f.write('#   (s)          (m)              (rad)\n')
+            f.write('#   time      WaveHeight      LinearResp ({:s})\n'.format(self.sim.DOFnames[DOFexport-1]))
+            f.write('#   (s)          (m)             {:s}\n'.format(self.sim.DOFunits[DOFexport-1]))
 
-            for i,ti in enumerate(self.sim._T):
+            for i,ti in enumerate(self.sim.T):
                 f.write('{:12.8f}   {:12.8f}   {:12.8f}\n'.format(ti,waveAmpTime[i,0],waveAmpTime[i,1]))
         
         print 'MLER wave amplitude time series written to',FileNameWaveAmpTime
@@ -347,7 +351,7 @@ class mler(object):
         
         print 'MLER coefficients for WEC-Sim written to',FileNameWEC
 
-    def MLERanimate(self,DOF,export=None,fps=25):
+    def MLERanimate(self,DOF=3,export=None,fps=25):
         """ Animate the MLER results so that I can see what is happening.
         DOF: 1 - 3 (translational DOFs)
              4 - 6 (rotational DOFs)
@@ -359,9 +363,9 @@ class mler(object):
         print 'Generating animation of wave profile and response for DOF =',DOF
 
         # create the 2D dataset
-        waveAmpTime = np.zeros( (self.sim._maxIX, self.sim._maxIT, 2) )
-        for ix,x in enumerate(self.sim._X):
-            for it,t in enumerate(self.sim._T):
+        waveAmpTime = np.zeros( (self.sim.maxIX, self.sim.maxIT, 2) )
+        for ix,x in enumerate(self.sim.X):
+            for it,t in enumerate(self.sim.T):
                 
                 # conditioned wave
                 # TODO: check for factor of 2 in sqrt
@@ -384,26 +388,23 @@ class mler(object):
         
         # labels
         ax.set_xlabel('x (m)')
-        if DOF==3:
-            ax.set_title('MLER heave')
-            ax.set_ylabel('Amplitude (m)')
-        elif DOF==5:
-            ax.set_title('MLER pitch');
-            ax.set_ylabel('Amplitude (m), Pitch (rad)');
+        ax.set_title('MLER '+self.sim.DOFnames[DOF-1])
+        ax.set_ylabel('Amplitude (m), Displacement {:s}'.format(self.sim.DOFunits[DOF-1]))
         #ax.legend(ax,'MLER wave'); %,'MLER Response');
         
         # plot first timestep
-        waveElev,  = ax.plot( self.sim._X, waveAmpTime[:,0,0], 'b-' )
-        floatResp, = ax.plot( self.sim._X, waveAmpTime[:,0,1], 'm--' )
+        waveElev,  = ax.plot( self.sim.X, waveAmpTime[:,0,0], 'b-' )
+        floatResp, = ax.plot( self.sim.X, waveAmpTime[:,0,1], 'm--' )
         ax.plot( [self.sim.X0, self.sim.X0], ax.get_ylim(), 'r-' ) # vertical line at X0
         
         # place a rectangle for the object on the plot
         dimX = 0.01 * np.diff(ax.get_xlim())[0]
         dimY = 0.01 * np.diff(ax.get_ylim())[0]
-        tmpZ0val = np.interp( self.sim.X0, self.sim._X, waveAmpTime[:,0,1] )
-        xy = [ (self.sim.X0-dimX), (tmpZ0val-dimY) ]
-        rect = mpatches.Rectangle( xy, 2*dimX, 2*dimY, edgecolor='r', fill=False ) # represents the float
-        ax.add_patch(rect)
+        tmpZ0val = np.interp( self.sim.X0, self.sim.X, waveAmpTime[:,0,1] )
+        if DOF==3:
+            xy = [ (self.sim.X0-dimX), (tmpZ0val-dimY) ]
+            rect = mpatches.Rectangle( xy, 2*dimX, 2*dimY, edgecolor='r', fill=False ) # represents the float
+            ax.add_patch(rect)
         
         # make horizontal line for the extreme values
         self._respExtremes = np.zeros(2)
@@ -424,8 +425,9 @@ class mler(object):
             floatResp.set_ydata( waveAmpTime[:,it,1] )
 
             # udpate device position
-            tmpZ0val = np.interp( self.sim.X0, self.sim._X, waveAmpTime[:,it,1] )
-            rect.set_y(tmpZ0val-dimY)
+            tmpZ0val = np.interp( self.sim.X0, self.sim.X, waveAmpTime[:,it,1] )
+            if DOF==3:
+                rect.set_y(tmpZ0val-dimY)
 
             # update device extremes
             self._respExtremes[0] = min( self._respExtremes[0], tmpZ0val )
@@ -434,7 +436,7 @@ class mler(object):
             floatMax.set_ydata( [self._respExtremes[1],self._respExtremes[1]] )
 
             # update teimstamp
-            tstr = 't = {:5.2f} s'.format(self.sim._T[it])
+            tstr = 't = {:5.2f} s'.format(self.sim.T[it])
             tstamp.set_text(tstr)
 
         def init_animate():
@@ -444,7 +446,7 @@ class mler(object):
         # init_func: def init() only required for blitting to give a clean slate
         # interval: screen udpate rate
         # blit: blitting redraws only updated portions of the screen; causes problems on OSX
-        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim._maxIT),
+        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim.maxIT),
                 init_func=init_animate, interval=1000/int(fps), repeat=False, blit=False )
 
         if export is None:
@@ -452,7 +454,7 @@ class mler(object):
         else:
             self.MLERexportMovie(export)
 
-        print 'Simulated response extremes:',self._respExtremes,'m'
+        print 'Simulated response extremes:',self._respExtremes,self.sim.DOFunits[DOF-1]
 
     def MLERexportMovie(self,exportName):
         if self.animation: # already run MLERanimate
@@ -469,9 +471,9 @@ class mler(object):
         """ the maximum may not occur at X0 or T0... 
         So, we have to generate the entire time and space array, then find the maximum and minimum.
         """
-        waveAmpTime = np.zeros( (self.sim._maxIX, self.sim._maxIT) )
-        for ix,x in enumerate(self.sim._X):
-            for it,t in enumerate(self.sim._T):
+        waveAmpTime = np.zeros( (self.sim.maxIX, self.sim.maxIT) )
+        for ix,x in enumerate(self.sim.X):
+            for it,t in enumerate(self.sim.T):
                 
                 # conditioned wave
                 # TODO: check factor of two in sqrt

@@ -31,13 +31,13 @@ Test.plotRAO(5)
 #
 
 # Now that everything is set up, generate the MLER wave for heave.
-Test.MLERcoeffsGen(3,1.0) # generate the wave profile, 1 meter heave response desired
+Test.MLERcoeffsGen(3,1.0)   # generate the wave profile, 1 meter heave response desired
 
 # At this point we can export the coefficients.  The coefficients will
 # match a desired response height that was given as the second argument to
 # MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,
 # we can renormalize the wave amplitude now. (AP)
-Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
+Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9) # the desired peak height (peak to MSL)
 
 # Now export the heave coefficients.
 Test.MLERexportCoeffs(outputDir+'Test_MLER_heaveOpt_Coeffs.txt');
@@ -49,7 +49,10 @@ Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_heaveOpt_heave_WaveAmpTime.txt',
 Test.MLERexportWECSim(outputDir+'Test_MLER_heaveOpt_WECSimInput.txt')
 
 # make a movie of the sequence for heave
-Test.MLERanimate(3)
-#Test.MLERanimate(3,export='Movie_Heave')
-Test.MLERexportMovie(outputDir+'Movie_Heave')
+#Test.MLERanimate(3,export='Movie_Heave') # export without plotting
+Test.MLERanimate(3)                             # plot animation
+Test.MLERexportMovie(outputDir+'Movie_Heave')   # export generated animation
+
+# make a movie of the sequence for pitch
+Test.MLERanimate(5,export=outputDir+'Movie_Pitch') # export without plotting
 
