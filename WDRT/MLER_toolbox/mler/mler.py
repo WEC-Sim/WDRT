@@ -30,6 +30,8 @@ class mler(object):
        #self.waveHeightDesired  = None                      # [m]   Height of wave desired if renormalizing amplitudes
        #self.rescaleFact        = None                      # [-]   Rescaling factor for renormalizing the amplitude
 
+        self.animation          = None
+
     def __repr__(self):
         s = 'MLER focused wave (desired response amplitude= {:f})'.format(self.desiredRespAmp)
         s+= '\n\tphase : {:f} deg'.format(self.phase*180./np.pi)
@@ -123,14 +125,15 @@ class mler(object):
             sys.exit('Call waves.waveSetup and ReadRAO before RAOplot(DOF)');
         import matplotlib.pyplot as plt
         plt.figure()
-        plt.plot( self.waves.w,      abs(self.RAO[:,DOFtoPlot-1]), 'b-' )
-        plt.plot( self.waves.w, np.angle(self.RAO[:,DOFtoPlot-1]), 'r--' )
+        plt.plot( self.waves.w,      abs(self.RAO[:,DOFtoPlot-1]), 'b-' , label='amplitude' )
+        plt.plot( self.waves.w, np.angle(self.RAO[:,DOFtoPlot-1]), 'r--', label='phase' )
         plt.title( 'RAO for dimension {:d} from file {:s}'.format(DOFtoPlot,self.RAOdataFileName[DOFtoPlot-1]) )
         plt.xlabel('Frequency (rad/s)')
         if DOFtoPlot <=3:
             plt.ylabel('Response amplitude (m/m) / Response phase (rad)')
         else:
             plt.ylabel('Response amplitude (rad/m) / Response phase (rad)')
+        plt.legend()
         if show is True: plt.show()
         
     def MLERcoeffsGen(self,DOFtoCalc,respDesired):
@@ -339,6 +342,124 @@ class mler(object):
         
         print 'MLER coefficients for WEC-Sim written to',FileNameWEC
 
+    def MLERanimate(self,DOF,export=None,fps=25):
+        """ Animate the MLER results so that I can see what is happening.
+        DOF: 1 - 3 (translational DOFs)
+             4 - 6 (rotational DOFs)
+        export: specify video filename without prefix, or None to play on screen
+        """
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as mpatches
+        import matplotlib.animation as anim
+        print 'Generating animation of wave profile and response for DOF =',DOF
+
+        # create the 2D dataset
+        waveAmpTime = np.zeros((self.sim.maxIX,self.sim.maxIT,2))
+        tarray = np.arange(self.sim.maxIT)*self.sim.dT + self.sim.startTime
+        xarray = np.arange(self.sim.maxIX)*self.sim.dX + self.sim.startX
+        for ix,x in enumerate(xarray):
+            for it,t in enumerate(tarray):
+                
+                # conditioned wave
+                # TODO: check for factor of 2 in sqrt
+                waveAmpTime[ix,it,0] = np.sum( np.sqrt(self.A*self.waves.dw) * 
+                        np.cos( self.waves.w*(t-self.sim.T0) + self.phase - self.waves.k*(x-self.sim.X0) )
+                        )
+                
+                # Response calculation
+                # TODO: check for factor of 2 in sqrt
+                waveAmpTime[ix,it,1] = np.sum( np.sqrt(self.A*self.waves.dw) * np.abs(self.RAO[:,DOF-1]) *
+                        np.cos( self.waves.w*(t-self.sim.T0) - self.waves.k*(x-self.sim.X0) )
+                        )
+
+        maxval =      max( np.max(waveAmpTime[:,:,0]), np.max(waveAmpTime[:,:,1]) )
+        minval = abs( min( np.min(waveAmpTime[:,:,0]), np.min(waveAmpTime[:,:,1]) ) )
+
+        fig, ax = plt.subplots()
+        ax.axis( [ xarray[0], xarray[-1], -1.1*max(maxval,minval), 1.1*max(maxval,minval) ] )
+        ax.set_autoscale_on(False)
+        
+        # labels
+        ax.set_xlabel('x (m)')
+        if DOF==3:
+            ax.set_title('MLER heave')
+            ax.set_ylabel('Amplitude (m)')
+        elif DOF==5:
+            ax.set_title('MLER pitch');
+            ax.set_ylabel('Amplitude (m), Pitch (rad)');
+        #ax.legend(ax,'MLER wave'); %,'MLER Response');
+        
+        # plot first timestep
+        waveElev, = ax.plot( xarray, waveAmpTime[:,0,0], 'b-' )
+        floatResp, = ax.plot( xarray, waveAmpTime[:,0,1], 'm--' )
+        ax.plot( [self.sim.X0, self.sim.X0], ax.get_ylim(), 'r-' ) # vertical line at X0
+        
+        # place a rectangle for the object on the plot
+        dimX = 0.01 * np.diff(ax.get_xlim())[0]
+        dimY = 0.01 * np.diff(ax.get_ylim())[0]
+        tmpZ0val = np.interp( self.sim.X0, xarray, waveAmpTime[:,0,1] )
+        xy = [ (self.sim.X0-dimX), (tmpZ0val-dimY) ]
+        rect = mpatches.Rectangle(xy,2*dimX,2*dimY,edgecolor='r',fill=False) # represents the float
+        ax.add_patch(rect)
+        
+        # make horizontal line for the extreme values
+        self.Extremes = np.zeros(2)
+        floatMin, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
+        floatMax, = ax.plot( [-1.5*dimX,1.5*dimX], [0,0], 'g', marker='.', linestyle='-')
+        
+        # put timestamp on plot
+        tstr = 't = {:5.2f} s'.format(0)
+        tstamp = plt.text( .98, .97, tstr, fontsize=14,
+                horizontalalignment='right', verticalalignment='top',
+                transform=ax.transAxes ) # transform to axis coordinates
+
+        def animate(it):
+            # update wave surface
+            waveElev.set_ydata( waveAmpTime[:,it,0] )
+
+            # update device response surface
+            floatResp.set_ydata( waveAmpTime[:,it,1] )
+
+            # udpate device position
+            tmpZ0val = np.interp( self.sim.X0, xarray, waveAmpTime[:,it,1] )
+            rect.set_y(tmpZ0val-dimY)
+
+            # update device extremes
+            self.Extremes[0] = min( self.Extremes[0], tmpZ0val )
+            self.Extremes[1] = max( self.Extremes[1], tmpZ0val )
+            floatMin.set_ydata( [self.Extremes[0],self.Extremes[0]] )
+            floatMax.set_ydata( [self.Extremes[1],self.Extremes[1]] )
+
+            # update teimstamp
+            tstr = 't = {:5.2f} s'.format(tarray[it])
+            tstamp.set_text(tstr)
+
+        def init_animate():
+            self.Extremes = np.zeros(2)
+
+        # notes:
+        # init_func: def init() only required for blitting to give a clean slate
+        # interval: screen udpate rate
+        # blit: blitting redraws only updated portions of the screen; causes problems on OSX
+        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim.maxIT),
+                init_func=init_animate, interval=1000/int(fps), repeat=False, blit=False )
+
+        if export is None:
+            plt.show()
+        else:
+            self.MLERexportMovie(export)
+
+        print 'Simulated extremes:',self.Extremes,'m'
+
+    def MLERexportMovie(self,exportName):
+        if self.animation:
+            # already run MLERanimate
+            fname = exportName+'.mp4'
+            print 'Exporting animation to',fname
+            self.animation.save(fname)
+        else:
+            sys.exit('Need to run MLERanimate first')
+        
     #
     # protected methods
     #

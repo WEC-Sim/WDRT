@@ -5,10 +5,8 @@ if (libpath not in sys.path): sys.path.append(libpath)
 
 import mler
 
-#RAOdir = '../RAO_data/'
-#outputDir = 'TestData/'
-RAOdir = 'RAO_data/'
-outputDir = 'example/TestData/'
+RAOdir = '../RAO_data/'
+outputDir = 'TestData/'
 
 # Create the object
 Test = mler.mler(H=9.0, T=15.1, numFreq=500)
@@ -47,25 +45,24 @@ Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_heaveOpt_heave_WaveAmpTime.txt',
 # Export the spectral info for WEC-Sim.
 Test.MLERexportWECSim(outputDir+'Test_MLER_heaveOpt_WECSimInput.txt')
 
+# make a movie of the sequence for heave
+Test.MLERanimate(3)
+#Test.MLERanimate(3,export='Movie_Heave')
+Test.MLERexportMovie(outputDir+'Movie_Heave')
+
+
 
 #
 # pitch conditioned response
 #
 
-# Repeat procedure for DOF=5
-Test.MLERcoeffsGen(5,1.0)
-Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
-Test.MLERexportCoeffs(outputDir+'Test_MLER_pitchOpt_Coeffs.txt');
-Test.MLERexportWECSim(outputDir+'Test_MLER_pitchOpt_WECSimInput.txt')
-Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_heave_WaveAmpTime.txt',3)
-Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_pitch_WaveAmpTime.txt',5)
-
-
-# TODO: animate, etc
-# # make a movie of the sequence for heave
-# MovieFramesHeave=Test.MLERanimate(3);
-# # export movie of heave (don't add extension)
-# Test.MLERexportMovie('Movie_Heave',MovieFramesHeave)
+# # Repeat procedure for DOF=5
+# Test.MLERcoeffsGen(5,1.0)
+# Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9)     # the desired peak height (peak to MSL)
+# Test.MLERexportCoeffs(outputDir+'Test_MLER_pitchOpt_Coeffs.txt');
+# Test.MLERexportWECSim(outputDir+'Test_MLER_pitchOpt_WECSimInput.txt')
+# Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_heave_WaveAmpTime.txt',3)
+# Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_pitchOpt_pitch_WaveAmpTime.txt',5)
 # 
 # 
 # # make a movie of the sequence for pitch
