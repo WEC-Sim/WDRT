@@ -56,3 +56,15 @@ Test.MLERexportMovie(outputDir+'Movie_Heave')   # export generated animation
 # make a movie of the sequence for pitch
 Test.MLERanimate(5,export=outputDir+'Movie_Pitch') # export without plotting
 
+# make a movie of the combined heave + pitch response
+#Test.MLERanimate2D(export=outputDir+'Movie_2D_heaveOpt')
+
+
+#
+# pitch conditioned response
+#
+
+#Test.MLERcoeffsGen(5,1.0)   # generate the wave profile, 1 meter heave response desired
+#Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9) # the desired peak height (peak to MSL)
+#Test.MLERanimate2D(export=outputDir+'Movie_2D_pitchOpt')
+

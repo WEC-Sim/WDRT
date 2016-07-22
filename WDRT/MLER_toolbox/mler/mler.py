@@ -174,6 +174,7 @@ class mler(object):
         self._Spect = spectrum.stats( S_tmp, self.waves._w, self.waves._dw )
        
         # calculate coefficient A_{R,n}
+        # TODO: need factor of 2 in sqrt?
         self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
                 * ( (self._Spect.M2 - self.waves._w*self._Spect.M1) \
                     + self._Spect.wBar*(self.waves._w*self._Spect.M0 - self._Spect.M1) ) \
@@ -442,7 +443,7 @@ class mler(object):
             minText.set_y(self._respExtremes[0]-dimY)
             maxText.set_y(self._respExtremes[1]+dimY)
 
-            # update teimstamp
+            # update timestamp
             tstr = 't = {:5.2f} s'.format(self.sim.T[it])
             tstamp.set_text(tstr)
 
@@ -462,6 +463,115 @@ class mler(object):
             self.MLERexportMovie(export)
 
         print 'Simulated response extremes:',self._respExtremes,self.sim.DOFunits[DOF-1]
+
+    def MLERanimate2D(self,export=None,fps=25):
+        """ Animate 2D (heave + pitch) MLER results
+        export: specify video filename without prefix, or None to play on screen
+        """
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as mpatches
+        import matplotlib.animation as anim
+        heaveDOF = 2
+        pitchDOF = 4
+
+        # create the 2D dataset
+        waveAmpTime = np.zeros( (self.sim.maxIX, self.sim.maxIT, 3) )
+        for ix,x in enumerate(self.sim.X):
+            for it,t in enumerate(self.sim.T):
+                
+                # conditioned wave
+                # TODO: check for factor of 2 in sqrt
+                waveAmpTime[ix,it,0] = np.sum( np.sqrt(self._A*self.waves._dw) * 
+                        np.cos( self.waves._w*(t-self.sim.T0) + self._phase - self.waves._k*(x-self.sim.X0) )
+                        )
+                
+                # Heave response calculation
+                # TODO: check for factor of 2 in sqrt
+                waveAmpTime[ix,it,1] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,heaveDOF]) *
+                        np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
+                        )
+
+                # Pitch response calculation
+                # TODO: check for factor of 2 in sqrt
+                waveAmpTime[ix,it,2] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,pitchDOF]) *
+                        np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
+                        )
+
+        maxval =      max( np.max(waveAmpTime[:,:,0]), np.max(waveAmpTime[:,:,1]) )
+        minval = abs( min( np.min(waveAmpTime[:,:,0]), np.min(waveAmpTime[:,:,1]) ) )
+
+        fig, ax = plt.subplots()
+        ax.axis( [ self.sim.startX, self.sim.endX, -1.1*max(maxval,minval), 1.1*max(maxval,minval) ] )
+        ax.set_autoscale_on(False)
+        
+        # labels
+        ax.set_xlabel('x (m)')
+        ax.set_title('MLER 2-DOF Simulation')
+        ax.set_ylabel('Amplitude (m), Displacements {:s},{:s}'.format(
+            self.sim.DOFunits[heaveDOF],self.sim.DOFunits[pitchDOF]))
+        #ax.legend(ax,'MLER wave'); %,'MLER Response');
+        
+        # plot first timestep
+        waveElev,  = ax.plot( self.sim.X, waveAmpTime[:,0,0], 'b-' )
+        floatResp, = ax.plot( self.sim.X, waveAmpTime[:,0,1], 'm--' )
+        ax.plot( [self.sim.X0, self.sim.X0], ax.get_ylim(), 'r-' ) # vertical line at X0
+        
+        # place a rectangle for the object on the plot
+        dimX = 0.01 * np.diff(ax.get_xlim())[0]
+        dimY = 0.01 * np.diff(ax.get_ylim())[0]
+        tmpZ0val = np.interp( self.sim.X0, self.sim.X, waveAmpTime[:,0,1] )
+        xy = [ (self.sim.X0-dimX), (tmpZ0val-dimY) ]
+        rect = mpatches.Rectangle( xy, 2*dimX, 2*dimY, edgecolor='r', fill=False ) # represents the float
+        ax.add_patch(rect)
+
+        # put orientation on plot
+        oriline, = plt.plot( [-2*dimX,2*dimX], [0,0], 'g-' )
+        oritext = plt.text( self.sim.X0+2*dimX, 2*dimY, r'0.0$^\circ$', fontsize=10, color='g',
+                horizontalalignment='left', verticalalignment='bottom')
+        
+        # put timestamp on plot
+        tstr = 't = {:5.2f} s'.format(0)
+        tstamp = plt.text( .98, .97, tstr, fontsize=14,
+                horizontalalignment='right', verticalalignment='top',
+                transform=ax.transAxes ) # transform to axis coordinates
+
+        def animate(it):
+            # update wave surface
+            waveElev.set_ydata( waveAmpTime[:,it,0] )
+
+            # update device response surface
+            floatResp.set_ydata( waveAmpTime[:,it,1] )
+
+            # udpate device position and orientation
+            tmpZ0val = np.interp( self.sim.X0, self.sim.X, waveAmpTime[:,it,1] )
+            tmpAngval = np.interp( self.sim.X0, self.sim.X, waveAmpTime[:,it,2] )
+            ang = tmpAngval * 180./np.pi
+
+            rect.set_y(tmpZ0val-dimY)
+
+            xori =  2*dimX*np.cos(ang*np.pi/180.)
+            yori = -2*dimX*np.sin(ang*np.pi/180.) * dimY/dimX # need to correct for aspect ratio
+            oriline.set_xdata([self.sim.X0-xori,self.sim.X0+xori])
+            oriline.set_ydata([   tmpZ0val-yori,   tmpZ0val+yori])
+
+            oritext.set_y(tmpZ0val+2*dimY)
+            oritext.set_text(r'{:f}$^\circ$'.format(ang))
+
+            # update timestamp
+            tstr = 't = {:5.2f} s'.format(self.sim.T[it])
+            tstamp.set_text(tstr)
+
+        # notes:
+        # init_func: def init() only required for blitting to give a clean slate
+        # interval: screen udpate rate
+        # blit: blitting redraws only updated portions of the screen; causes problems on OSX
+        self.animation = anim.FuncAnimation( fig, animate, frames=np.arange(self.sim.maxIT),
+                init_func=None, interval=1000/int(fps), repeat=False, blit=False )
+
+        if export is None:
+            plt.show()
+        else:
+            self.MLERexportMovie(export)
 
     def MLERexportMovie(self,exportName):
         if self.animation: # already run MLERanimate
