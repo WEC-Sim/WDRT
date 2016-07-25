@@ -152,6 +152,7 @@ class mler(object):
         """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
         DOFtoCalc: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
+        respDesired: desired response, units should correspond to DOFtoCalc
         Sets self._S, self._A, self._CoeffA_Rn, self._phase
         Sets self._Spect containing spectral information
         """
@@ -230,6 +231,8 @@ class mler(object):
         print 'Rescaled by {:f}'.format(self._rescaleFact)
         
     def MLERexportCoeffs(self,FileNameCoeff):
+        """ Export coefficients to use as input for other codes (e.g. Star, ...)
+        """
         import datetime
         
         Phase =  self._phase + self.waves._w*self.sim.T0 - self.waves._k*self.sim.X0  # note sign: overall exported phase is still backwards (AP)

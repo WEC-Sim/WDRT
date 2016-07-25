@@ -35,6 +35,7 @@ class stats(object):
         
         # Band coefficient:  narrowband < 0.5 <= broadband
         # TODO: Check these equations
+        # compare bandwidth parameter with Dietz2004 eqn 3.41
         self.BandCoeff = np.sqrt(1.-self.M2**2/(self.M0*self.M4)) # from http://ocw.mit.edu/courses/mechanical-engineering/2-019-design-of-ocean-systems-spring-2011/lecture-notes/MIT2_019S11_OWE.pdf (AP)
         # Probability of amplitude exceeding some value
         self.AmpToExceed = np.linspace(0,ampMax,ampMax/ampStep+1)
