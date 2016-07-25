@@ -5,11 +5,11 @@ class stats(object):
     """ Based on SpectralInfoClass.m
     """
     def __init__(self,S=None,w=None,dw=None):
-        self.M0             = None      # [m^2/s^2] Zeroeth spectral moment
-        self.M1             = None      # [m^2/s^3] First spectral moment
-        self.M2             = None      # [m^2/s^4] Second spectral moment
-        self.M3             = None      # [m^2/s^5] Third spectral moment
-        self.M4             = None      # [m^2/s^6] Fourth spectral moment
+        self.M0             = None      # [m^2/s^0] Zeroeth spectral moment
+        self.M1             = None      # [m^2/s^1] First spectral moment
+        self.M2             = None      # [m^2/s^2] Second spectral moment
+        self.M3             = None      # [m^2/s^3] Third spectral moment
+        self.M4             = None      # [m^2/s^4] Fourth spectral moment
 
         self.AmpToExceed    = None      # [m]       Vector of amplitudes to exceed
         self.BandCoeff      = 0.0       # [-]       Width of spectral band (calculated): narrowband < 0.5 <= broadband
@@ -22,8 +22,7 @@ class stats(object):
             self.calculate(S,w,dw)
 
     def calculate(self,S,w,dw,ampMax=25.,ampStep=0.01):
-        # TODO: check units on S
-        """ S   ->  [m^2]     Wave spectrum vector
+        """ S   ->  [m^2-s]   Wave spectrum vector
             w   ->  [rad/s]   Wave frequency vector
             dw  ->  [rad/s]   Frequency step size
         """

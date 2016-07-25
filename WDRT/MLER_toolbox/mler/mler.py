@@ -23,8 +23,8 @@ class mler(object):
         self._RAOdataReadIn     = np.zeros(6,dtype=bool)    # [-]   What RAO dimensions did we read in?
         self._RAOdataFileName   = ['','','','','','']       # [-]   Name of the data file read in for RAO
         self._CoeffA_Rn         = None                      # [ ]   MLER coefficients A_{R,n}
-        self._S                 = None                      # [m^2] Conditioned wave spectrum vector
-        self._A                 = None                      # [m^2] 2*(conditioned wave spectrum vector)
+        self._S                 = None                      # [m^2-s] Conditioned wave spectrum vector
+        self._A                 = None                      # [m^2-s] 2*(conditioned wave spectrum vector)
         self._phase             = 0.0                       # [rad] Wave phase
         self._Spect             = None                      # [-]   Spectral info
         self._rescaleFact       = None                      # [-]   Rescaling factor for renormalizing the amplitude
@@ -34,6 +34,12 @@ class mler(object):
 
     @property
     def Spect(self): return self._Spect
+    @property
+    def S(self): return self._S
+    @property
+    def A(self): return self._A
+    @property
+    def phase(self): return self._phase
 
     def __repr__(self):
         s = 'MLER focused wave (desired response amplitude= {:f})'.format(self.desiredRespAmp)
@@ -100,7 +106,7 @@ class mler(object):
         tmpRAO = tmpRAO[ np.argsort(tmpRAO[:,0]) ]  # sort by frequency
         
         # Add at w=0, amp=0, phase=0
-        # TODO check:
+        # TODO check w=0 amplitude & phase:
         #### Questionable if the amplitude should be 1 or 0.  If set to 1, we count
         #### on the spectrum having nothing out there.  For dimensions
         #### other than in heave, this should be valid.  Heave should be
@@ -142,7 +148,7 @@ class mler(object):
         plt.legend()
         if show is True: plt.show()
         
-    def MLERcoeffsGen(self,DOFtoCalc,respDesired):
+    def MLERcoeffsGen(self,DOFtoCalc,respDesired=1.0):
         """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
         DOFtoCalc: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
@@ -167,14 +173,15 @@ class mler(object):
         # note that we could define:  a_n=(waves.A*waves.dw).^0.5; (AP)
         #S_tmp(:)=squeeze(abs(obj.RAO(:,DOFtoCalc))).*2 .* obj.waves.A;          % Response spectrum.
         # note: self.A == 2*self.S  (EWQ)
-        #   i.e. S_tmp is 4 * RAO * calculatedWaveSpectrum
+        #   i.e. S_tmp is 4 * RAO * calculatedeWaveSpectrum
         S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
+        # to match eqn 3, should this be (EWQ) 
+        #S_tmp[:] = np.abs(self._RAO[:,DOFtoCalc])**2*self.waves._S     # Response spectrum.
 
         # calculate spectral moments and other important spectral values.
         self._Spect = spectrum.stats( S_tmp, self.waves._w, self.waves._dw )
        
         # calculate coefficient A_{R,n}
-        # TODO: need factor of 2 in sqrt?
         self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
                 * ( (self._Spect.M2 - self.waves._w*self._Spect.M1) \
                     + self._Spect.wBar*(self.waves._w*self._Spect.M0 - self._Spect.M1) ) \
@@ -188,8 +195,8 @@ class mler(object):
         self._phase[self._CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
         self._CoeffA_Rn[self._CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
         
-        self._S[:] = self.waves._S * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
-        self._A[:] = self.waves._A * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2;
+        self._S[:] = self.waves._S * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2
+        self._A[:] = self.waves._A * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2 # self.A == 2*self.S
         
         # if the response amplitude we ask for is negative, we will add
         # a pi phase shift to the phase information.  This is because
@@ -254,7 +261,7 @@ class mler(object):
             f.write('#\n')
             f.write('#\n')
             f.write('#   frequency      SpectAmp      Phase     wavenumber\n')
-            f.write('#   (rad/s)          (m^2)       (rad)      (rad^2/m)\n')
+            f.write('#   (rad/s)        (m^2-s)       (rad)     (rad^2/m)\n')
 
             # Write coefficients, etc
             for i,wi in enumerate(self.waves._w):
@@ -276,14 +283,12 @@ class mler(object):
         for i,ti in enumerate(self.sim.T):
             
             # conditioned wave
-            # TODO: check for factor of two in sqrt
             waveAmpTime[i,0] = np.sum( 
                     np.sqrt(self._A*self.waves._dw) *
                         np.cos( self.waves._w*(ti-self.sim.T0) + self._phase - self.waves._k*(xi-self.sim.X0) )
                     )
             
             # Response calculation
-            # TODO: check for factor of two in sqrt
             # TODO: check for phase term?
             waveAmpTime[i,1] = np.sum( 
                     np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,DOFexport-1]) *
@@ -369,13 +374,11 @@ class mler(object):
             for it,t in enumerate(self.sim.T):
                 
                 # conditioned wave
-                # TODO: check for factor of 2 in sqrt
                 waveAmpTime[ix,it,0] = np.sum( np.sqrt(self._A*self.waves._dw) * 
                         np.cos( self.waves._w*(t-self.sim.T0) + self._phase - self.waves._k*(x-self.sim.X0) )
                         )
                 
                 # Response calculation
-                # TODO: check for factor of 2 in sqrt
                 waveAmpTime[ix,it,1] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,DOF-1]) *
                         np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
                         )
@@ -480,19 +483,16 @@ class mler(object):
             for it,t in enumerate(self.sim.T):
                 
                 # conditioned wave
-                # TODO: check for factor of 2 in sqrt
                 waveAmpTime[ix,it,0] = np.sum( np.sqrt(self._A*self.waves._dw) * 
                         np.cos( self.waves._w*(t-self.sim.T0) + self._phase - self.waves._k*(x-self.sim.X0) )
                         )
                 
                 # Heave response calculation
-                # TODO: check for factor of 2 in sqrt
                 waveAmpTime[ix,it,1] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,heaveDOF]) *
                         np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
                         )
 
                 # Pitch response calculation
-                # TODO: check for factor of 2 in sqrt
                 waveAmpTime[ix,it,2] = np.sum( np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,pitchDOF]) *
                         np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) )
                         )
@@ -593,10 +593,9 @@ class mler(object):
             for it,t in enumerate(self.sim.T):
                 
                 # conditioned wave
-                # TODO: check factor of two in sqrt
                 waveAmpTime[ix,it] = np.sum(
-                        np.sqrt(self._A*self.waves._dw) * 
-                            np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) + self._phase )
+                        np.sqrt(self._A*self.waves._dw) * # A == 2*S
+                            np.cos( self.waves._w*(t-self.sim.T0) - self.waves._k*(x-self.sim.X0) + self._phase ) 
                         )
 
         return np.max(np.abs(waveAmpTime))

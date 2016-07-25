@@ -33,6 +33,17 @@ class wave(object):
         self._A              = None                 # [m^2]     2*(wave spectrum vector)
         self._k              = None                 # [rad^2/m] Wavenumber array
 
+    @property
+    def w(self): return self._w
+    @property
+    def dw(self): return self._dw
+    @property
+    def k(self): return self._k
+    @property
+    def S(self): return self._S
+    @property
+    def A(self): return self._A
+
     def __repr__(self):
         s = 'waveClass (Hs= {:f} m, Tp= {:f} s)'.format(self.H,self.T)
         s+= '\n\tnumber of frequencies  : {:d}'.format(self.numFreq)
@@ -74,7 +85,7 @@ class wave(object):
         plt.plot(self._w,self._S)
         plt.title('{:s} spectrum for Hs = {:f} (m), Tp = {:f} (s)'.format(self.type,self.H,self.T))
         plt.xlabel('Frequency (rad/s)')
-        plt.ylabel('Spectral amplitude (m^2)') #TODO: double check units
+        plt.ylabel('Spectral amplitude (m^2-s)')
         if show is True: plt.show()
 
     #

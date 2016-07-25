@@ -49,12 +49,12 @@ Test.MLERexportWaveAmpTime(outputDir+'Test_MLER_heaveOpt_heave_WaveAmpTime.txt',
 Test.MLERexportWECSim(outputDir+'Test_MLER_heaveOpt_WECSimInput.txt')
 
 # make a movie of the sequence for heave
-#Test.MLERanimate(3,export='Movie_Heave') # export without plotting
+#Test.MLERanimate(3,export='Movie_Heave')        # export without plotting
 Test.MLERanimate(3)                             # plot animation
-Test.MLERexportMovie(outputDir+'Movie_Heave')   # export generated animation
+Test.MLERexportMovie(outputDir+'Movie_Heave')   # export generated animation (after plotting)
 
 # make a movie of the sequence for pitch
-Test.MLERanimate(5,export=outputDir+'Movie_Pitch') # export without plotting
+#Test.MLERanimate(5,export=outputDir+'Movie_Pitch') # export without plotting
 
 # make a movie of the combined heave + pitch response
 #Test.MLERanimate2D(export=outputDir+'Movie_2D_heaveOpt')
