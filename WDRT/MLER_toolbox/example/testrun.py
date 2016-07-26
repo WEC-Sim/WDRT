@@ -37,7 +37,8 @@ Test.MLERcoeffsGen(3,1.0)   # generate the wave profile, 1 meter heave response 
 # match a desired response height that was given as the second argument to
 # MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,
 # we can renormalize the wave amplitude now. (AP)
-Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9) # the desired peak height (peak to MSL)
+
+#Test.MLERwaveAmpNormalize(Test.waves.H/2 * 1.9) # the desired peak height (peak to MSL)
 
 # Now export the heave coefficients.
 Test.MLERexportCoeffs(outputDir+'Test_MLER_heaveOpt_Coeffs.txt');

@@ -170,14 +170,11 @@ class mler(object):
         self._phase     = np.zeros(self.waves.numFreq);
         
         # calculate the RAO times sqrt of spectrum
-        # TODO: add equation references
         # note that we could define:  a_n=(waves.A*waves.dw).^0.5; (AP)
         #S_tmp(:)=squeeze(abs(obj.RAO(:,DOFtoCalc))).*2 .* obj.waves.A;          % Response spectrum.
         # note: self.A == 2*self.S  (EWQ)
         #   i.e. S_tmp is 4 * RAO * calculatedeWaveSpectrum
         S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
-        # to match eqn 3, should this be (EWQ) 
-        #S_tmp[:] = np.abs(self._RAO[:,DOFtoCalc])**2*self.waves._S     # Response spectrum.
 
         # calculate spectral moments and other important spectral values.
         self._Spect = spectrum.stats( S_tmp, self.waves._w, self.waves._dw )
@@ -192,7 +189,6 @@ class mler(object):
         self._phase[:] = -np.unwrap( np.angle(self._RAO[:,DOFtoCalc]) ) # Phase delay should be a positive number in this convention (AP)
         
         # for negative values of Amp, shift phase by pi and flip sign
-        # TODO: verify this is legit
         self._phase[self._CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
         self._CoeffA_Rn[self._CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
         
@@ -292,7 +288,6 @@ class mler(object):
                     )
             
             # Response calculation
-            # TODO: check for phase term?
             waveAmpTime[i,1] = np.sum( 
                     np.sqrt(self._A*self.waves._dw) * np.abs(self._RAO[:,DOFexport-1]) *
                         np.cos( self.waves._w*(ti-self.sim.T0) - self.waves._k*(xi-self.sim.X0) )

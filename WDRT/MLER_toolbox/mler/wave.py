@@ -123,7 +123,6 @@ class wave(object):
             lastk = self._k[:1]
             orig_settings = np.seterr(divide='ignore',invalid='ignore')
             for i in range(100):
-                # TODO: more rigorous convergence
                 self._k = self._w**2 / (self.g * np.tanh(self._k*self.waterDepth) );
 
                 # check convergence
