@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# TODO: put this in egg
 import numpy as np
 import scipy.interpolate
 
@@ -106,16 +105,14 @@ class mler(object):
         tmpRAO = tmpRAO[ np.argsort(tmpRAO[:,0]) ]  # sort by frequency
         
         # Add at w=0, amp=0, phase=0
-        # TODO check w=0 amplitude & phase:
         #### Questionable if the amplitude should be 1 or 0.  If set to 1, we count
         #### on the spectrum having nothing out there.  For dimensions
         #### other than in heave, this should be valid.  Heave should be
-        #### set to 1. (AP)
+        #### set to 1. (ADP)
         if DOFread == 3: #heave
             tmp = np.array( [[0,1,0]] )
         else:
             tmp = np.array( [[0,0,0]] )
-        # TODO rewrite w/o concatenate
         tmpRAO = np.concatenate( (tmp,tmpRAO), axis=0 )
         
         # Now interpolate to find the values
@@ -217,7 +214,6 @@ class mler(object):
 
         print 'Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired)
         
-        # TODO: higher-order calculation
         tmpMaxAmp = self._MLERpeakvalue()
 
         # renormalization of wave amplitudes

@@ -117,7 +117,6 @@ class wave(object):
         """ Calculate wave number
         Sets self._k
         """
-        #TODO: higher-order wavenumber
         self._k = self._w**2 / self.g # deep water approximation
         if not self.deepWaterWave:
             lastk = self._k[:1]

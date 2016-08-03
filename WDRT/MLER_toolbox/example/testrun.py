@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 libpath     = '/Users/equon/WDRT/WDRT/MLER_toolbox'
-RAOdir      = libpath+'/RAO_data/'
+RAOdir      = libpath+'/example/RAO_data/'
 outputDir   = libpath+'/example/TestData/'
 
 import sys
