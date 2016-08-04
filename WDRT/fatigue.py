@@ -19,9 +19,9 @@ from pylab import find
 
 def EqLoad(F, N, m):
     '''
-    Calculates an equivalent fatigue load based on Miner’s Rule,
+    Calculates an equivalent fatigue load based on Miner's Rule,
     using the rainflow counting method presented in,
-    Downing & Socie, 1982, “Simple rainflow counting algorithms”
+    Downing & Socie, 1982, "Simple rainflow counting algorithms"
 
     Parameters
     ----------
