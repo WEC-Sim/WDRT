@@ -195,7 +195,7 @@
 Environmental contours describing extreme sea states can be used for numerical or physical model simulations analyzing the design-response of WECs.
 These environmental contours, characterized by combinations of significant wave height (<span class="math">\(H_s\)</span>) and either energy period (<span class="math">\(T_e\)</span>) or peak period (<span class="math">\(T_p\)</span>), provide inputs that are associated with a certain reliability interval.
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.</p>
-<p>For this example (<code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>), we&#8217;ll consider <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=46022">NDBC buoy 46022</a>.</p>
+<p>For this example (<code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>), we will consider <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=46022">NDBC buoy 46022</a>.</p>
 <div class="figure align-center" id="id3">
 <a class="reference internal image-reference" href="_images/example_envSampling.png"><img alt="_images/example_envSampling.png" src="_images/example_envSampling.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
@@ -849,7 +849,7 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 <h2><a class="toc-backref" href="#id22">Most-likely extreme response (MLER)</a><a class="headerlink" href="#most-likely-extreme-response-mler" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Unlike the rest of <cite>WDRT</cite>, most-likely extreme response (MLER) module of this toolbox is currently written in MATLAB, efforts are currently underway to port it the python.</p>
+<p class="last">Unlike the rest of <cite>WDRT</cite>, the Most-Likely Extreme Response (MLER) module of this toolbox is currently written in MATLAB; efforts are currently underway to port it to python.</p>
 </div>
 <p>The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The extreme wave load can be predicted. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.</p>
 <p>An example can be found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/testrun.m</span></code>.</p>

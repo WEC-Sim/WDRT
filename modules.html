@@ -89,7 +89,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.NDBCdata">WDRT.NDBCdata module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.ESSC">WDRT.ESSC module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#WDRT-mler-module">WDRT.MLER module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wdrt-mler-module">WDRT.MLER module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -147,13 +147,13 @@
 </pre></div>
 </div>
 <div class="section" id="module-WDRT.fatigue">
-<span id="WDRT-fatigue-module"></span><h2>WDRT.fatigue module<a class="headerlink" href="#module-WDRT.fatigue" title="Permalink to this headline">¶</a></h2>
+<span id="wdrt-fatigue-module"></span><h2>WDRT.fatigue module<a class="headerlink" href="#module-WDRT.fatigue" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="WDRT.fatigue.EqLoad">
 <code class="descclassname">WDRT.fatigue.</code><code class="descname">EqLoad</code><span class="sig-paren">(</span><em>F</em>, <em>N</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/fatigue.html#EqLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.fatigue.EqLoad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates an equivalent fatigue load based on Miner’s Rule,
+<dd><p>Calculates an equivalent fatigue load based on Miner&#8217;s Rule,
 using the rainflow counting method presented in,
-Downing &amp; Socie, 1982, “Simple rainflow counting algorithms”</p>
+Downing &amp; Socie, 1982, &#8220;Simple rainflow counting algorithms&#8221;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -178,7 +178,7 @@ Equivalent force or stress</p>
 
 </div>
 <div class="section" id="module-WDRT.shortTermExtreme">
-<span id="WDRT-shorttermextreme-module"></span><h2>WDRT.shortTermExtreme module<a class="headerlink" href="#module-WDRT.shortTermExtreme" title="Permalink to this headline">¶</a></h2>
+<span id="wdrt-shorttermextreme-module"></span><h2>WDRT.shortTermExtreme module<a class="headerlink" href="#module-WDRT.shortTermExtreme" title="Permalink to this headline">¶</a></h2>
 <p>WDRT shortTermExtreme module</p>
 <p>This module contains tools for analysis of short-term (sea-state specific)
 extremes, as well as some usefull statistical methods.</p>
@@ -763,7 +763,7 @@ Cumulative distribution function values at x</p>
 
 </div>
 <div class="section" id="module-WDRT.longTermExtreme">
-<span id="WDRT-longtermextreme-module"></span><h2>WDRT.longTermExtreme module<a class="headerlink" href="#module-WDRT.longTermExtreme" title="Permalink to this headline">¶</a></h2>
+<span id="wdrt-longtermextreme-module"></span><h2>WDRT.longTermExtreme module<a class="headerlink" href="#module-WDRT.longTermExtreme" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="WDRT.longTermExtreme.fullLongTermSurvival">
 <em class="property">class </em><code class="descclassname">WDRT.longTermExtreme.</code><code class="descname">fullLongTermSurvival</code><span class="sig-paren">(</span><em>Fr</em>, <em>fs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/longTermExtreme.html#fullLongTermSurvival"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.longTermExtreme.fullLongTermSurvival" title="Permalink to this definition">¶</a></dt>
@@ -803,7 +803,7 @@ Survival function value(s) at x.</td>
 
 </div>
 <div class="section" id="module-WDRT.NDBCdata">
-<span id="WDRT-ndbcdata-module"></span><h2>WDRT.NDBCdata module<a class="headerlink" href="#module-WDRT.NDBCdata" title="Permalink to this headline">¶</a></h2>
+<span id="wdrt-ndbcdata-module"></span><h2>WDRT.NDBCdata module<a class="headerlink" href="#module-WDRT.NDBCdata" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="WDRT.NDBCdata.fetchFromWeb">
 <code class="descclassname">WDRT.NDBCdata.</code><code class="descname">fetchFromWeb</code><span class="sig-paren">(</span><em>buoyNum</em>, <em>savePath='./'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#fetchFromWeb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.fetchFromWeb" title="Permalink to this definition">¶</a></dt>
@@ -815,7 +815,7 @@ to a single .txt file, and stores the values in an array</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buoyNum</strong> (<em>int</em>) &#8211; Buoy number to download data for. Can find the appropriate buoy at
+<li><strong>buoyNum</strong> (<em>string</em>) &#8211; Buoy number to download data for. Can find the appropriate buoy at
 <a class="reference external" href="http://www.ndbc.noaa.gov">http://www.ndbc.noaa.gov</a>. Only buoys with historical data (i.e. have a
 <a class="reference external" href="http://www.ndbc.noaa.gov/station_history.php">http://www.ndbc.noaa.gov/station_history.php</a>?station=##### page) can be
 used for environmental contour analyses.</li>
@@ -970,7 +970,7 @@ List of datetime objects.</li>
 
 </div>
 <div class="section" id="module-WDRT.ESSC">
-<span id="WDRT-essc-module"></span><h2>WDRT.ESSC module<a class="headerlink" href="#module-WDRT.ESSC" title="Permalink to this headline">¶</a></h2>
+<span id="wdrt-essc-module"></span><h2>WDRT.ESSC module<a class="headerlink" href="#module-WDRT.ESSC" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="WDRT.ESSC.getContourPoints">
 <code class="descclassname">WDRT.ESSC.</code><code class="descname">getContourPoints</code><span class="sig-paren">(</span><em>T_Return</em>, <em>Hs_Return</em>, <em>T_Sample</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#getContourPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.getContourPoints" title="Permalink to this definition">¶</a></dt>
@@ -1338,8 +1338,8 @@ T values [sec] over which the steepness curve is defined.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="WDRT-mler-module">
-<h2>WDRT.MLER module<a class="headerlink" href="#WDRT-mler-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="wdrt-mler-module">
+<h2>WDRT.MLER module<a class="headerlink" href="#wdrt-mler-module" title="Permalink to this headline">¶</a></h2>
 <p><em>Currently written in MATLAB and will be converted to Python in the near future</em></p>
 <p>To improve the model efficiency and reduce required computational time or wave tank testing time, the shipping and offshore industry often perform their mid- and high-fidelity simulations and experimental wave tank tests using an equivalent design wave profile generated from (linear) low-fidelity model solutions. The MLER module was developed based on the most likely extreme response method, which  uses the linear RAO of the device and the spectrum for the sea state of interest to produce a focused wave profile that gives the largest response. Because it uses linear theory, the underlying assumption is that the higher-order effects are small in comparison to the linear effects.</p>
 <p>The source code can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/</span></code> folder and <code class="docutils literal"><span class="pre">testrun.m</span></code> is an example with limited comments.</p>

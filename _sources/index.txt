@@ -18,7 +18,7 @@ The `WDRT` contains a number of code modules to assist in the major processes of
 * **most-likely extreme response (MLER)** - focused-wave construction for efficient high-fidelity modeling
 
 Contributors
-----------
+------------
 * Ryan Coe, Sandia National Laboratories
 * Carlos Michelen, Sandia National Laboratories
 * Aubrey Eckert-Gallup, Sandia National Laboratories

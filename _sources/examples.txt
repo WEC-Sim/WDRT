@@ -13,7 +13,7 @@ Environmental contours describing extreme sea states can be used for numerical o
 These environmental contours, characterized by combinations of significant wave height (:math:`H_s`) and either energy period (:math:`T_e`) or peak period (:math:`T_p`), provide inputs that are associated with a certain reliability interval.
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.
 
-For this example (``$WDRT_SOURCE/examples/example_shortTermExtreme.py``), we'll consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
+For this example (``$WDRT_SOURCE/examples/example_shortTermExtreme.py``), we will consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
 
 .. figure::  _static/example_envSampling.png
    :align: center
@@ -307,7 +307,7 @@ Most-likely extreme response (MLER)
 
 .. Note::
 
-	Unlike the rest of `WDRT`, most-likely extreme response (MLER) module of this toolbox is currently written in MATLAB, efforts are currently underway to port it the python.
+	Unlike the rest of `WDRT`, the Most-Likely Extreme Response (MLER) module of this toolbox is currently written in MATLAB; efforts are currently underway to port it to python.
 
 The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The extreme wave load can be predicted. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
