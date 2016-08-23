@@ -82,7 +82,7 @@ def fetchFromWeb(buoyNum, savePath='./'):
     saveDir = os.path.join(savePath, 'NDBC%s' % (buoyNum))
 
     if not os.path.exists(saveDir):
-        os.mkdir(saveDir)
+        os.makedirs(saveDir)
 
     for link in links:
         dataLink = "http://ndbc.noaa.gov" + link
