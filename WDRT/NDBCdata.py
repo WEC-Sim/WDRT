@@ -20,6 +20,7 @@ import re
 import numpy as np
 from datetime import datetime, date
 import os
+import glob
 
 
 def fetchFromWeb(buoyNum, savePath='./'):
@@ -180,10 +181,9 @@ def loadFromText(dirPath):
     spectralVals = []
     numLines = 0
 
-    for fileName in os.listdir(dirPath):
-        fn = os.path.join(dirPath, fileName)
-        print 'Reading from: %s' % (fn)
-        f = open(fn, 'r')
+    for fileName in glob.glob(os.path.join(dirPath,'SWD*.txt')):
+        print 'Reading from: %s' % (fileName)
+        f = open(fileName, 'r')
         frequency = f.readline().split()
         numCols = len(frequency)
         if frequency[4] == 'mm':
