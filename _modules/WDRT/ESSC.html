@@ -147,11 +147,11 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stats</span>
-<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">optim</span>
-<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="kn">as</span> <span class="nn">interp</span>
-<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
 
 
 <div class="viewcode-block" id="getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.getContours">[docs]</a><span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">size_bin</span><span class="p">,</span> <span class="n">nb_steps</span><span class="p">,</span> <span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">):</span>
@@ -408,7 +408,7 @@
         <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span> <span class="o">=</span> <span class="n">betafcn</span><span class="p">(</span><span class="n">sig_0</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
         <span class="c1"># Initial search for minimum value using initial guess</span>
         <span class="n">sig_1</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">objfun_penalty</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">sig_0</span><span class="p">,</span>
-                           <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                           <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="c1"># While either the difference between iterations or the difference in</span>
         <span class="c1"># objective function evaluation is greater than the tolerance, continue</span>
         <span class="c1"># iterating</span>
@@ -420,7 +420,7 @@
             <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span> <span class="o">=</span> <span class="n">betafcn</span><span class="p">(</span><span class="n">sig_0</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
             <span class="c1"># Find a new minimum</span>
             <span class="n">sig_1</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">objfun_penalty</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">sig_0</span><span class="p">,</span>
-                               <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                               <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Comp1_mean</span><span class="p">,</span> <span class="n">sigma_vals</span><span class="p">,</span> <span class="n">Beta1</span><span class="p">,</span> <span class="n">Beta2</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">rho</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">rho</span>  <span class="c1"># Increase penalization</span>
         <span class="n">sig_final</span> <span class="o">=</span> <span class="n">sig_1</span>
         <span class="k">return</span> <span class="n">sig_final</span>
@@ -673,8 +673,8 @@
     <span class="c1"># normal space</span>
 
     <span class="c1"># Vary U1,U2 along circle sqrt(U1^2+U2^2) = beta</span>
-    <span class="n">U1_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:])</span>
-    <span class="n">U2_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">U1_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">U2_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_lines</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]),</span> <span class="n">beta_lines</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
 
     <span class="c1"># Removing values on the H_s = 0 line that are far from the circles in the</span>
     <span class="c1"># normal space that will be evaluated to speed up calculations</span>

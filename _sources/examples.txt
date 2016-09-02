@@ -104,8 +104,8 @@ These steps are also summarized in ``$WDRT_SOURCE/examples/example_contourApproa
 
    Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.
 
-1. Establish environmental data and sample sea stats
-''''''''''''''''''''''''''''''''''''''''''''''''''''
+1. Establish environmental data and sample sea states
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
 Following the `Environmental characterization`_ example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
@@ -305,21 +305,17 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 Most-likely extreme response (MLER)
 -----------------------------------
 
-.. Note::
+The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
-	Unlike the rest of `WDRT`, the Most-Likely Extreme Response (MLER) module of this toolbox is currently written in MATLAB; efforts are currently underway to port it to python.
+An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``.
 
-The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The extreme wave load can be predicted. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
-
-An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/testrun.m``.
-
-.. literalinclude:: ../WDRT/MLER_toolbox/testrun.m
-	:language: matlab
+.. literalinclude:: ../WDRT/MLER_toolbox/example/testrun.py
+	:language: python
    	:linenos:
 
 In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016). The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the `Wave Energy Converter Simulator, or WEC- Sim <https://wec-sim.github.io/WEC-Sim/>`_. 
 
-Figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. The focused wave was designed to target maximum pitch motion. Note that a specific wave profile is required for different response of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile for pitch is different from the one for heave. This is expected because the max heave and pitch are most likely to occur at different time.
+The figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the "heave conditioned" and "pitch conditioned" curves. This is expected because the maximum heave and pitch are most likely to occur at different times.
 
 .. figure::  _static/MLER.png
    :align: center

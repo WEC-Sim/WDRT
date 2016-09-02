@@ -84,20 +84,20 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Examples</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#environmental-characterization">Environmental characterization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#short-term-extreme-response-analysis">Short-term extreme response analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#long-term-extreme-response-analysis">Long-term extreme response analysis</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#contour-approach">Contour approach</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats">1. Establish environmental data and sample sea stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#establish-environmental-data-and-sample-sea-states">1. Establish environmental data and sample sea states</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#model-device-response">2. Model device response</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#short-term-extreme-statistics">3. Short term extreme statistics</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#determine-design-load-condition-s">5. Determine design load condition(s)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#full-sea-sate-approach">Full sea-sate approach</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id1">1. Establish environmental data and sample sea stats</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2">2. Model device response</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats">1. Establish environmental data and sample sea stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">2. Model device response</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#short-term-response-distributions">4. Short-term response distributions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#construct-long-term-response-distribution">5. Construct long-term response distribution</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#plot-and-analyze-results">6. Plot and analyze results</a></li>
@@ -134,7 +134,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -157,46 +157,46 @@
            <div itemprop="articleBody">
             
   <div class="section" id="examples">
-<h1><a class="toc-backref" href="#id6">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <p>This page includes a number of examples demonstrating the usage of the <cite>WDRT</cite>. In addtion to code snippets included here, these examples are outlined in the <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples</span></code> directory. Each toolbox module has at least one example/tutorial. The table of contents below gives an outline of the available tutorials.</p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#examples" id="id6">Examples</a><ul>
-<li><a class="reference internal" href="#environmental-characterization" id="id7">Environmental characterization</a></li>
-<li><a class="reference internal" href="#short-term-extreme-response-analysis" id="id8">Short-term extreme response analysis</a></li>
-<li><a class="reference internal" href="#long-term-extreme-response-analysis" id="id9">Long-term extreme response analysis</a><ul>
-<li><a class="reference internal" href="#contour-approach" id="id10">Contour approach</a><ul>
-<li><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats" id="id11">1. Establish environmental data and sample sea stats</a></li>
-<li><a class="reference internal" href="#model-device-response" id="id12">2. Model device response</a></li>
-<li><a class="reference internal" href="#short-term-extreme-statistics" id="id13">3. Short term extreme statistics</a></li>
-<li><a class="reference internal" href="#determine-design-load-condition-s" id="id14">5. Determine design load condition(s)</a></li>
+<li><a class="reference internal" href="#examples" id="id5">Examples</a><ul>
+<li><a class="reference internal" href="#environmental-characterization" id="id6">Environmental characterization</a></li>
+<li><a class="reference internal" href="#short-term-extreme-response-analysis" id="id7">Short-term extreme response analysis</a></li>
+<li><a class="reference internal" href="#long-term-extreme-response-analysis" id="id8">Long-term extreme response analysis</a><ul>
+<li><a class="reference internal" href="#contour-approach" id="id9">Contour approach</a><ul>
+<li><a class="reference internal" href="#establish-environmental-data-and-sample-sea-states" id="id10">1. Establish environmental data and sample sea states</a></li>
+<li><a class="reference internal" href="#model-device-response" id="id11">2. Model device response</a></li>
+<li><a class="reference internal" href="#short-term-extreme-statistics" id="id12">3. Short term extreme statistics</a></li>
+<li><a class="reference internal" href="#determine-design-load-condition-s" id="id13">5. Determine design load condition(s)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#full-sea-sate-approach" id="id15">Full sea-sate approach</a><ul>
-<li><a class="reference internal" href="#id1" id="id16">1. Establish environmental data and sample sea stats</a></li>
-<li><a class="reference internal" href="#id2" id="id17">2. Model device response</a></li>
-<li><a class="reference internal" href="#short-term-response-distributions" id="id18">4. Short-term response distributions</a></li>
-<li><a class="reference internal" href="#construct-long-term-response-distribution" id="id19">5. Construct long-term response distribution</a></li>
-<li><a class="reference internal" href="#plot-and-analyze-results" id="id20">6. Plot and analyze results</a></li>
+<li><a class="reference internal" href="#full-sea-sate-approach" id="id14">Full sea-sate approach</a><ul>
+<li><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats" id="id15">1. Establish environmental data and sample sea stats</a></li>
+<li><a class="reference internal" href="#id1" id="id16">2. Model device response</a></li>
+<li><a class="reference internal" href="#short-term-response-distributions" id="id17">4. Short-term response distributions</a></li>
+<li><a class="reference internal" href="#construct-long-term-response-distribution" id="id18">5. Construct long-term response distribution</a></li>
+<li><a class="reference internal" href="#plot-and-analyze-results" id="id19">6. Plot and analyze results</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#fatigue-analysis" id="id21">Fatigue analysis</a></li>
-<li><a class="reference internal" href="#most-likely-extreme-response-mler" id="id22">Most-likely extreme response (MLER)</a></li>
+<li><a class="reference internal" href="#fatigue-analysis" id="id20">Fatigue analysis</a></li>
+<li><a class="reference internal" href="#most-likely-extreme-response-mler" id="id21">Most-likely extreme response (MLER)</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="environmental-characterization">
-<h2><a class="toc-backref" href="#id7">Environmental characterization</a><a class="headerlink" href="#environmental-characterization" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Environmental characterization</a><a class="headerlink" href="#environmental-characterization" title="Permalink to this headline">¶</a></h2>
 <p>The WDRT includes a package for creating environmental contours of extreme sea states using a <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">principle components analysis (PCA)</a> methodology with additional improvements for characterizing the joint probability distribution of sea state variables of interest.
 Environmental contours describing extreme sea states can be used for numerical or physical model simulations analyzing the design-response of WECs.
 These environmental contours, characterized by combinations of significant wave height (<span class="math">\(H_s\)</span>) and either energy period (<span class="math">\(T_e\)</span>) or peak period (<span class="math">\(T_p\)</span>), provide inputs that are associated with a certain reliability interval.
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.</p>
 <p>For this example (<code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>), we will consider <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=46022">NDBC buoy 46022</a>.</p>
-<div class="figure align-center" id="id3">
+<div class="figure align-center" id="id2">
 <a class="reference internal image-reference" href="_images/example_envSampling.png"><img alt="_images/example_envSampling.png" src="_images/example_envSampling.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
 </div>
@@ -314,10 +314,10 @@ These reliability levels are needed to drive both contour and full sea state sty
 </div>
 </div>
 <div class="section" id="short-term-extreme-response-analysis">
-<h2><a class="toc-backref" href="#id8">Short-term extreme response analysis</a><a class="headerlink" href="#short-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Short-term extreme response analysis</a><a class="headerlink" href="#short-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
 <p>A short term extreme distribution is the answer to “If a device is in sea-state X for Y amount of time, what will be the largest Z observed?&#8221;, where X is the environmental condition, Y the short-term period, and Z the response parameter of interest (e.g. the mooring load, bending moment).
 The short-term extreme response module provides five different methods for obtaining this distribution based on observations of the quantity of interest &#8220;Z&#8221; at the desired sea-state &#8220;X&#8221;.
-These methods are described in detail in <a class="reference internal" href="publications.html#pubs"><span>Michelen and Coe 2015</span></a></p>
+These methods are described in detail in <a class="reference internal" href="publications.html#pubs"><span class="std std-ref">Michelen and Coe 2015</span></a></p>
 <p>In this example the Weibull tail-fit method is used.
 The proccess of obtaiing the sort-term extreme distribution using the Weibull tail-fit method is as follows:</p>
 <blockquote>
@@ -487,23 +487,23 @@ They show the quality of the agreement between the global peaks and the resultin
 </td></tr></table></div>
 </div>
 <div class="section" id="long-term-extreme-response-analysis">
-<h2><a class="toc-backref" href="#id9">Long-term extreme response analysis</a><a class="headerlink" href="#long-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Long-term extreme response analysis</a><a class="headerlink" href="#long-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
 <p>The long-term extreme response represents the design response for some specific deployment location and time-span.
 Two major classes of approaches are implemented in the WDRT: the contour approach and the full sea state approach.</p>
 <div class="section" id="contour-approach">
-<h3><a class="toc-backref" href="#id10">Contour approach</a><a class="headerlink" href="#contour-approach" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Contour approach</a><a class="headerlink" href="#contour-approach" title="Permalink to this headline">¶</a></h3>
 <p>In the contour approach, simulations are run along the desired extreme wave contour (e.g. 25-year contour).
 The condition producing the largest response is used to define the extreme response distribution for the device via a short-term extreme process.
 To obtain a single design response value for this method, one should select a percentile from that extreme response distribution based on some prior knowledge of system behavior.
 Typical percentiles used for marine structures range from 75 to 99%.</p>
 <p>The following steps demonstrate the execution of a <cite>contour approach</cite> to long-term extreme response analysis.
 These steps are also summarized in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_contourApproach.py</span></code>.</p>
-<div class="figure align-center" id="id4">
+<div class="figure align-center" id="id3">
 <a class="reference internal image-reference" href="_images/example_contourApproach.png"><img alt="_images/example_contourApproach.png" src="_images/example_contourApproach.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
 </div>
-<div class="section" id="establish-environmental-data-and-sample-sea-stats">
-<h4><a class="toc-backref" href="#id11">1. Establish environmental data and sample sea stats</a><a class="headerlink" href="#establish-environmental-data-and-sample-sea-stats" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="establish-environmental-data-and-sample-sea-states">
+<h4><a class="toc-backref" href="#id10">1. Establish environmental data and sample sea states</a><a class="headerlink" href="#establish-environmental-data-and-sample-sea-states" title="Permalink to this headline">¶</a></h4>
 <p>Following the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
 For this example, we will work with the data produced in the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -523,7 +523,7 @@ For this example, we will work with the data produced in the <a class="reference
 </td></tr></table></div>
 </div>
 <div class="section" id="model-device-response">
-<h4><a class="toc-backref" href="#id12">2. Model device response</a><a class="headerlink" href="#model-device-response" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id11">2. Model device response</a><a class="headerlink" href="#model-device-response" title="Permalink to this headline">¶</a></h4>
 <p>Obtain predictions for your device response at each of the selected sea states.
 This step can be accomplished via any model considered appropriate.
 Low and mid-fidelity numerical models (e.g. Cummins equation) are often used.
@@ -559,7 +559,7 @@ For this example, we will simply load data that was previously produced with a s
 </td></tr></table></div>
 </div>
 <div class="section" id="short-term-extreme-statistics">
-<h4><a class="toc-backref" href="#id13">3. Short term extreme statistics</a><a class="headerlink" href="#short-term-extreme-statistics" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id12">3. Short term extreme statistics</a><a class="headerlink" href="#short-term-extreme-statistics" title="Permalink to this headline">¶</a></h4>
 <p>The extreme response for each sea state can be defined as a percentile, <span class="math">\(\alpha\)</span>, in the extreme response distributions. The percentile chosen here should ideally be based on some experience with similar systems. Typical values for <span class="math">\(\alpha\)</span> used for marine structures range from 75 to 99%. This approach has less variability than simply picking the maximum QOI observed in each sea state.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -582,7 +582,7 @@ For this example, we will simply load data that was previously produced with a s
 </td></tr></table></div>
 </div>
 <div class="section" id="determine-design-load-condition-s">
-<h4><a class="toc-backref" href="#id14">5. Determine design load condition(s)</a><a class="headerlink" href="#determine-design-load-condition-s" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">5. Determine design load condition(s)</a><a class="headerlink" href="#determine-design-load-condition-s" title="Permalink to this headline">¶</a></h4>
 <p>For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI). The DLC is defined as the scenario that gives the largest response. To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -602,14 +602,14 @@ For this example, we will simply load data that was previously produced with a s
 </div>
 </div>
 <div class="section" id="full-sea-sate-approach">
-<h3><a class="toc-backref" href="#id15">Full sea-sate approach</a><a class="headerlink" href="#full-sea-sate-approach" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Full sea-sate approach</a><a class="headerlink" href="#full-sea-sate-approach" title="Permalink to this headline">¶</a></h3>
 <p>In the full sea state approach, simulations are run at a sampling of sea states within an envelop defined by the environmental characterization process.
 Based on the device response and relative occurrence likelihood for each sea state, an extreme distribution is constructed.
 The full sea-state approach is more rigorous than the contour approach, but also requires more modeling to implement.
 This distribution gives a richer picture of the design response and can, for example, be used to study how the design response varies with return period.</p>
 <p>The following example is also located at <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_longTermFullSeaState.py</span></code>.</p>
-<div class="section" id="id1">
-<h4><a class="toc-backref" href="#id16">1. Establish environmental data and sample sea stats</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="establish-environmental-data-and-sample-sea-stats">
+<h4><a class="toc-backref" href="#id15">1. Establish environmental data and sample sea stats</a><a class="headerlink" href="#establish-environmental-data-and-sample-sea-stats" title="Permalink to this headline">¶</a></h4>
 <p>Following the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
 For this example, we will work with the data produced in the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -630,8 +630,8 @@ For this example, we will work with the data produced in the <a class="reference
 </pre></div>
 </td></tr></table></div>
 </div>
-<div class="section" id="id2">
-<h4><a class="toc-backref" href="#id17">2. Model device response</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id16">2. Model device response</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>Obtain predictions for your device response at each of the selected sea states.
 This step can be accomplished via any model considered appropriate.
 Low and mid-fidelity numerical models (e.g. Cummins equation) are often used.
@@ -665,7 +665,7 @@ For this example, we will simply load data that was previously produced with a s
 </td></tr></table></div>
 </div>
 <div class="section" id="short-term-response-distributions">
-<h4><a class="toc-backref" href="#id18">4. Short-term response distributions</a><a class="headerlink" href="#short-term-response-distributions" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id17">4. Short-term response distributions</a><a class="headerlink" href="#short-term-response-distributions" title="Permalink to this headline">¶</a></h4>
 <p>As discussed in the <a class="reference internal" href="#short-term-extreme-response-analysis">Short-term extreme response analysis</a> example, the short-term extreme response corresponds to some assumed period of interest, often referred to as the storm period.
 Typically 1 to 3 hour storms are considered.
 Obtain the short-term extreme response distribution for the storm duration of interest, <span class="math">\(f_{x_{1\textrm{hr}}|H_s, T_e}(x)\)</span>.</p>
@@ -688,7 +688,7 @@ Obtain the short-term extreme response distribution for the storm duration of in
 </td></tr></table></div>
 </div>
 <div class="section" id="construct-long-term-response-distribution">
-<h4><a class="toc-backref" href="#id19">5. Construct long-term response distribution</a><a class="headerlink" href="#construct-long-term-response-distribution" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id18">5. Construct long-term response distribution</a><a class="headerlink" href="#construct-long-term-response-distribution" title="Permalink to this headline">¶</a></h4>
 <p>From the previous 4 steps, we now have <span class="math">\(n=100\)</span> pairs of sea state and corresponding device response probabilities.
 The long-term extreme response distribution can be constructed as a complementary cumulative distribution function (CCDF), sometimes also called a survival function.
 When plotted on a log-y scale, the CCDF has the benefit of highlighting the <em>tail</em> of the more typical cumulative distribution function (CDF).</p>
@@ -700,9 +700,9 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the <em>
 </td></tr></table></div>
 </div>
 <div class="section" id="plot-and-analyze-results">
-<h4><a class="toc-backref" href="#id20">6. Plot and analyze results</a><a class="headerlink" href="#plot-and-analyze-results" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id19">6. Plot and analyze results</a><a class="headerlink" href="#plot-and-analyze-results" title="Permalink to this headline">¶</a></h4>
 <p>The results can be plotted and used to determine the return level for a desired return period.</p>
-<div class="figure align-center" id="id5">
+<div class="figure align-center" id="id4">
 <a class="reference internal image-reference" href="_images/example_longTermFullSeaState.png"><img alt="_images/example_longTermFullSeaState.png" src="_images/example_longTermFullSeaState.png" style="width: 400pt;" /></a>
 <p class="caption"><span class="caption-text">Long term complementary cumulative distribution function (CCDF).</span></p>
 </div>
@@ -773,7 +773,7 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the <em>
 </div>
 </div>
 <div class="section" id="fatigue-analysis">
-<h2><a class="toc-backref" href="#id21">Fatigue analysis</a><a class="headerlink" href="#fatigue-analysis" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id20">Fatigue analysis</a><a class="headerlink" href="#fatigue-analysis" title="Permalink to this headline">¶</a></h2>
 <p>In addition to extreme loads, a WEC must also be able to structurally withstand fatigue loading for its design life.
 Fatigue loads are time varying loads which cause cumulative damage to structural components and eventually lead to structural failure.
 Usually, a component’s fatigue strength/life is reported in terms of an <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve.
@@ -799,12 +799,12 @@ The required inputs to the module are:</p>
 </ol>
 </div></blockquote>
 <p>This example is shown below and can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_fatigue.py</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># This example loads pre-calculated PTO force histories for a reduced size joint</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># This example loads pre-calculated PTO force histories for a reduced size joint</span>
 <span class="c1"># probability distribution. Then uses the WDRT fatigue function to calculate</span>
 <span class="c1"># equivalent fatigue loads for a 1 hour timeframe and a 1 year timeframe.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">WDRT.fatigue</span> <span class="kn">as</span> <span class="nn">fatigue</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.fatigue</span> <span class="k">as</span> <span class="nn">fatigue</span>
 
 <span class="c1"># Reduced size joint probability distribution</span>
 <span class="n">Te</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">6.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">14.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">14.0</span><span class="p">],[</span><span class="mf">6.0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mf">14.0</span><span class="p">]]</span>  <span class="c1"># Wave energy periods</span>
@@ -830,10 +830,10 @@ The required inputs to the module are:</p>
         <span class="n">Feq_1y</span> <span class="o">=</span> <span class="n">Feq_1y</span><span class="o">+</span><span class="p">(</span><span class="n">Feq_1h</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">N1h</span><span class="o">*</span><span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
 <span class="n">Feq_1y</span> <span class="o">=</span> <span class="p">(</span><span class="n">Feq_1y</span><span class="o">/</span><span class="n">N1y</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">m</span><span class="p">)</span>    <span class="c1"># Equivalent fatigue load for a 1 year timeframe</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;1 hour equivalent fatigue loads:&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">Feq_1h</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;1 year equivalent fatigue load:&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">Feq_1y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 hour equivalent fatigue loads:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Feq_1h</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 year equivalent fatigue load:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Feq_1y</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this example, 1 hour PTO force histories (for the <a class="reference external" href="http://wec-sim.github.io/WEC-Sim/tutorials.html#two-body-point-absorber-rm3">RM3 WEC</a>) have been numerically obtained (using <a class="reference external" href="http://wec-sim.github.io/WEC-Sim/index.html">WEC-Sim</a>) for each sea state in the hypothetical joint probability distribution shown below.
@@ -846,14 +846,10 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 </div>
 </div>
 <div class="section" id="most-likely-extreme-response-mler">
-<h2><a class="toc-backref" href="#id22">Most-likely extreme response (MLER)</a><a class="headerlink" href="#most-likely-extreme-response-mler" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Unlike the rest of <cite>WDRT</cite>, the Most-Likely Extreme Response (MLER) module of this toolbox is currently written in MATLAB; efforts are currently underway to port it to python.</p>
-</div>
-<p>The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The extreme wave load can be predicted. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.</p>
-<p>An example can be found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/testrun.m</span></code>.</p>
-<div class="highlight-matlab"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+<h2><a class="toc-backref" href="#id21">Most-likely extreme response (MLER)</a><a class="headerlink" href="#most-likely-extreme-response-mler" title="Permalink to this headline">¶</a></h2>
+<p>The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.</p>
+<p>An example can be found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py</span></code>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
  4
@@ -900,76 +896,58 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 45
 46
 47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c">% create the object</span>
-<span class="n">Test</span><span class="p">=</span><span class="n">MLERclass</span><span class="p">;</span>
+48</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">libpath</span>     <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;HOME&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/WDRT/WDRT/MLER_toolbox&#39;</span>
+<span class="n">RAOdir</span>      <span class="o">=</span> <span class="n">libpath</span><span class="o">+</span><span class="s1">&#39;/example/RAO_data/&#39;</span>
+<span class="n">outputDir</span>   <span class="o">=</span> <span class="n">libpath</span><span class="o">+</span><span class="s1">&#39;/example/TestData/&#39;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">libpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">):</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">libpath</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">mler</span>
 
-<span class="c">% setup the simulation</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">sim</span><span class="p">.</span><span class="n">simSetup</span><span class="p">;</span>
+<span class="c1"># Create the object</span>
+<span class="n">Test</span> <span class="o">=</span> <span class="n">mler</span><span class="o">.</span><span class="n">mler</span><span class="p">(</span><span class="n">H</span><span class="o">=</span><span class="mf">9.0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">15.1</span><span class="p">,</span> <span class="n">numFreq</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
-<span class="c">% setup the waves</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">H</span><span class="p">=</span><span class="mi">9</span><span class="p">;</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">T</span><span class="p">=</span><span class="mf">15.1</span><span class="p">;</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">numFreq</span><span class="p">=</span><span class="mi">500</span><span class="p">;</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">waveSetup</span><span class="p">;</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">plotSpectrum</span><span class="p">;</span>
+<span class="c1"># Setup the wave information</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">Test</span><span class="o">.</span><span class="n">waves</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">plotSpectrum</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-<span class="c">% setup the RAO information</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">RAOread</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;RAO_data/RAO_heave_RM3float.dat&#39;</span><span class="p">);</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">RAOread</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;RAO_data/RAO_pitch_RM3float.dat&#39;</span><span class="p">);</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">RAOplot</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>        <span class="c">% check the RAO</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">RAOplot</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>        <span class="c">% check the RAO</span>
+<span class="c1"># Setup the RAO information</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">readRAO</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">RAOdir</span><span class="o">+</span><span class="s1">&#39;RAO_heave_RM3float.dat&#39;</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">readRAO</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">RAOdir</span><span class="o">+</span><span class="s1">&#39;RAO_pitch_RM3float.dat&#39;</span><span class="p">)</span>
 
-<span class="c">% now that everything is setup, generate the MLER wave for heave.</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERcoeffsGen</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>        <span class="c">% generate the wave profile, 1 meter response desired</span>
+<span class="c1"># Check the input RAOs</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">plotRAO</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">plotRAO</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-<span class="c">% at this point we can export the coefficients.  The coefficients will</span>
-<span class="c">% match a desired response height that was given as the second argument to</span>
-<span class="c">% MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,</span>
-<span class="c">% we can renormalize the wave amplitude now</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERwaveAmpNormalize</span><span class="p">(</span><span class="n">Test</span><span class="p">.</span><span class="n">waves</span><span class="p">.</span><span class="n">H</span> <span class="o">/</span><span class="mi">2</span>  <span class="o">*</span> <span class="mf">1.9</span><span class="p">)</span>           <span class="c">% the peak height (peak to MSL) desired</span>
+<span class="c1"># Now that everything is set up, generate the MLER wave for heave.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERcoeffsGen</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>   <span class="c1"># generate the heave-conditioned wave profile, 1 meter heave response desired</span>
+<span class="c1">#Test.MLERcoeffsGen(5,1.0)   # generate the pitch-conditioned wave profile, 1 meter heave response desired</span>
 
-<span class="c">% now export the heave coefficients</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERexportCoeffs</span><span class="p">(</span><span class="s">&#39;TestData/Test_heave_MLER_heaveOpt_Coeffs.txt&#39;</span><span class="p">);</span>
+<span class="c1"># At this point we can export the coefficients.  The coefficients will</span>
+<span class="c1"># match a desired response height that was given as the second argument to</span>
+<span class="c1"># MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,</span>
+<span class="c1"># we can renormalize the wave amplitude now. (AP)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERwaveAmpNormalize</span><span class="p">(</span><span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">H</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">1.9</span><span class="p">)</span> <span class="c1"># the desired peak height (peak to MSL)</span>
 
+<span class="c1"># Now export the heave coefficients.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportCoeffs</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_Coeffs.txt&#39;</span><span class="p">);</span>
 
-<span class="c">% export the wave amplitude time series at x=x0 for heave</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERexportWaveAmpTime</span><span class="p">(</span><span class="s">&#39;TestData/Test_heave_MLER_heaveOpt_heave_WaveAmpTime.txt&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># Export the wave amplitude time series at x=x0 and the heave response.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportWaveAmpTime</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_heave_WaveAmpTime.txt&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
 
-<span class="c">% export the spectral info for WEC-Sim</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERexportWECSim</span><span class="p">(</span><span class="s">&#39;TestData/Test_heave_MLER_heaveOpt_WECSimInput.txt&#39;</span><span class="p">)</span>
+<span class="c1"># Export the spectral info for WEC-Sim.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportWECSim</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_WECSimInput.txt&#39;</span><span class="p">)</span>
 
+<span class="c1"># make a movie of the sequence for heave</span>
+<span class="c1">#Test.MLERanimate(3,export=&#39;Movie_Heave&#39;)        # export without plotting</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERanimate</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>                             <span class="c1"># plot animation</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportMovie</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Movie_Heave&#39;</span><span class="p">)</span>   <span class="c1"># export generated animation (after plotting)</span>
 
-
-<span class="c">% make a movie of the sequence for heave</span>
-<span class="n">MovieFramesHeave</span><span class="p">=</span><span class="n">Test</span><span class="p">.</span><span class="n">MLERanimate</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-<span class="c">% export movie of heave (don&#39;t add extension)</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERexportMovie</span><span class="p">(</span><span class="s">&#39;Movie_Heave&#39;</span><span class="p">,</span><span class="n">MovieFramesHeave</span><span class="p">)</span>
-
-
-<span class="c">% make a movie of the sequence for pitch</span>
-<span class="n">MovieFramesPitch</span><span class="p">=</span><span class="n">Test</span><span class="p">.</span><span class="n">MLERanimate</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
-<span class="c">% export movie of pitch (don&#39;t add extension)</span>
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERexportMovie</span><span class="p">(</span><span class="s">&#39;Movie_Pitch&#39;</span><span class="p">,</span><span class="n">MovieFramesPitch</span><span class="p">)</span>
-
-
-<span class="c">% do some checks for heave vs. pitch optimized</span>
-<span class="n">Test_heave</span><span class="p">.</span><span class="n">S</span> <span class="p">=</span> <span class="n">Test</span><span class="p">.</span><span class="n">S</span><span class="p">;</span>
-
-<span class="n">Test</span><span class="p">.</span><span class="n">MLERcoeffsGen</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
-<span class="n">Test_pitch</span><span class="p">.</span><span class="n">S</span> <span class="p">=</span> <span class="n">Test</span><span class="p">.</span><span class="n">S</span><span class="p">;</span>
 </pre></div>
 </td></tr></table></div>
 <p>In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016). The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the <a class="reference external" href="https://wec-sim.github.io/WEC-Sim/">Wave Energy Converter Simulator, or WEC- Sim</a>.</p>
-<p>Figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. The focused wave was designed to target maximum pitch motion. Note that a specific wave profile is required for different response of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile for pitch is different from the one for heave. This is expected because the max heave and pitch are most likely to occur at different time.</p>
+<p>The figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the &#8220;heave conditioned&#8221; and &#8220;pitch conditioned&#8221; curves. This is expected because the maximum heave and pitch are most likely to occur at different times.</p>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="_images/MLER.png"><img alt="_images/MLER.png" src="_images/MLER.png" style="width: 500pt;" /></a>
 </div>

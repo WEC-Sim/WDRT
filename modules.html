@@ -83,11 +83,11 @@
             
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Toolbox Modules</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Toolbox Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.fatigue">WDRT.fatigue module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.shortTermExtreme">WDRT.shortTermExtreme module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-WDRT.NDBCdata">WDRT.NDBCdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wdrt-ndbcdata-module">WDRT.NDBCdata module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.ESSC">WDRT.ESSC module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wdrt-mler-module">WDRT.MLER module</a></li>
 </ul>
@@ -118,7 +118,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -143,7 +143,7 @@
   <div class="section" id="toolbox-modules">
 <h1>Toolbox Modules<a class="headerlink" href="#toolbox-modules" title="Permalink to this headline">¶</a></h1>
 <p>The following sections contain the documentation for <cite>WDRT</cite>. Note that this documentation is also contained in the python source code. As such, documentation for any <cite>WDRT</cite> function or classs can also be accessed in iPython via by calling</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="o">&lt;</span><span class="n">wdrt</span> <span class="k">class</span> <span class="nc">or</span> <span class="n">module</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="o">&lt;</span><span class="n">wdrt</span> <span class="k">class</span> <span class="nc">or</span> <span class="n">module</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="module-WDRT.fatigue">
@@ -165,8 +165,7 @@ Downing &amp; Socie, 1982, &#8220;Simple rainflow counting algorithms&#8221;</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Feq</strong> &#8211;
-Equivalent force or stress</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Feq</strong> &#8211; Equivalent force or stress</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(float)</p>
@@ -193,36 +192,31 @@ an error or a NaN if input is outside of bounds(x).</p>
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.pdf">
 <code class="descname">pdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
-<p>Probability density function</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Probability density function</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.cdf">
 <code class="descname">cdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.cdf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
-<p>Cumulative distribution function</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Cumulative distribution function</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.ppf">
 <code class="descname">ppf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.ppf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
-<p>Percent point function (inverse cdf)</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Percent point function (inverse cdf)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.getExpVal">
 <code class="descname">getExpVal</code><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist.getExpVal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.getExpVal" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>method</em></p>
-<p>Expected value of distribution</p>
+<dd><p><em>method</em> &#8211; Expected value of distribution</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.gerRthValue">
 <code class="descname">gerRthValue</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.gerRthValue" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>method</em></p>
-<p>Rth percentile value of distribution</p>
+<dd><p><em>method</em> &#8211; Rth percentile value of distribution</p>
 </dd></dl>
 
 <p>Class initialization function</p>
@@ -242,11 +236,11 @@ for x</li>
 </table>
 <p class="rubric">Example</p>
 <p>To create an ecmDist object, you can use either the PDF:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist1</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="n">my_PDF</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist1</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="n">my_PDF</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or the CDF:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist2</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">my_CDF</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist2</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">my_CDF</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -258,8 +252,7 @@ for x</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ev</strong> &#8211;
-Expected value (mean)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ev</strong> &#8211; Expected value (mean)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
@@ -267,7 +260,7 @@ Expected value (mean)</td>
 </table>
 <p class="rubric">Example</p>
 <p>In order to find the expected value from the distribution</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vExp</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vExp</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -283,8 +276,7 @@ Expected value (mean)</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r</strong> (<em>float</em>) &#8211; Target percentile (0 &lt; r &lt; 1)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>xr</strong> &#8211;
-Response for rth percentile</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>xr</strong> &#8211; Response for rth percentile</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
@@ -292,7 +284,7 @@ Response for rth percentile</td>
 </table>
 <p class="rubric">Example</p>
 <p>In order to find the 95th percentile value from the distribution:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v95</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v95</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -314,8 +306,7 @@ Response for rth percentile</td>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>block_maxima</strong> &#8211;
-Block maxima (i.e. largest peak in each block)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>block_maxima</strong> &#8211; Block maxima (i.e. largest peak in each block)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -340,8 +331,7 @@ distribution function via numerical differentiation.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdf</strong> &#8211;
-Probability density function values at x</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdf</strong> &#8211; Probability density function values at x</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -376,12 +366,9 @@ short-term extreme distribution. The methods are:
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>fig1</strong> (<em>matplotlib.pyplot figure</em>) &#8211;
-Figure containing the comparison of peaks distribution.</li>
-<li><strong>fig2</strong> (<em>matplotlib.pyplot figure</em>) &#8211;
-Figure containing the comparison of short-term extreme distribution</li>
-<li><strong>expected_value_of_short_term_extreme</strong> (<em>dictionary</em>) &#8211;
-Expected value of the short-term extreme distribution from each method</li>
+<li><strong>fig1</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of peaks distribution.</li>
+<li><strong>fig2</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of short-term extreme distribution</li>
+<li><strong>expected_value_of_short_term_extreme</strong> (<em>dictionary</em>) &#8211; Expected value of the short-term extreme distribution from each method</li>
 </ul>
 </p>
 </td>
@@ -407,10 +394,8 @@ for entire population wanted.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>x_cdf</strong> (<em>np.array</em>) &#8211;
-x locations</li>
-<li><strong>cdf</strong> (<em>np.array</em>) &#8211;
-CDF values at x_cdf</li>
+<li><strong>x_cdf</strong> (<em>np.array</em>) &#8211; x locations</li>
+<li><strong>cdf</strong> (<em>np.array</em>) &#8211; CDF values at x_cdf</li>
 </ul>
 </p>
 </td>
@@ -437,10 +422,8 @@ for entire population wanted.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211;
-Bin (x) locations</li>
-<li><strong>pdf</strong> (<em>np.array</em>) &#8211;
-PDF values at x_pdf</li>
+<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211; Bin (x) locations</li>
+<li><strong>pdf</strong> (<em>np.array</em>) &#8211; PDF values at x_pdf</li>
 </ul>
 </p>
 </td>
@@ -469,14 +452,10 @@ locFlag = 1: Location parameter of Weibull distribution is calculated in fit</li
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the peaks.</li>
-<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211;
-Parameters of peak&#8217;s distribution (Weibull)
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
 [shape_a, shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -508,20 +487,14 @@ zero.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the peaks.</li>
-<li><strong>subset_shape_params</strong> (<em>np.array length 7</em>) &#8211;
-Shape parameter for each of the seven Weibull fits for the
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>subset_shape_params</strong> (<em>np.array length 7</em>) &#8211; Shape parameter for each of the seven Weibull fits for the
 subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
-<li><strong>subset_scale_params</strong> (<em>np.array length 7</em>) &#8211;
-Scale parameter for each of the seven Weibull fits for the
+<li><strong>subset_scale_params</strong> (<em>np.array length 7</em>) &#8211; Scale parameter for each of the seven Weibull fits for the
 subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
-<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211;
-Parameters of peak&#8217;s distribution (Weibull)
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
 [shape_a, shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -548,15 +521,11 @@ method and the Generalized Extreme Value distribution.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>ste_params</strong> (<em>np.array length 3</em>) &#8211;
-Parameters of the short term extreme distribution (Generalized
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of the short term extreme distribution (Generalized
 Extreme Value) [shape_c, loc, scale].</li>
-<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211;
-Block maxima (i.e. largest peak in each block).</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
 </ul>
 </p>
 </td>
@@ -582,15 +551,11 @@ method and the Gumbel (right) distribution.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>ste_params</strong> (<em>np.array length 2</em>) &#8211;
-Parameters of the short term extreme distribution (Gumbel_r)
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 2</em>) &#8211; Parameters of the short term extreme distribution (Gumbel_r)
 [loc, scale].</li>
-<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211;
-Block maxima (i.e. largest peak in each block).</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
 </ul>
 </p>
 </td>
@@ -618,16 +583,11 @@ threshold method.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>ecmDist object</em>) &#8211;
-Probability distribution of the peaks.</li>
-<li><strong>peaksOverThreshold_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
-Probaility distribution of the peaks over threshold.</li>
-<li><strong>pot_params</strong> (<em>np.array length 3</em>) &#8211;
-Parameters of peak over threshold&#8217;s distribution (Generalized
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>peaksOverThreshold_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probaility distribution of the peaks over threshold.</li>
+<li><strong>pot_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of peak over threshold&#8217;s distribution (Generalized
 Pareto)[shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -653,10 +613,8 @@ of a zero-centered response time-series</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>t_peaks</strong> (<em>np.array</em>) &#8211;
-Time vector for peaks</li>
-<li><strong>peaks</strong> (<em>np.array</em>) &#8211;
-Peaks of the response time-series</li>
+<li><strong>t_peaks</strong> (<em>np.array</em>) &#8211; Time vector for peaks</li>
+<li><strong>peaks</strong> (<em>np.array</em>) &#8211; Peaks of the response time-series</li>
 </ul>
 </p>
 </td>
@@ -687,8 +645,7 @@ goodness of fit plots for entire population wanted.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fgof</strong> &#8211;
-Figure containing the four goodness of fit subplots.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fgof</strong> &#8211; Figure containing the four goodness of fit subplots.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.pyplot figure</p>
@@ -713,10 +670,10 @@ First line is header with same delimiter as data, followed by data.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;
-Data as a dictionary:</p>
-<blockquote>
-<div><dl class="docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;</p>
+<dl class="docutils">
+<dt>Data as a dictionary:</dt>
+<dd><dl class="first last docutils">
 <dt>keys: str</dt>
 <dd><p class="first last">Header name for each column.</p>
 </dd>
@@ -724,7 +681,8 @@ Data as a dictionary:</p>
 <dd><p class="first last">Column data</p>
 </dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </p>
 </td>
 </tr>
@@ -750,8 +708,7 @@ density function via numerical integration.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> &#8211;
-Cumulative distribution function values at x</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> &#8211; Cumulative distribution function values at x</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -780,194 +737,11 @@ Cumulative distribution function values at x</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="WDRT.longTermExtreme.fullLongTermSurvival.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/longTermExtreme.html#fullLongTermSurvival.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.longTermExtreme.fullLongTermSurvival.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Survival function (S(x) = 1 - F(x))</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np array</em>) &#8211; Points at which to evaluate survival function.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>S</strong> &#8211;
-Survival function value(s) at x.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np array</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 </div>
-<div class="section" id="module-WDRT.NDBCdata">
-<span id="wdrt-ndbcdata-module"></span><h2>WDRT.NDBCdata module<a class="headerlink" href="#module-WDRT.NDBCdata" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="WDRT.NDBCdata.fetchFromWeb">
-<code class="descclassname">WDRT.NDBCdata.</code><code class="descname">fetchFromWeb</code><span class="sig-paren">(</span><em>buoyNum</em>, <em>savePath='./'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#fetchFromWeb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.fetchFromWeb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches ndbc.noaa.gov for the historical spectral wave density
-data of a given device and writes the annual files from the website
-to a single .txt file, and stores the values in an array</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buoyNum</strong> (<em>string</em>) &#8211; Buoy number to download data for. Can find the appropriate buoy at
-<a class="reference external" href="http://www.ndbc.noaa.gov">http://www.ndbc.noaa.gov</a>. Only buoys with historical data (i.e. have a
-<a class="reference external" href="http://www.ndbc.noaa.gov/station_history.php">http://www.ndbc.noaa.gov/station_history.php</a>?station=##### page) can be
-used for environmental contour analyses.</li>
-<li><strong>savePath</strong> (<em>string</em>) &#8211; Relative path to place directory with data files.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>swdList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays of the spectral wave density data,
-separated by year.</li>
-<li><strong>freqList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays that contain the frequency values
-for each year</li>
-<li><strong>dateList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays of the date values for each line of
-spectral data, separated by year.</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>To download data from the NDBC website for the first time</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">NDBCdata</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">swdList</span><span class="p">,</span> <span class="n">freqList</span><span class="p">,</span> <span class="n">dateList</span> <span class="o">=</span> <span class="n">NDBCdata</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">(</span><span class="mi">46022</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="WDRT.NDBCdata.getDateNums">
-<code class="descclassname">WDRT.NDBCdata.</code><code class="descname">getDateNums</code><span class="sig-paren">(</span><em>dateArr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#getDateNums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.getDateNums" title="Permalink to this definition">¶</a></dt>
-<dd><p>datetime objects</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dateArr</strong> (<em>np.array</em>) &#8211; Array of a specific years date vals from NDBC.fetchFromWeb</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>dateNum</strong> &#8211;
-Array of datetime objects.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="WDRT.NDBCdata.getStats">
-<code class="descclassname">WDRT.NDBCdata.</code><code class="descname">getStats</code><span class="sig-paren">(</span><em>swdArr</em>, <em>freqArr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#getStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.getStats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Significant wave height and energy period</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>swdArr</strong> (<em>np.array</em>) &#8211; Numpy array of the spectral wave density data for a specific year</li>
-<li><strong>freqArr</strong> (<em>np.array</em>) &#8211; Numpy array that contains the frequency values for a specific year</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hm0</strong> (<em>list</em>) &#8211;
-Significant wave height.</li>
-<li><strong>Te</strong> (<em>list</em>) &#8211;
-Energy period.</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="WDRT.NDBCdata.loadFromText">
-<code class="descclassname">WDRT.NDBCdata.</code><code class="descname">loadFromText</code><span class="sig-paren">(</span><em>dirPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#loadFromText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.loadFromText" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads NDBC data previously downloaded to a series of text files in the
-specified directory.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirPath</strong> (<em>string</em>) &#8211; Relative path to directory containing NDBC text files (created by
-NBDCdata.fetchFromWeb)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>swdList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays of the spectral wave density data,
-separated by year.</li>
-<li><strong>freqList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays that contain the frequency values
-for each year</li>
-<li><strong>dateList</strong> (<em>list</em>) &#8211;
-List that contains numpy arrays of the date values for each line of
-spectral data, separated by year.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>To load data from previously downloaded files</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">NDBCdata</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">swdList</span><span class="p">,</span> <span class="n">freqList</span><span class="p">,</span> <span class="n">dateList</span> <span class="o">=</span> <span class="n">NDBCdata</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">(</span><span class="s1">&#39;./NDBC460022&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="WDRT.NDBCdata.prepData">
-<code class="descclassname">WDRT.NDBCdata.</code><code class="descname">prepData</code><span class="sig-paren">(</span><em>swdList</em>, <em>freqList</em>, <em>dateList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/NDBCdata.html#prepData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.NDBCdata.prepData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs getStats and getDataNums for full set of data, then removes any
-NaNs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>swdList</strong> (<em>list</em>) &#8211; List that contains numpy arrays of the spectral wave density data,
-separated by year.</li>
-<li><strong>freqList</strong> (<em>list</em>) &#8211; List that contains numpy arrays that contain the frequency values
-for each year.</li>
-<li><strong>dateList</strong> (<em>list</em>) &#8211; List of date vals from NDBC.fetchFromWeb</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hm0</strong> (<em>list</em>) &#8211;
-Significant wave height.</li>
-<li><strong>Te</strong> (<em>list</em>) &#8211;
-Energy period.</li>
-<li><strong>dateNum</strong> (<em>list</em>) &#8211;
-List of datetime objects.</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>To process data pulled from NDBC website</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.NDBCdata</span> <span class="kn">as</span> <span class="nn">NDBCdata</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">swdList</span><span class="p">,</span> <span class="n">freqList</span><span class="p">,</span> <span class="n">dateVals</span> <span class="o">=</span> <span class="n">NDBCdata</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">(</span><span class="mi">46089</span><span class="p">,</span> <span class="n">savePath</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">DateNum</span> <span class="o">=</span> <span class="n">NDBCdata</span><span class="o">.</span><span class="n">prepData</span><span class="p">(</span><span class="n">swdList</span><span class="p">,</span> <span class="n">freqList</span><span class="p">,</span> <span class="n">dateVals</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
+<div class="section" id="wdrt-ndbcdata-module">
+<h2>WDRT.NDBCdata module<a class="headerlink" href="#wdrt-ndbcdata-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-WDRT.ESSC">
 <span id="wdrt-essc-module"></span><h2>WDRT.ESSC module<a class="headerlink" href="#module-WDRT.ESSC" title="Permalink to this headline">¶</a></h2>
@@ -986,8 +760,7 @@ List of datetime objects.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Hs_Sample</strong> &#8211;
-points sampled along return contour</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Hs_Sample</strong> &#8211; points sampled along return contour</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">nparray</p>
@@ -1023,11 +796,9 @@ contour, can be a scalar or a vector.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
-Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
-Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
 return to original input orientation.</li>
 </ul>
 </p>
@@ -1037,9 +808,9 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">WDRT.NDBCdata</span> <span class="kn">as</span> <span class="nn">NDBCdata</span>
-<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.NDBCdata</span> <span class="k">as</span> <span class="nn">NDBCdata</span>
+<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.ndbc.noaa.gov/station_history.php?station=46022&quot;</span>
@@ -1120,12 +891,9 @@ contour, can be a scalar or a vector.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_samples</strong> (<em>np.array</em>) &#8211;
-Vector of Hs values for each sample point.</li>
-<li><strong>Te_samples</strong> (<em>np.array</em>) &#8211;
-Vector of Te values for each sample point.</li>
-<li><strong>Weight_points</strong> (<em>np.array</em>) &#8211;
-Vector of probabilistic weights for each sampling point
+<li><strong>Hs_samples</strong> (<em>np.array</em>) &#8211; Vector of Hs values for each sample point.</li>
+<li><strong>Te_samples</strong> (<em>np.array</em>) &#8211; Vector of Te values for each sample point.</li>
+<li><strong>Weight_points</strong> (<em>np.array</em>) &#8211; Vector of probabilistic weights for each sampling point
 to be used in risk calculations.</li>
 </ul>
 </p>
@@ -1135,7 +903,7 @@ to be used in risk calculations.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To get weighted samples from a set of contours:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Load data from existing text files</span>
@@ -1205,8 +973,7 @@ the mu fitting function.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mu_fit</strong> &#8211;
-Array of fitted mu values.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>mu_fit</strong> &#8211; Array of fitted mu values.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -1234,10 +1001,8 @@ coefficients, and shift. Used in the ESSC and getSamples functions.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>original1</strong> (<em>np.array</em>) &#8211;
-Hs values following rotation from principal component space.</li>
-<li><strong>original2</strong> (<em>np.array</em>) &#8211;
-T values following rotation from principal component space.</li>
+<li><strong>original1</strong> (<em>np.array</em>) &#8211; Hs values following rotation from principal component space.</li>
+<li><strong>original2</strong> (<em>np.array</em>) &#8211; T values following rotation from principal component space.</li>
 </ul>
 </p>
 </td>
@@ -1263,8 +1028,7 @@ the sigma fitting function.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sigma_fit</strong> &#8211;
-Array of fitted sigma values.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sigma_fit</strong> &#8211; Array of fitted sigma values.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -1300,11 +1064,9 @@ shallow water:h/lambda &lt;= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>SteepH</strong> (<em>np.array</em>) &#8211;
-H values [m] that correspond to the T_mesh values creating the
+<li><strong>SteepH</strong> (<em>np.array</em>) &#8211; H values [m] that correspond to the T_mesh values creating the
 steepness curve.</li>
-<li><strong>T_steep</strong> (<em>np.array</em>) &#8211;
-T values [sec] over which the steepness curve is defined.</li>
+<li><strong>T_steep</strong> (<em>np.array</em>) &#8211; T values [sec] over which the steepness curve is defined.</li>
 </ul>
 </p>
 </td>
@@ -1313,7 +1075,7 @@ T values [sec] over which the steepness curve is defined.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To find limit the steepness of waves on a contour by breaking:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">BreakingSteepness</span>
 
 <span class="n">data_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;NDBC46022_1996_2012_Hs_Te.npz&#39;</span><span class="p">)</span>
@@ -1340,9 +1102,10 @@ T values [sec] over which the steepness curve is defined.</li>
 </div>
 <div class="section" id="wdrt-mler-module">
 <h2>WDRT.MLER module<a class="headerlink" href="#wdrt-mler-module" title="Permalink to this headline">¶</a></h2>
-<p><em>Currently written in MATLAB and will be converted to Python in the near future</em></p>
-<p>To improve the model efficiency and reduce required computational time or wave tank testing time, the shipping and offshore industry often perform their mid- and high-fidelity simulations and experimental wave tank tests using an equivalent design wave profile generated from (linear) low-fidelity model solutions. The MLER module was developed based on the most likely extreme response method, which  uses the linear RAO of the device and the spectrum for the sea state of interest to produce a focused wave profile that gives the largest response. Because it uses linear theory, the underlying assumption is that the higher-order effects are small in comparison to the linear effects.</p>
-<p>The source code can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/</span></code> folder and <code class="docutils literal"><span class="pre">testrun.m</span></code> is an example with limited comments.</p>
+<p>To improve the model efficiency and reduce required computational time or wave tank testing time, the shipping and offshore industry often perform their mid- and high-fidelity simulations and experimental wave tank tests using an equivalent design wave profile generated from (linear) low-fidelity model solutions. The MLER module was developed based on the most likely extreme response method, which uses the linear RAO of the device and the spectrum for the sea state of interest to produce a focused wave profile that gives the largest response.
+This approach does not require an input time series for the device.
+Because it uses linear theory, the underlying assumption is that the higher-order effects are small in comparison to the linear effects.</p>
+<p>Users are referred to the source and examples section for more information about usage. The source code also includes a Python egg in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/dist</span></code> for use with <code class="docutils literal"><span class="pre">easy_install</span></code>.</p>
 </div>
 </div>
 
