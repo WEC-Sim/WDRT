@@ -24,6 +24,7 @@ Contributors
 * Aubrey Eckert-Gallup, Sandia National Laboratories
 * Jennifer van Rij, National Renewable Energy Laboratory
 * Yi-Hsiang Yu, National Renewable Energy Laboratory
+* Eliot Quon, National Renewable Energy Laboratory
 
 Contents
 ========

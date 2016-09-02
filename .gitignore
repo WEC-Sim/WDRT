@@ -1,2 +1,7 @@
+.*
+
 *.pyc
 _build
+
+WDRT/MLER_toolbox/build/
+
