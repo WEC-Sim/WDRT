@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: WDRT-MLER
+Version: 0.1
+Summary: WEC Design Response Toolbox (WDRT) implementation of the Most Likely Extreme Response (MLER) method
+Home-page: http://wec-sim.github.io/WDRT/index.html
+Author: Eliot Quon
+Author-email: eliot.quon@nrel.gov
+License: Apache License, Version 2.0
+Description: UNKNOWN
+Platform: UNKNOWN
