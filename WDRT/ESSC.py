@@ -620,8 +620,8 @@ class ESSC:
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T, self.Hs, 'k-', label='100 year contour')
-        #plt.plot(self.T_ReturnContours, Hs_ReturnContours_Steep, '-', color='0.65',
-        #label='100 year contour w/ breaking')
+        plt.plot(self.T_ReturnContours, Hs_ReturnContours_Steep, '-', color='0.65',
+        label='100 year contour w/ breaking')
         plt.plot(self.T_sampleFSS, self.Hs_sampleFSS, 'ro', label='full sea state samples')
         plt.plot(self.T_sampleCA, self.Hs_sampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
