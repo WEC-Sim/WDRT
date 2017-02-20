@@ -24,13 +24,7 @@ from sklearn.decomposition import PCA
 
 class ESSC:
 
-    Hs = None
-    T = None
-    Hs_sampleFSS = None
-    T_sampleFSS = None 
-    Weight_sampleFSS = None
-
-    def __init__(self,depth,size_bin,nb_steps,time_ss,time_r,buoy):
+    def __init__(self,depth,size_bin,buoy):
         '''
         Parameters
         ___________
@@ -51,59 +45,12 @@ class ESSC:
         '''
 
         self.depth = depth
-        self.size_bin = size_bin
-        self.nb_steps = nb_steps
-        self.time_r = time_r
-        self.time_ss = time_ss
         self.buoy = buoy
 
-        # pca = PCA(n_components=2)
-        # pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
-        # coeff = abs(pca.components_)  # Apply correct/expected sign convention
-        # coeff[1, 1] = -1.0 * coeff[1, 1]  # Apply correct/expected sign convention
-
-        # Comp1_Comp2 = np.dot (np.array((self.buoy.Hs, self.buoy.T)).T, coeff)
-
-        # shift = abs(min(Comp1_Comp2[:, 1])) + 0.1  # Calculate shift
+        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
 
 
-        # shift = abs(min(Comp1_Comp2[:, 1])) + 0.1  # Calculate shift
-        # # Apply shift to Component 2 to make all values positive
-        # Comp1_Comp2[:, 1] = Comp1_Comp2[:, 1] + shift
-
-        # Comp1_Comp2_sort = Comp1_Comp2[Comp1_Comp2[:, 0].argsort(), :]
-
-        # # Fitting distribution of component 1
-        # comp1_params = stats.invgauss.fit(Comp1_Comp2_sort[:, 0], floc=0)
-
-        # n_data = len(self.buoy.Hs)  # Number of observations
-
-        # edges = np.hstack((np.arange(0, self.size_bin * np.ceil(n_data / self.size_bin),
-        #                  self.size_bin), n_data + 1))
-        # ranks = np.arange(n_data)
-        # hist_count, _ = np.histogram(ranks, bins=edges)
-        # bin_inds = np.digitize(ranks, bins=edges) - 1
-        # Comp2_bins_params = np.zeros((2, int(max(bin_inds) + 1)))
-        # Comp1_mean = np.array([])
-
-
-        # for bin_loop in range(np.max(bin_inds) + 1):
-        #     mask_bins = bin_inds == bin_loop  # Find location of bin values
-        #     Comp2_bin = np.sort(Comp1_Comp2_sort[mask_bins, 1])
-        #     Comp1_mean = np.append(Comp1_mean,
-        #                            np.mean(Comp1_Comp2_sort[mask_bins, 0]))
-        #     # Calcualte normal distribution parameters for C2 in each bin
-        #     Comp2_bins_params[:, bin_loop] = np.array(stats.norm.fit(Comp2_bin))
-
-        # mu_param, pcov = optim.curve_fit(mu_fcn,
-        #                                          Comp1_mean.T, Comp2_bins_params[0, :])
-
-        # sigma_param = sigma_fits(Comp1_mean, Comp2_bins_params[1, :])
-
-        self.coeff, self.shift, self.comp1_params, self.sigma_param , self.mu_param = self.generateParams()
-
-
-    def generateParams(self):
+    def __generateParams(self,size_bin):
         pca = PCA(n_components=2)
         pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
         coeff = abs(pca.components_)  # Apply correct/expected sign convention
@@ -125,8 +72,8 @@ class ESSC:
 
         n_data = len(self.buoy.Hs)  # Number of observations
 
-        edges = np.hstack((np.arange(0, self.size_bin * np.ceil(n_data / self.size_bin),
-                         self.size_bin), n_data + 1))
+        edges = np.hstack((np.arange(0, size_bin * np.ceil(n_data / size_bin),
+                         size_bin), n_data + 1))
         ranks = np.arange(n_data)
         hist_count, _ = np.histogram(ranks, bins=edges)
         bin_inds = np.digitize(ranks, bins=edges) - 1
@@ -142,10 +89,10 @@ class ESSC:
             # Calcualte normal distribution parameters for C2 in each bin
             Comp2_bins_params[:, bin_loop] = np.array(stats.norm.fit(Comp2_bin))
 
-        mu_param, pcov = optim.curve_fit(mu_fcn,
+        mu_param, pcov = optim.curve_fit(self.__mu_fcn,
                                                  Comp1_mean.T, Comp2_bins_params[0, :])
 
-        sigma_param = sigma_fits(Comp1_mean, Comp2_bins_params[1, :])
+        sigma_param = self.__sigma_fits(Comp1_mean, Comp2_bins_params[1, :])
 
         return coeff, shift, comp1_params, sigma_param, mu_param
 
@@ -153,7 +100,7 @@ class ESSC:
 
 
 
-    def getContours(self):
+    def getContours(self, time_ss,time_r, nb_steps):
         '''WDRT Extreme Sea State Contour (ESSC) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -210,7 +157,7 @@ class ESSC:
             contour_probs = 10 ** (-1 * np.array([1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]))
             # Probabilities defining sampling contour bounds.
             random_seed = 2  # Random seed for sample generation
-            Hs_sample, T_sample, Weight_sample = ESSC.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
+            Hs_Sample, T_Sample, Weight_Sample = ESSC.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
         '''
 
 
@@ -218,9 +165,9 @@ class ESSC:
         # IFORM
         # Failure probability for the desired return period (time_R) given the
         # duration of the measurements (time_ss)
-        p_f = 1 / (365 * (24 / self.time_ss) * self.time_r)
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
         beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
-        theta = np.linspace(0, 2 * np.pi, num = self.nb_steps)
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
         # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
         U1 = beta * np.cos(theta)
         U2 = beta * np.sin(theta)
@@ -229,9 +176,9 @@ class ESSC:
                                      mu= self.comp1_params[0], loc=0,
                                      scale= self.comp1_params[2])
         # Calculate mu values at each point on the circle
-        mu_R = mu_fcn(Comp1_R, self.mu_param[0], self.mu_param[1])
+        mu_R = self.__mu_fcn(Comp1_R, self.mu_param[0], self.mu_param[1])
         # Calculate sigma values at each point on the circle
-        sigma_R = sigma_fcn(self.sigma_param, Comp1_R)
+        sigma_R = self.__sigma_fcn(self.sigma_param, Comp1_R)
         # Use calculated mu and sigma values to calculate C2 along the contour
         Comp2_R = stats.norm.ppf(stats.norm.cdf(U2, loc=0, scale=1),
                                  loc=mu_R, scale=sigma_R)
@@ -242,7 +189,7 @@ class ESSC:
         # function
 
         # Calculate Hs and T along the contour
-        Hs_Return, T_Return = princomp_inv(Comp1_R, Comp2_R, self.coeff, self.shift)
+        Hs_Return, T_Return = self.__princomp_inv(Comp1_R, Comp2_R, self.coeff, self.shift)
         Hs_Return = np.maximum(0, Hs_Return)  # Remove negative values
         self.Hs_ReturnContours = Hs_Return
         self.T_ReturnContours = T_Return
@@ -268,9 +215,9 @@ class ESSC:
             generated.
         Returns
         -------
-        Hs_samples: np.array
+        Hs_Samples: np.array
             Vector of Hs values for each sample point.
-        Te_samples: np.array
+        Te_Samples: np.array
             Vector of Te values for each sample point.
         Weight_points: np.array
             Vector of probabilistic weights for each sampling point
@@ -317,7 +264,7 @@ class ESSC:
             contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))
             # Probabilities defining sampling contour bounds.
             random_seed = 2 # Random seed for sample generation
-            Hs_sample,T_sample,Weight_points = ESSC.getSamples(Hs,T,
+            Hs_Sample,T_Sample,Weight_points = ESSC.getSamples(Hs,T,
             num_contour_points,contour_probs,random_seed,depth,size_bin,nb_steps,
             Time_SS,Time_r)
         '''
@@ -336,8 +283,8 @@ class ESSC:
         C1_zeroline_prob = stats.invgauss.cdf(Comp_zeroline[:, 0],
                                               mu = self.comp1_params[0], loc=0,
                                               scale = self.comp1_params[2])
-        mu_zeroline = mu_fcn(Comp_zeroline[:, 0], self.mu_param[0], self.mu_param[1])
-        sigma_zeroline = sigma_fcn(self.sigma_param, Comp_zeroline[:, 0])
+        mu_zeroline = self.__mu_fcn(Comp_zeroline[:, 0], self.mu_param[0], self.mu_param[1])
+        sigma_zeroline = self.__sigma_fcn(self.sigma_param, Comp_zeroline[:, 0])
         C2_zeroline_prob = stats.norm.cdf(Comp_zeroline[:, 1],
                                           loc=mu_zeroline, scale=sigma_zeroline)
         C1_normzeroline = stats.norm.ppf(C1_zeroline_prob, 0, 1)
@@ -372,21 +319,21 @@ class ESSC:
             Theta_zeroline < 0] + 2 * np.pi
 
 
-        Sample_alpha, Sample_beta, Weight_points = self.generateData(beta_lines,
+        Sample_alpha, Sample_beta, Weight_points = self.__generateData(beta_lines,
             Rho_zeroline, Theta_zeroline, num_contour_points,contour_probs,random_seed)
 
-        Hs_sample, T_sample = self.transformSamples(Sample_alpha, Sample_beta)
+        Hs_Sample, T_Sample = self.__transformSamples(Sample_alpha, Sample_beta)
 
-        self.Hs_sampleFSS = Hs_sample
-        self.T_SampleFSS = T_sample
-        self.Weight_sampleFSS = Weight_points
-
-
-
-        return Hs_sample, T_sample, Weight_points
+        self.Hs_SampleFSS = Hs_Sample
+        self.T_SampleFSS = T_Sample
+        self.Weight_SampleFSS = Weight_points
 
 
-    def generateData(beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs,random_seed):
+
+        return Hs_Sample, T_Sample, Weight_points
+
+
+    def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs,random_seed):
         """
         Calculates radius, angle, and weight for each sample point
         """
@@ -441,7 +388,7 @@ class ESSC:
         return Sample_alpha, Sample_beta, Weight_points
 
 
-    def transformSamples(self, Sample_alpha, Sample_beta):
+    def __transformSamples(self, Sample_alpha, Sample_beta):
         Sample_U1 = Sample_beta * np.cos(Sample_alpha)
         Sample_U2 = Sample_beta * np.sin(Sample_alpha)
 
@@ -449,14 +396,14 @@ class ESSC:
         Comp1_sample = stats.invgauss.ppf(stats.norm.cdf(Sample_U1, loc=0, scale=1),
                                           mu=self.comp1_params[0], loc=0,
                                           scale=self.comp1_params[2])
-        mu_sample = mu_fcn(Comp1_sample, self.mu_param[0], self.mu_param[1])
+        mu_sample = self.__mu_fcn(Comp1_sample, self.mu_param[0], self.mu_param[1])
         # Calculate sigma values at each point on the circle
-        sigma_sample = sigma_fcn(self.sigma_param, Comp1_sample)
+        sigma_sample = self.__sigma_fcn(self.sigma_param, Comp1_sample)
         # Use calculated mu and sigma values to calculate C2 along the contour
         Comp2_sample = stats.norm.ppf(stats.norm.cdf(Sample_U2, loc=0, scale=1),
                                       loc=mu_sample, scale=sigma_sample)
         # Sample transformation into Hs-T space
-        Hs_Sample, T_Sample = princomp_inv(
+        Hs_Sample, T_Sample = self.__princomp_inv(
             Comp1_sample, Comp2_sample, self.coeff, self.shift)
 
         return Hs_Sample, T_Sample
@@ -497,6 +444,9 @@ class ESSC:
 
         si = interp.interp1d(x, y)
         Hs_SampleCA = si(T_Sample)
+
+        self.T_SampleCA = T_Sample
+        self.Hs_SampleCA = Hs_SampleCA
         return Hs_SampleCA
 
 
@@ -572,11 +522,14 @@ class ESSC:
 
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
-        self.SteepH = SteepH
         return SteepH
 
+
+    #TODO
+    #Make Hs_ReturnContours_Steep saveable and plottable
     def saveData(self):
-        with h5py.File('Data/test.h5', w) as f:
+        fileString = 'Data/envSamples_NDBC' +  str(self.buoy.buoyNum) + '.h5'
+        with h5py.File(fileString, 'w') as f:
                 # NDBC data
             f_Hs = f.create_dataset('Hs', data= self.buoy.Hs)
             f_Hs.attrs['units'] = 'm'
@@ -592,26 +545,26 @@ class ESSC:
             f_Hs_ReturnContours = f.create_dataset('Hs_ReturnContours', data=self.Hs_ReturnContours)
             f_Hs_ReturnContours.attrs['units'] = 'm'
             f_Hs_ReturnContours.attrs['description'] = 'contours, significant wave height'
-            f_Hs_ReturnContours_Steep = f.create_dataset(
-              'Hs_ReturnContours_Steep', data = Hs_ReturnContours_Steep)
-            f_Hs_ReturnContours_Steep.attrs['units'] = 'm'
-            f_Hs_ReturnContours_Steep.attrs['description'] = 'contours (steepness limited), significant wave height'
+            # f_Hs_ReturnContours_Steep = f.create_dataset(
+            #   'Hs_ReturnContours_Steep', data = Hs_ReturnContours_Steep)
+            # f_Hs_ReturnContours_Steep.attrs['units'] = 'm'
+            # f_Hs_ReturnContours_Steep.attrs['description'] = 'contours (steepness limited), significant wave height'
 
             # Samples for full sea state long term analysis
-            f_Hs_sampleFSS = f.create_dataset('Hs_sampleFSS', data= self.Hs_sampleFSS)
+            f_Hs_sampleFSS = f.create_dataset('Hs_sampleFSS', data= self.Hs_SampleFSS)
             f_Hs_sampleFSS.attrs['units'] = 'm'
             f_Hs_sampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-            f_T_sampleFSS = f.create_dataset('T_sampleFSS', data= self.T_sampleFSS)
+            f_T_sampleFSS = f.create_dataset('T_sampleFSS', data=self.T_SampleFSS)
             f_T_sampleFSS.attrs['units'] = 's'
             f_T_sampleFSS.attrs['description'] = 'full sea state energy period samples'
-            f_Weight_sampleFSS = f.create_dataset('Weight_sampleFSS', data = self.Weight_sampleFSS)
+            f_Weight_sampleFSS = f.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
             f_Weight_sampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
             # Samples for contour approach long term analysis
-            f_Hs_sampleCA = f.create_dataset('Hs_sampleCA', data= self.Hs_sampleCA)
+            f_Hs_sampleCA = f.create_dataset('Hs_SampleCA', data= self.Hs_SampleCA)
             f_Hs_sampleCA.attrs['units'] = 'm'
             f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-            f_T_sampleCA = f.create_dataset('T_sampleCA', data= self.T_sampleCA)
+            f_T_sampleCA = f.create_dataset('T_SampleCA', data= self.T_SampleCA)
             f_T_sampleCA.attrs['units'] = 's'
             f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
@@ -619,216 +572,217 @@ class ESSC:
     def plotData(self):
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
-        plt.plot(self.T, self.Hs, 'k-', label='100 year contour')
-        plt.plot(self.T_ReturnContours, Hs_ReturnContours_Steep, '-', color='0.65',
-        label='100 year contour w/ breaking')
-        plt.plot(self.T_sampleFSS, self.Hs_sampleFSS, 'ro', label='full sea state samples')
-        plt.plot(self.T_sampleCA, self.Hs_sampleCA, 'y^', label='contour approach samples')
+        plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+        # plt.plot(self.T_ReturnContours, Hs_ReturnContours_Steep, '-', color='0.65',
+        # label='100 year contour w/ breaking')
+        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
         plt.ylabel('Sig. wave height, $H_s$ [m]')
+        
         plt.show()
 
 
 
-def mu_fcn(x, mu_p_1, mu_p_2):
-    ''' Linear fitting function for the mean(mu) of Component 2 normal
-    distribution as a function of the Component 1 mean for each bin.
-    Used in the ESSC and getSamples functions.
-    Parameters
-    ----------
-    mu_p: np.array
-           Array of mu fitting function parameters.
-    x: np.array
-       Array of values (Component 1 mean for each bin) at which to evaluate
-       the mu fitting function.
-    Returns
-    -------
-    mu_fit: np.array
-            Array of fitted mu values.
-    '''
-    mu_fit = mu_p_1 * x + mu_p_2
-    return mu_fit
+    def __mu_fcn(self,x, mu_p_1, mu_p_2):
+        ''' Linear fitting function for the mean(mu) of Component 2 normal
+        distribution as a function of the Component 1 mean for each bin.
+        Used in the ESSC and getSamples functions.
+        Parameters
+        ----------
+        mu_p: np.array
+               Array of mu fitting function parameters.
+        x: np.array
+           Array of values (Component 1 mean for each bin) at which to evaluate
+           the mu fitting function.
+        Returns
+        -------
+        mu_fit: np.array
+                Array of fitted mu values.
+        '''
+        mu_fit = mu_p_1 * x + mu_p_2
+        return mu_fit
 
 
-def sigma_fcn(sig_p, x):
-    '''Quadratic fitting formula for the standard deviation(sigma) of Component
-    2 normal distribution as a function of the Component 1 mean for each bin.
-    Used in the ESSC and getSamples functions.
-    Parameters
-    ----------
-    sig_p: np.array
-           Array of sigma fitting function parameters.
-    x: np.array
-       Array of values (Component 1 mean for each bin) at which to evaluate
-       the sigma fitting function.
-    Returns
-    -------
-    sigma_fit: np.array
-               Array of fitted sigma values.
-    '''
-    sigma_fit = sig_p[0] * x**2 + sig_p[1] * x + sig_p[2]
-    return sigma_fit
+    def __sigma_fcn(self,sig_p, x):
+        '''Quadratic fitting formula for the standard deviation(sigma) of Component
+        2 normal distribution as a function of the Component 1 mean for each bin.
+        Used in the ESSC and getSamples functions.
+        Parameters
+        ----------
+        sig_p: np.array
+               Array of sigma fitting function parameters.
+        x: np.array
+           Array of values (Component 1 mean for each bin) at which to evaluate
+           the sigma fitting function.
+        Returns
+        -------
+        sigma_fit: np.array
+                   Array of fitted sigma values.
+        '''
+        sigma_fit = sig_p[0] * x**2 + sig_p[1] * x + sig_p[2]
+        return sigma_fit
 
 
-def princomp_inv(princip_data1, princip_data2, coeff, shift):
-    '''Takes the inverse of the principal component rotation given data,
-    coefficients, and shift. Used in the ESSC and getSamples functions.
-    Parameters
-    ----------
-    princip_data1: np.array
-                   Array of Component 1 values.
-    princip_data2: np.array
-                   Array of Component 2 values.
-    coeff: np.array
-           Array of principal component coefficients.
-    shift: float
-           Shift applied to Component 2 to make all values positive.
-    Returns
-    -------
-    original1: np.array
-               Hs values following rotation from principal component space.
-    original2: np.array
-               T values following rotation from principal component space.
-    '''
-    original1 = np.zeros(len(princip_data1))
-    original2 = np.zeros(len(princip_data1))
-    for i in range(len(princip_data2)):
-        original1[i] = (((coeff[0, 1] * (princip_data2[i] - shift)) +
-                         (coeff[0, 0] * princip_data1[i])) / (coeff[0, 1]**2 +
-                                                              coeff[0, 0]**2))
-        original2[i] = (((coeff[0, 1] * princip_data1[i]) -
-                         (coeff[0, 0] * (princip_data2[i] -
-                                         shift))) / (coeff[0, 1]**2 + coeff[0, 0]**2))
-    return original1, original2
+    def __princomp_inv(self,princip_data1, princip_data2, coeff, shift):
+        '''Takes the inverse of the principal component rotation given data,
+        coefficients, and shift. Used in the ESSC and getSamples functions.
+        Parameters
+        ----------
+        princip_data1: np.array
+                       Array of Component 1 values.
+        princip_data2: np.array
+                       Array of Component 2 values.
+        coeff: np.array
+               Array of principal component coefficients.
+        shift: float
+               Shift applied to Component 2 to make all values positive.
+        Returns
+        -------
+        original1: np.array
+                   Hs values following rotation from principal component space.
+        original2: np.array
+                   T values following rotation from principal component space.
+        '''
+        original1 = np.zeros(len(princip_data1))
+        original2 = np.zeros(len(princip_data1))
+        for i in range(len(princip_data2)):
+            original1[i] = (((coeff[0, 1] * (princip_data2[i] - shift)) +
+                             (coeff[0, 0] * princip_data1[i])) / (coeff[0, 1]**2 +
+                                                                  coeff[0, 0]**2))
+            original2[i] = (((coeff[0, 1] * princip_data1[i]) -
+                             (coeff[0, 0] * (princip_data2[i] -
+                                             shift))) / (coeff[0, 1]**2 + coeff[0, 0]**2))
+        return original1, original2
 
 
-    
+        
 
 
 
-def betafcn(sig_p, rho):
-    '''Penalty calculation for sigma parameter fitting function to impose
-    positive value constraint.
-    Parameters
-    ----------
-    sig_p: np.array
-           Array of sigma fitting function parameters.
-    rho: float
-         Penalty function variable that drives the solution towards
-         required constraint.
-    Returns
-    -------
-    Beta1: float
-           Penalty function variable that applies the constraint requiring
-           the y-intercept of the sigma fitting function to be greater than
-           or equal to 0.
-    Beta2: float
-           Penalty function variable that applies the constraint requiring
-           the minimum of the sigma fitting function to be greater than or
-           equal to 0.
-    '''
-    if -sig_p[2] <= 0:
-        Beta1 = 0.0
-    else:
-        Beta1 = rho
-    if -sig_p[2] + (sig_p[1]**2) / (4 * sig_p[0]) <= 0:
-        Beta2 = 0.0
-    else:
-        Beta2 = rho
-    return Beta1, Beta2
+    def __betafcn(self,sig_p, rho):
+        '''Penalty calculation for sigma parameter fitting function to impose
+        positive value constraint.
+        Parameters
+        ----------
+        sig_p: np.array
+               Array of sigma fitting function parameters.
+        rho: float
+             Penalty function variable that drives the solution towards
+             required constraint.
+        Returns
+        -------
+        Beta1: float
+               Penalty function variable that applies the constraint requiring
+               the y-intercept of the sigma fitting function to be greater than
+               or equal to 0.
+        Beta2: float
+               Penalty function variable that applies the constraint requiring
+               the minimum of the sigma fitting function to be greater than or
+               equal to 0.
+        '''
+        if -sig_p[2] <= 0:
+            Beta1 = 0.0
+        else:
+            Beta1 = rho
+        if -sig_p[2] + (sig_p[1]**2) / (4 * sig_p[0]) <= 0:
+            Beta2 = 0.0
+        else:
+            Beta2 = rho
+        return Beta1, Beta2
 
-# Sigma function sigma_fcn defined outside of ESSC function
+    # Sigma function sigma_fcn defined outside of ESSC function
 
-def objfun(sig_p, x, y_actual):
-    '''Sum of least square error objective function used in sigma
-    minimization.
-    Parameters
-    ----------
-    sig_p: np.array
-           Array of sigma fitting function parameters.
-    x: np.array
-       Array of values (Component 1 mean for each bin) at which to evaluate
-       the sigma fitting function.
-    y_actual: np.array
-              Array of actual sigma values for each bin to use in least
-              square error calculation with fitted values.
-    Returns
-    -------
-    obj_fun_result: float
-                    Sum of least square error objective function for fitted
-                    and actual values.
-    '''
-    obj_fun_result = np.sum((sigma_fcn(sig_p, x) - y_actual)**2)
-    return obj_fun_result  # Sum of least square error
+    def __objfun(self,sig_p, x, y_actual):
+        '''Sum of least square error objective function used in sigma
+        minimization.
+        Parameters
+        ----------
+        sig_p: np.array
+               Array of sigma fitting function parameters.
+        x: np.array
+           Array of values (Component 1 mean for each bin) at which to evaluate
+           the sigma fitting function.
+        y_actual: np.array
+                  Array of actual sigma values for each bin to use in least
+                  square error calculation with fitted values.
+        Returns
+        -------
+        obj_fun_result: float
+                        Sum of least square error objective function for fitted
+                        and actual values.
+        '''
+        obj_fun_result = np.sum((self.__sigma_fcn(sig_p, x) - y_actual)**2)
+        return obj_fun_result  # Sum of least square error
 
-def objfun_penalty(sig_p, x, y_actual, Beta1, Beta2):
-    '''Penalty function used for sigma function constrained optimization.
-    Parameters
-    ----------
-    sig_p: np.array
-           Array of sigma fitting function parameters.
-    x: np.array
-       Array of values (Component 1 mean for each bin) at which to evaluate
-       the sigma fitting function.
-    y_actual: np.array
-              Array of actual sigma values for each bin to use in least
-              square error calculation with fitted values.
-    Beta1: float
-           Penalty function variable that applies the constraint requiring
-           the y-intercept of the sigma fitting function to be greater than
-           or equal to 0.
-    Beta2: float
-           Penalty function variable that applies the constraint requiring
-           the minimum of the sigma fitting function to be greater than or
-           equal to 0.
-    Returns
-    -------
-    penalty_fcn: float
-                 Objective function result with constraint penalties
-                 applied for out of bound solutions.
-    '''
-    penalty_fcn = (objfun(sig_p, x, y_actual) + Beta1 * (-sig_p[2])**2 +
-                   Beta2 * (-sig_p[2] + (sig_p[1]**2) / (4 * sig_p[0]))**2)
-    return penalty_fcn
+    def __objfun_penalty(self,sig_p, x, y_actual, Beta1, Beta2):
+        '''Penalty function used for sigma function constrained optimization.
+        Parameters
+        ----------
+        sig_p: np.array
+               Array of sigma fitting function parameters.
+        x: np.array
+           Array of values (Component 1 mean for each bin) at which to evaluate
+           the sigma fitting function.
+        y_actual: np.array
+                  Array of actual sigma values for each bin to use in least
+                  square error calculation with fitted values.
+        Beta1: float
+               Penalty function variable that applies the constraint requiring
+               the y-intercept of the sigma fitting function to be greater than
+               or equal to 0.
+        Beta2: float
+               Penalty function variable that applies the constraint requiring
+               the minimum of the sigma fitting function to be greater than or
+               equal to 0.
+        Returns
+        -------
+        penalty_fcn: float
+                     Objective function result with constraint penalties
+                     applied for out of bound solutions.
+        '''
+        penalty_fcn = (self.__objfun(sig_p, x, y_actual) + Beta1 * (-sig_p[2])**2 +
+                       Beta2 * (-sig_p[2] + (sig_p[1]**2) / (4 * sig_p[0]))**2)
+        return penalty_fcn
 
-def sigma_fits(Comp1_mean, sigma_vals):
-    '''Sigma parameter fitting function using penalty optimization.
-    Parameters
-    ----------
-    Comp1_mean: np.array
-                Mean value of Component 1 for each bin of Component 2.
-    sigma_vals: np.array
-                Value of Component 2 sigma for each bin derived from normal
-                distribution fit.
-    Returns
-    -------
-    sig_final: np.array
-               Final sigma parameter values after constrained optimization.
-    '''
-    sig_0 = np.array((0.1, 0.1, 0.1))  # Set initial guess
-    rho = 1.0  # Set initial penalty value
-    # Set tolerance, very small values (i.e.,smaller than 10^-5) may cause
-    # instabilities
-    epsilon = 10**-5
-    # Set inital beta values using beta function
-    Beta1, Beta2 = betafcn(sig_0, rho)
-    # Initial search for minimum value using initial guess
-    sig_1 = optim.fmin(func=objfun_penalty, x0=sig_0,
-                       args=(Comp1_mean, sigma_vals, Beta1, Beta2), disp=False)
-    # While either the difference between iterations or the difference in
-    # objective function evaluation is greater than the tolerance, continue
-    # iterating
-    while (np.amin(abs(sig_1 - sig_0)) > epsilon and
-           abs(objfun(sig_1, Comp1_mean, sigma_vals) -
-               objfun(sig_0, Comp1_mean, sigma_vals)) > epsilon):
-        sig_0 = sig_1
-        # Calculate penalties for this iteration
-        Beta1, Beta2 = betafcn(sig_0, rho)
-        # Find a new minimum
-        sig_1 = optim.fmin(func=objfun_penalty, x0=sig_0,
+    def __sigma_fits(self,Comp1_mean, sigma_vals):
+        '''Sigma parameter fitting function using penalty optimization.
+        Parameters
+        ----------
+        Comp1_mean: np.array
+                    Mean value of Component 1 for each bin of Component 2.
+        sigma_vals: np.array
+                    Value of Component 2 sigma for each bin derived from normal
+                    distribution fit.
+        Returns
+        -------
+        sig_final: np.array
+                   Final sigma parameter values after constrained optimization.
+        '''
+        sig_0 = np.array((0.1, 0.1, 0.1))  # Set initial guess
+        rho = 1.0  # Set initial penalty value
+        # Set tolerance, very small values (i.e.,smaller than 10^-5) may cause
+        # instabilities
+        epsilon = 10**-5
+        # Set inital beta values using beta function
+        Beta1, Beta2 = self.__betafcn(sig_0, rho)
+        # Initial search for minimum value using initial guess
+        sig_1 = optim.fmin(func=self.__objfun_penalty, x0=sig_0,
                            args=(Comp1_mean, sigma_vals, Beta1, Beta2), disp=False)
-        rho = 10 * rho  # Increase penalization
-    sig_final = sig_1
-    return sig_final
+        # While either the difference between iterations or the difference in
+        # objective function evaluation is greater than the tolerance, continue
+        # iterating
+        while (np.amin(abs(sig_1 - sig_0)) > epsilon and
+               abs(self.__objfun(sig_1, Comp1_mean, sigma_vals) -
+                   self.__objfun(sig_0, Comp1_mean, sigma_vals)) > epsilon):
+            sig_0 = sig_1
+            # Calculate penalties for this iteration
+            Beta1, Beta2 = self.__betafcn(sig_0, rho)
+            # Find a new minimum
+            sig_1 = optim.fmin(func=self.__objfun_penalty, x0=sig_0,
+                               args=(Comp1_mean, sigma_vals, Beta1, Beta2), disp=False)
+            rho = 10 * rho  # Increase penalization
+        sig_final = sig_1
+        return sig_final
