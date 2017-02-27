@@ -46,8 +46,20 @@ class ESSC:
 
         self.depth = depth
         self.buoy = buoy
+        self.size_bin = size_bin
+        
+        self.Hs_ReturnContours = None
+        self.Hs_SampleCA = None
+        self.Hs_SampleFSS = None
+        
+        self.T_ReturnContours = None
+        self.T_SampleCA = None
+        self.T_SampleFSS = None
+        
+        self.Weight_points = None
 
         self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+
 
 
     def __generateParams(self,size_bin):
@@ -160,7 +172,9 @@ class ESSC:
             Hs_Sample, T_Sample, Weight_Sample = ESSC.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
         '''
 
-
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
 
         # IFORM
         # Failure probability for the desired return period (time_R) given the
@@ -525,56 +539,67 @@ class ESSC:
         return SteepH
 
 
-    #TODO
-    #Make Hs_ReturnContours_Steep saveable and plottable
+
     def saveData(self):
         fileString = 'Data/envSamples_NDBC' +  str(self.buoy.buoyNum) + '.h5'
         with h5py.File(fileString, 'w') as f:
-                # NDBC data
-            f_Hs = f.create_dataset('Hs', data= self.buoy.Hs)
-            f_Hs.attrs['units'] = 'm'
-            f_Hs.attrs['description'] = 'significant wave height'
-            f_T = f.create_dataset('T', data= self.buoy.T)
-            f_T.attrs['units'] = 'm'
-            f_T.attrs['description'] = 'energy period'
+            f._nb_steps = f.create_dataset('nb_steps', data = self.nb_steps)
+            f._time_r = f.create_dataset('time_r', data = self.time_r)
+            f.time_ss = f.create_dataset('time_ss', data = self.time_ss)
+            f.coeff = f.create_dataset('coeff', data = self.coeff)
+            f.shift = f.create_dataset('shift', data = self.shift)
+            f.comp1_params = f.create_dataset('comp1_params', data = self.comp1_params)
+            f.sigma_param = f.create_dataset('sigma_param', data = self.sigma_param)
+            f.mu_param = f.create_dataset('mu_param', data = self.mu_param)
 
-            # Return contours
-            f_T_ReturnContours = f.create_dataset('T_ReturnContours', data=self.T_ReturnContours)
-            f_T_ReturnContours.attrs['units'] = 's'
-            f_T_ReturnContours.attrs['description'] = 'contour, energy period'
-            f_Hs_ReturnContours = f.create_dataset('Hs_ReturnContours', data=self.Hs_ReturnContours)
-            f_Hs_ReturnContours.attrs['units'] = 'm'
-            f_Hs_ReturnContours.attrs['description'] = 'contours, significant wave height'
-            # f_Hs_ReturnContours_Steep = f.create_dataset(
-            #   'Hs_ReturnContours_Steep', data = Hs_ReturnContours_Steep)
-            # f_Hs_ReturnContours_Steep.attrs['units'] = 'm'
-            # f_Hs_ReturnContours_Steep.attrs['description'] = 'contours (steepness limited), significant wave height'
+            if(self.buoy.Hs is not None):
+                # NDBC data
+                f_Hs = f.create_dataset('Buoy_Hs', data= self.buoy.Hs)
+                f_Hs.attrs['units'] = 'm'
+                f_Hs.attrs['description'] = 'significant wave height'
+                f_T = f.create_dataset('T', data= self.buoy.T)
+                f_T.attrs['units'] = 'm'
+                f_T.attrs['description'] = 'energy period'
+
+            if(self.T_ReturnContours is not None):
+                f_T_ReturnContours = f.create_dataset('T_ReturnContours', data=self.T_ReturnContours)
+                f_T_ReturnContours.attrs['units'] = 's'
+                f_T_ReturnContours.attrs['description'] = 'contour, energy period'
+
+            if(self.Hs_ReturnContours is not None):
+                f_Hs_ReturnContours = f.create_dataset('Hs_ReturnContours', data=self.Hs_ReturnContours)
+                f_Hs_ReturnContours.attrs['units'] = 'm'
+                f_Hs_ReturnContours.attrs['description'] = 'contours, significant wave height'
 
             # Samples for full sea state long term analysis
-            f_Hs_sampleFSS = f.create_dataset('Hs_sampleFSS', data= self.Hs_SampleFSS)
-            f_Hs_sampleFSS.attrs['units'] = 'm'
-            f_Hs_sampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-            f_T_sampleFSS = f.create_dataset('T_sampleFSS', data=self.T_SampleFSS)
-            f_T_sampleFSS.attrs['units'] = 's'
-            f_T_sampleFSS.attrs['description'] = 'full sea state energy period samples'
-            f_Weight_sampleFSS = f.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
-            f_Weight_sampleFSS.attrs['description'] = 'full sea state relative weighting samples'
+            if(self.Hs_SampleFSS is not None):
+                f_Hs_sampleFSS = f.create_dataset('Hs_sampleFSS', data= self.Hs_SampleFSS)
+                f_Hs_sampleFSS.attrs['units'] = 'm'
+                f_Hs_sampleFSS.attrs['description'] = 'full sea state significant wave height samples'
+            if(self.T_SampleFSS is not None):
+                f_T_sampleFSS = f.create_dataset('T_sampleFSS', data=self.T_SampleFSS)
+                f_T_sampleFSS.attrs['units'] = 's'
+                f_T_sampleFSS.attrs['description'] = 'full sea state energy period samples'
+            if(self.Weight_SampleFSS is not None):
+                f_Weight_sampleFSS = f.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                f_Weight_sampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
             # Samples for contour approach long term analysis
-            f_Hs_sampleCA = f.create_dataset('Hs_SampleCA', data= self.Hs_SampleCA)
-            f_Hs_sampleCA.attrs['units'] = 'm'
-            f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-            f_T_sampleCA = f.create_dataset('T_SampleCA', data= self.T_SampleCA)
-            f_T_sampleCA.attrs['units'] = 's'
-            f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
+            if(self.Hs_SampleCA is not None):
+                f_Hs_sampleCA = f.create_dataset('Hs_SampleCA', data= self.Hs_SampleCA)
+                f_Hs_sampleCA.attrs['units'] = 'm'
+                f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
+            
+            if(self.T_SampleCA is not None):
+                f_T_sampleCA = f.create_dataset('T_SampleCA', data= self.T_SampleCA)
+                f_T_sampleCA.attrs['units'] = 's'
+                f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
 
     def plotData(self):
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-        # plt.plot(self.T_ReturnContours, Hs_ReturnContours_Steep, '-', color='0.65',
-        # label='100 year contour w/ breaking')
         plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
         plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
