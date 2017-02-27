@@ -21,6 +21,7 @@ import numpy as np
 from datetime import datetime, date
 import os
 import glob
+import h5py
 
 
 
@@ -55,7 +56,7 @@ class Buoy:
     T = []
     dateNum = []
 
-    def __init__(self, buoyNum, savePath = '/Data/'):
+    def __init__(self, buoyNum, savePath = './Data/'):
 
         '''
         Parameters
@@ -70,9 +71,12 @@ class Buoy:
         self.buoyNum = buoyNum
         self.savePath = savePath
 
+        if not os.path.exists(savePath):
+          os.makedirs(savePath)
 
 
-    def fetchFromWeb(self, saveData = True, savePath = None):
+
+    def fetchFromWeb(self, saveType = "h5", savePath = None):
 
         '''Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -81,10 +85,11 @@ class Buoy:
 
         Parameters
         ----------
-        saveData : bool
-            If set to to true, the data compiled by this function will be
-            saved into a file at the directory specified by the savePath
-            member variable
+        saveType: string
+            If set to to "h5", the data will be saved in a compressed .h5
+            file
+            If set to "txt", the data will be stored in a raw .txt file
+            Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
 
@@ -118,17 +123,24 @@ class Buoy:
 
         links = [a["href"] for a in b.find_next_siblings("a", href=True)]
 
-        if(saveData):
+        if(saveType is 'txt'):
             # Grab the device number so the filename is more specific
             saveDir = os.path.join(self.savePath, 'NDBC%s' % (self.buoyNum))
-
+            print "Saving in :", saveDir
             if not os.path.exists(saveDir):
                 os.makedirs(saveDir)
+
+        if(saveType is "h5"):
+            saveDir = os.path.join(self.savePath, 'NDBC%s.h5' %(self.buoyNum))
+            # if not os.path.exists(saveDir):
+            #     os.makedirs(saveDir)
+            print "Saving in :", saveDir
+            f = h5py.File(saveDir, 'w')
 
         for link in links:
             dataLink = "http://ndbc.noaa.gov" + link
             year = int(re.findall("[0-9]+", link)[1])
-            if(saveData):
+            if(saveType is 'txt'):
             #certain years have multiple files marked with the letter 'b'
                 if ('b' + str(year)) not in link:
                     swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
@@ -136,6 +148,15 @@ class Buoy:
                 else:
                     swdFile = open(os.path.join(saveDir, "SWD-%s-%s.txt" %
                                    (self.buoyNum, str(year) + 'b')), 'w')
+
+            if(saveType is 'h5'):
+                if ('b' + str(year)) not in link:
+                    dataSetName = str(("SWD-%s-%d" %
+                                   (self.buoyNum, year)))
+                else:
+                    dataSetName = str(("SWD-%s-%s" %
+                                   (self.buoyNum, str(year) + 'b')))
+
 
             fileName = dataLink.replace('download_data', 'view_text_file')
             data = urllib2.urlopen(fileName)
@@ -151,13 +172,13 @@ class Buoy:
 
             #First Line of every file contains the frequency data
             frequency = data.readline()
-            if saveData:
+            if (saveType is "txt"):
                 swdFile.write(frequency)
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
 
 
             for line in data:
-                if saveData:
+                if (saveType is "txt"):
                     swdFile.write(line)
                 currentLine = line.split()
                 numCols = len(currentLine)
@@ -171,9 +192,16 @@ class Buoy:
 
             dateValues = np.array(dateVals, dtype=np.int)
             spectralValues = np.array(spectralVals, dtype=np.float)
+
             dateValues = np.reshape(dateValues, (numLines, numDates))
             spectralValues = np.reshape(spectralValues, (numLines,
                                                          (numCols - numDates)))
+
+            if(saveType is "h5"):
+                f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
+                f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
+                f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
+
             del dateVals[:]
             del spectralVals[:]
 
@@ -183,9 +211,9 @@ class Buoy:
             self.freqList.append(frequency)
             self.dateList.append(dateValues)
 
-            if saveData:
+            if(saveType is "txt"):
                 swdFile.close()
-            self.prepData()
+        self.prepData()
 
 
     def loadFromText(self, dirPath = None):
@@ -206,7 +234,8 @@ class Buoy:
         To load data from previously downloaded files
 
         >>> import NDBCdata
-        >>> swdList, freqList, dateList = NDBCdata.loadFromText('./NDBC460022')
+        >>> buoy = NDBCdata.buoy(46022)
+        >>> NDBCdata.loadFromText('./NDBC460022')
         '''
         dateVals = []
         spectralVals = []
@@ -255,13 +284,50 @@ class Buoy:
             self.swdList.append(spectralValues)
             self.freqList.append(frequency)
             self.dateList.append(dateValues)
-            self.prepData()
+        self.prepData()
+
+
+
+    def loadFromH5(self, dirPath = "./Data"):
+        """
+        Loads NDBCdata previously saved in a .h5 file
+
+        Parameters
+        ----------
+            dirPath : string
+                Relative path to directory containing the NDBC .h5 file (created by
+                NBDCdata.fetchFromWeb).
+        Example
+        -------
+        To load data from previously downloaded files
+
+        >>> import NDBCdata
+        >>> buoy = NDBCdata.buoy(46022)
+        >>> NDBCdata.loadFromH5('./NDBC460022')
+        """
+        fileName = dirPath + "/NDBC" + str(self.buoyNum) + ".h5"
+
+
+        print "Reading from: ", fileName
+        f = h5py.File(fileName,'r')
+
+        for file in f:
+            if("frequency" in file):
+                #print file
+                self.freqList.append(f[file][:])
+            elif("date_values" in file):
+                self.dateList.append(f[file][:])
+            else:
+                self.swdList.append(f[file][:])
+        # for i in self.swdList:
+        #     print i
+        self.prepData()
 
 
 
 
 
-    def prepData(self):
+    def prepData(self, dirPath = None):
         '''Runs getStats and getDataNums for full set of data, then removes any
         NaNs.
 

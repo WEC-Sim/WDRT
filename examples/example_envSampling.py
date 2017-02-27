@@ -7,10 +7,13 @@ import copy
 buoy46022 = NDBCdata.Buoy(46022)
 
 # Read data from ndbc.noaa.gov
-#buoy.fetchFromWeb()
+buoy46022.fetchFromWeb()
 
-# Load data from text if available
-buoy46022.loadFromText()
+# Load data from .txt file if avilable
+#buoy46022.loadFromText()
+
+# Load data from .h5 file if available
+#buoy46022.loadFromH5()
 
 # Declare required parameters for an ESSC object
 depth = 391.4  # Depth at measurement point (m)
@@ -38,7 +41,7 @@ random_seed = 2  # Random seed for sample generation
 
 # Get samples for a full sea state long term analysis
 Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = essc.getSamples(num_contour_points,
-                                                     contour_probs, random_seed,)
+                                                     contour_probs, random_seed)
 # Get samples for a contour approach long term analysis
 T_sampleCA = np.arange(12, 26, 2)
 Hs_sampleCA = essc.getContourPoints(T_sampleCA)
