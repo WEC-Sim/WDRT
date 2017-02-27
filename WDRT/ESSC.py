@@ -540,11 +540,22 @@ class ESSC:
 
 
 
-    def saveData(self):
-        fileString = 'Data/envSamples_NDBC' +  str(self.buoy.buoyNum) + '.h5'
+    def saveData(self,savePath = './Data'):
+        """
+        Saves all available data obtained via the ESSC module to 
+        a .h5 file
+
+        Params
+        ______
+        savePath : string 
+            relevent path where the .h5 file will be created and
+            saved
+        """
+        fileString = savePath + '/envSamples_NDBC' +  str(self.buoy.buoyNum) + '.h5'
         with h5py.File(fileString, 'w') as f:
-            f._nb_steps = f.create_dataset('nb_steps', data = self.nb_steps)
-            f._time_r = f.create_dataset('time_r', data = self.time_r)
+
+            f.nb_steps = f.create_dataset('nb_steps', data = self.nb_steps)
+            f.time_r = f.create_dataset('time_r', data = self.time_r)
             f.time_ss = f.create_dataset('time_ss', data = self.time_ss)
             f.coeff = f.create_dataset('coeff', data = self.coeff)
             f.shift = f.create_dataset('shift', data = self.shift)
