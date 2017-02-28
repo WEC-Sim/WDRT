@@ -20,6 +20,13 @@ import scipy.interpolate as interp
 import matplotlib.pyplot as plt
 import h5py
 from sklearn.decomposition import PCA
+import requests
+import bs4
+import urllib2
+import re
+from datetime import datetime, date
+import os
+import glob
 
 
 class ESSC:
@@ -540,69 +547,61 @@ class ESSC:
 
 
 
-    def saveData(self,savePath = './Data'):
+    def saveData(self, savePath = './Data'):
         """
-        Saves all available data obtained via the ESSC module to 
+        Saves all available data obtained via the EA module to
         a .h5 file
 
         Params
         ______
-        savePath : string 
+        savePath : string
             relevent path where the .h5 file will be created and
             saved
         """
-        fileString = savePath + '/envSamples_NDBC' +  str(self.buoy.buoyNum) + '.h5'
+        fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
         with h5py.File(fileString, 'w') as f:
 
-            f.nb_steps = f.create_dataset('nb_steps', data = self.nb_steps)
-            f.time_r = f.create_dataset('time_r', data = self.time_r)
-            f.time_ss = f.create_dataset('time_ss', data = self.time_ss)
-            f.coeff = f.create_dataset('coeff', data = self.coeff)
-            f.shift = f.create_dataset('shift', data = self.shift)
-            f.comp1_params = f.create_dataset('comp1_params', data = self.comp1_params)
-            f.sigma_param = f.create_dataset('sigma_param', data = self.sigma_param)
-            f.mu_param = f.create_dataset('mu_param', data = self.mu_param)
+            gp = f.create_group('parameters')
+            f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
+            f.time_r = gp.create_dataset('time_r', data=self.time_r)
+            f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
+            f.coeff = gp.create_dataset('coeff', data=self.coeff)
+            f.shift = gp.create_dataset('shift', data=self.shift)
+            f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
+            f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
+            f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
 
             if(self.buoy.Hs is not None):
-                # NDBC data
-                f_Hs = f.create_dataset('Buoy_Hs', data= self.buoy.Hs)
-                f_Hs.attrs['units'] = 'm'
-                f_Hs.attrs['description'] = 'significant wave height'
-                f_T = f.create_dataset('T', data= self.buoy.T)
-                f_T.attrs['units'] = 'm'
-                f_T.attrs['description'] = 'energy period'
-
-            if(self.T_ReturnContours is not None):
-                f_T_ReturnContours = f.create_dataset('T_ReturnContours', data=self.T_ReturnContours)
-                f_T_ReturnContours.attrs['units'] = 's'
-                f_T_ReturnContours.attrs['description'] = 'contour, energy period'
+                self.buoy._saveData(fileObj=f)
 
             if(self.Hs_ReturnContours is not None):
-                f_Hs_ReturnContours = f.create_dataset('Hs_ReturnContours', data=self.Hs_ReturnContours)
-                f_Hs_ReturnContours.attrs['units'] = 'm'
-                f_Hs_ReturnContours.attrs['description'] = 'contours, significant wave height'
+                grc = f.create_group('ReturnContours')
+                f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
+                f_T_Return.attrs['units'] = 's'
+                f_T_Return.attrs['description'] = 'contour, energy period'
+                f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+                f_Hs_Return.attrs['units'] = 'm'
+                f_Hs_Return.attrs['description'] = 'contours, significant wave height'
 
             # Samples for full sea state long term analysis
             if(self.Hs_SampleFSS is not None):
-                f_Hs_sampleFSS = f.create_dataset('Hs_sampleFSS', data= self.Hs_SampleFSS)
-                f_Hs_sampleFSS.attrs['units'] = 'm'
-                f_Hs_sampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-            if(self.T_SampleFSS is not None):
-                f_T_sampleFSS = f.create_dataset('T_sampleFSS', data=self.T_SampleFSS)
-                f_T_sampleFSS.attrs['units'] = 's'
-                f_T_sampleFSS.attrs['description'] = 'full sea state energy period samples'
-            if(self.Weight_SampleFSS is not None):
-                f_Weight_sampleFSS = f.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
-                f_Weight_sampleFSS.attrs['description'] = 'full sea state relative weighting samples'
+                gfss = f.create_group('Samples_FullSeaState')
+                f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+                f_Hs_SampleFSS.attrs['units'] = 'm'
+                f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
+                f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
+                f_T_SampleFSS.attrs['units'] = 's'
+                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
+                f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
             # Samples for contour approach long term analysis
             if(self.Hs_SampleCA is not None):
-                f_Hs_sampleCA = f.create_dataset('Hs_SampleCA', data= self.Hs_SampleCA)
+                gca = f.create_group('Samples_ContourApproach')
+                f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
                 f_Hs_sampleCA.attrs['units'] = 'm'
                 f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-            
-            if(self.T_SampleCA is not None):
-                f_T_sampleCA = f.create_dataset('T_SampleCA', data= self.T_SampleCA)
+                f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
                 f_T_sampleCA.attrs['units'] = 's'
                 f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
@@ -822,3 +821,398 @@ class ESSC:
             rho = 10 * rho  # Increase penalization
         sig_final = sig_1
         return sig_final
+
+
+class Buoy:
+    '''
+    Attributes
+    __________
+    swdList : list
+        List that contains numpy arrays of the spectral wave density data,
+        separated by year.
+    freqList: list
+        List that contains numpy arrays that contain the frequency values
+        for each year
+    dateList : list
+        List that contains numpy arrays of the date values for each line of
+        spectral data, separated by year
+    Hs : list
+        Significant wave height.
+    T : list
+        Energy period.
+    dateNum : list
+        List of datetime objects.
+    '''
+
+    swdList = []
+    freqList = []
+    dateList = []
+    Hs = []
+    T = []
+    dateNum = []
+
+    def __init__(self, buoyNum, savePath = './Data/'):
+
+        '''
+        Parameters
+        ___________
+            buoyNum : string
+                device number for desired buoy
+            savePath : string
+                relative path where the data read from ndbc.noaa.gov will be stored
+
+
+        '''
+        self.buoyNum = buoyNum
+        self.savePath = savePath
+
+        if not os.path.exists(savePath):
+          os.makedirs(savePath)
+
+
+
+    def fetchFromWeb(self, saveType="h5", savePath=None):
+
+        '''Searches ndbc.noaa.gov for the historical spectral wave density
+        data of a given device and writes the annual files from the website
+        to a single .txt file, and stores the values in the swdList, freqList,
+        and dateList member variables.
+
+        Parameters
+        ----------
+        saveType: string
+            If set to to "h5", the data will be saved in a compressed .h5
+            file
+            If set to "txt", the data will be stored in a raw .txt file
+            Otherwise, a file will not be created
+        savePath : string
+            Relative path to place directory with data files.
+        '''
+        numLines = 0
+        numCols = 0
+        numDates = 0
+        dateVals = []
+        spectralVals = []
+        if savePath == None:
+            savePath = self.savePath
+
+        url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
+        ndbcURL = requests.get(url)
+        ndbcURL.raise_for_status()
+        ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
+        b = ndbcHTML.findAll("b", text="Spectral wave density data: ")
+
+        if len(b) == 2:
+            b = b[1]
+        else:
+            b = b[0]
+
+        links = [a["href"] for a in b.find_next_siblings("a", href=True)]
+
+        if(saveType is 'txt'):
+            # Grab the device number so the filename is more specific
+            saveDir = os.path.join(self.savePath, 'NDBC%s' % (self.buoyNum))
+            print "Saving in :", saveDir
+            if not os.path.exists(saveDir):
+                os.makedirs(saveDir)
+
+        if(saveType is "h5"):
+            saveDir = os.path.join(self.savePath, 'NDBC%s-raw.h5' %(self.buoyNum))
+            # if not os.path.exists(saveDir):
+            #     os.makedirs(saveDir)
+            print "Saving in :", saveDir
+            f = h5py.File(saveDir, 'w')
+
+        for link in links:
+            dataLink = "http://ndbc.noaa.gov" + link
+            year = int(re.findall("[0-9]+", link)[1])
+            if(saveType is 'txt'):
+            #certain years have multiple files marked with the letter 'b'
+                if ('b' + str(year)) not in link:
+                    swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
+                                   (self.buoyNum, year)), 'w')
+                else:
+                    swdFile = open(os.path.join(saveDir, "SWD-%s-%s.txt" %
+                                   (self.buoyNum, str(year) + 'b')), 'w')
+
+            if(saveType is 'h5'):
+                if ('b' + str(year)) not in link:
+                    dataSetName = str(("SWD-%s-%d" %
+                                   (self.buoyNum, year)))
+                else:
+                    dataSetName = str(("SWD-%s-%s" %
+                                   (self.buoyNum, str(year) + 'b')))
+
+
+            fileName = dataLink.replace('download_data', 'view_text_file')
+            data = urllib2.urlopen(fileName)
+            print "Reading from:", data.geturl()
+
+
+
+            # dates after 2004 contain a time-value for minutes
+            if (year > 2004):
+                numDates = 5
+            else:
+                numDates = 4
+
+            #First Line of every file contains the frequency data
+            frequency = data.readline()
+            if (saveType is "txt"):
+                swdFile.write(frequency)
+            frequency = np.array(frequency.split()[numDates:], dtype = np.float)
+
+
+            for line in data:
+                if (saveType is "txt"):
+                    swdFile.write(line)
+                currentLine = line.split()
+                numCols = len(currentLine)
+
+                if float(currentLine[numDates+1]) < 999:
+                    numLines += 1
+                    for j in range(numDates):
+                        dateVals.append(currentLine[j])
+                    for j in range(numCols - numDates):
+                        spectralVals.append(currentLine[j + numDates])
+
+            dateValues = np.array(dateVals, dtype=np.int)
+            spectralValues = np.array(spectralVals, dtype=np.float)
+
+            dateValues = np.reshape(dateValues, (numLines, numDates))
+            spectralValues = np.reshape(spectralValues, (numLines,
+                                                         (numCols - numDates)))
+
+            if(saveType is "h5"):
+                f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
+                f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
+                f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
+
+            del dateVals[:]
+            del spectralVals[:]
+
+            numLines = 0
+            numCols = 0
+            self.swdList.append(spectralValues)
+            self.freqList.append(frequency)
+            self.dateList.append(dateValues)
+
+            if(saveType is "txt"):
+                swdFile.close()
+        self._prepData()
+
+
+    def loadFromText(self, dirPath = None):
+        '''Loads NDBC data previously downloaded to a series of text files in the
+        specified directory.
+
+        Parameters
+        ----------
+            dirPath : string
+                Relative path to directory containing NDBC text files (created by
+                NBDCdata.fetchFromWeb). If left blank, the method will search
+                all directories for the data using the current directory as
+                the root.
+
+
+        Example
+        -------
+        To load data from previously downloaded files
+
+        >>> import ESSC
+        >>> buoy = ESSC.buoy(46022)
+        >>> ESSC.loadFromText('./Data/NDBC460022')
+        '''
+        dateVals = []
+        spectralVals = []
+        numLines = 0
+
+        if dirPath == None:
+            for dirpath, subdirs, files in os.walk('.'):
+                for dirs in subdirs:
+                    if ("NDBC%s" % self.buoyNum) in dirs:
+                        dirPath = os.path.join(dirpath,dirs)
+                        break
+
+        for fileName in glob.glob(os.path.join(dirPath,'SWD*.txt')):
+            print 'Reading from: %s' % (fileName)
+            f = open(fileName, 'r')
+            frequency = f.readline().split()
+            numCols = len(frequency)
+            if frequency[4] == 'mm':
+                frequency = np.array(frequency[5:], dtype=np.float)
+                numTimeVals = 5
+
+            else:
+                frequency = np.array(frequency[4:], dtype=np.float)
+                numTimeVals = 4
+
+            for line in f:
+                currentLine = line.split()
+                if float(currentLine[numTimeVals + 1]) < 999:
+                    numLines += 1
+                    for i in range(numTimeVals):
+                        dateVals.append(currentLine[i])
+                    for i in range(numCols - numTimeVals):
+                        spectralVals.append(currentLine[i + numTimeVals])
+
+            dateValues = np.array(dateVals, dtype=np.int)
+            spectralValues = np.array(spectralVals, dtype=np.double)
+            dateValues = np.reshape(dateValues, (numLines, numTimeVals))
+            spectralValues = np.reshape(
+                spectralValues, (numLines, (numCols - numTimeVals)))
+
+            del dateVals[:]
+            del spectralVals[:]
+
+            numLines = 0
+            numCols = 0
+            self.swdList.append(spectralValues)
+            self.freqList.append(frequency)
+            self.dateList.append(dateValues)
+        self._prepData()
+
+    def loadFromH5(self, dirPath = "./Data"):
+        """
+        Loads NDBCdata previously saved in a .h5 file
+
+        Parameters
+        ----------
+            dirPath : string
+                Relative path to directory containing the NDBC .h5 file (created by
+                NBDCdata.fetchFromWeb).
+        Example
+        -------
+        To load data from previously downloaded files
+
+        >>> import NDBCdata
+        >>> buoy = NDBCdata.buoy(46022)
+        >>> NDBCdata.loadFromH5('./NDBC460022')
+        """
+        fileName = dirPath + "/NDBC" + str(self.buoyNum) + ".h5"
+
+
+        print "Reading from: ", fileName
+        f = h5py.File(fileName, 'r')
+
+        for file in f:
+            if("frequency" in file):
+                #print file
+                self.freqList.append(f[file][:])
+            elif("date_values" in file):
+                self.dateList.append(f[file][:])
+            else:
+                self.swdList.append(f[file][:])
+        # for i in self.swdList:
+        #     print i
+        self._prepData()
+
+    def saveData(self, savePath='./Data/'):
+        '''
+        Saves NDBCdata to hdf5 file.
+
+        Parameters
+        ----------
+            savePath : string
+                Relative path for desired file
+        '''
+        fileString = savePath + '/NDBC' + str(self.buoyNum) + '.h5'
+        f = h5py.File(fileString, 'w')
+        self._saveData(f)
+
+    def _saveData(self, fileObj):
+        if(self.Hs is not None):
+            gbd = fileObj.create_group('buoy_Data')
+            f_Hs = gbd.create_dataset('Hs', data=self.Hs)
+            f_Hs.attrs['units'] = 'm'
+            f_Hs.attrs['description'] = 'significant wave height'
+            f_T = gbd.create_dataset('Te', data=self.T)
+            f_T.attrs['units'] = 'm'
+            f_T.attrs['description'] = 'energy period'
+        else:
+            RuntimeError('Buoy object contains no data')
+
+
+    def _prepData(self):
+        '''Runs _getStats and _getDataNums for full set of data, then removes any
+        NaNs.
+        '''
+        n = len(self.swdList)
+        Hs = []
+        T = []
+        dateNum = []
+        for ii in range(n):
+            tmp1, tmp2 = _getStats(self.swdList[ii], self.freqList[ii])
+            Hs.extend(tmp1)
+            T.extend(tmp2)
+            dateNum.extend(_getDateNums(self.dateList[ii]))
+        Hs = np.array(Hs, dtype=np.float)
+        T = np.array(T, dtype=np.float)
+        dateNum = np.array(dateNum, dtype=np.float)
+
+        # Removing NaN data, assigning T label depending on input (Te or Tp)
+        Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
+        # Find NaN data in Hs or T
+        dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
+        Hs = Hs[Nanrem]  # Remove any NaN data from Hs
+        T = T[Nanrem]  # Remove any NaN data from T
+        self.Hs = Hs
+        self.T = T
+        self.dateNum = dateNum
+        return Hs, T, dateNum
+
+def _getDateNums(dateArr):
+    '''datetime objects
+
+    Parameters
+    ----------
+        dateArr : np.array
+            Array of a specific years date vals from NDBC.fetchFromWeb
+
+    Returns
+    -------
+        dateNum : np.array
+            Array of datetime objects.
+    '''
+    dateNum = []
+    for times in dateArr:
+        if  times[0] < 1900:
+            times[0] = 1900 + times[0]
+        if times[0] < 2005:
+            dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                                   times[2], times[3])))
+        else:
+            dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                                   times[2], times[3],
+                                                   times[4])))
+    return dateNum
+
+
+
+def _getStats(swdArr, freqArr):
+        '''Significant wave height and energy period
+
+        Parameters
+        ----------
+            swdArr : np.array
+                Numpy array of the spectral wave density data for a specific year
+            freqArr: np.array
+                Numpy array that contains the frequency values for a specific year
+
+        Returns
+        -------
+            Hm0 : list
+                Significant wave height.
+            Te : list
+                Energy period.
+        '''
+        Hm0 = []
+        Te = []
+
+        for line in swdArr:
+            m_1 = np.trapz(line * freqArr ** (-1), freqArr)
+            m0 = np.trapz(line, freqArr)
+            Hm0.append(4.004 * m0 ** 0.5)
+            np.seterr(all='ignore')
+            Te.append(m_1 / m0)
+        return Hm0, Te

@@ -7,14 +7,14 @@ import os
 
 
 # Load data from example_envSampling.py
-envFile = h5py.File(os.path.join('data', 'envSamples_NDBC46022.h5'), 'r')
-Hs_sample = np.array(envFile['Hs_sampleFSS'])
-T_sample = np.array(envFile['T_sampleFSS'])
-Weight_sample = np.array(envFile['Weight_sampleFSS'])
-Hs = np.array(envFile['Hs'])
-T = np.array(envFile['T'])
-Hs_Return = np.array(envFile['Hs_Return'])
-T_Return = np.array(envFile['T_Return'])
+envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
+Hs_sample = np.array(envFile['Samples_FullSeaState/Hs_SampleFSS'])
+T_sample = np.array(envFile['Samples_FullSeaState/T_SampleFSS'])
+Weight_sample = np.array(envFile['Samples_FullSeaState/Weight_SampleFSS'])
+Hs = np.array(envFile['buoy_Data/Hs'])
+T = np.array(envFile['buoy_Data/Te'])
+Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
+T_Return = np.array(envFile['ReturnContours/T_Return'])
 
 # Load data from modeling
 modResFile = h5py.File(os.path.join('data', 'longTerm_FullSeaState.h5'), 'r')

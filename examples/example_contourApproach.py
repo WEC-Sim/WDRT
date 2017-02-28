@@ -10,13 +10,13 @@ import h5py
 import os
 
 # Load data from example_envSampling.py
-envFile = h5py.File(os.path.join('data', 'envSamples_NDBC46022.h5'), 'r')
-Hs = np.array(envFile['Hs'])
-T = np.array(envFile['T'])
-Hs_Return = np.array(envFile['Hs_Return'])
-T_Return = np.array(envFile['T_Return'])
-Hs_sample = np.array(envFile['Hs_sampleCA'])
-T_sample = np.array(envFile['T_sampleCA'])
+envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
+Hs = np.array(envFile['buoy_Data/Hs'])
+T = np.array(envFile['buoy_Data/Te'])
+Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
+T_Return = np.array(envFile['ReturnContours/T_Return'])
+Hs_sample = np.array(envFile['Samples_ContourApproach/Hs_SampleCA'])
+T_sample = np.array(envFile['Samples_ContourApproach/T_SampleCA'])
 
 # Load data from modeling
 modResFile = h5py.File(os.path.join(

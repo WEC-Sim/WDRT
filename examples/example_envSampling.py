@@ -1,10 +1,9 @@
 import numpy as np
-import NDBCdata
-import ESSC
+import WDRT.ESSC as ESSC
 import copy
 
 # Create buoy object, in this case for Station #46022
-buoy46022 = NDBCdata.Buoy(46022)
+buoy46022 = ESSC.Buoy(46022)
 
 # Read data from ndbc.noaa.gov
 buoy46022.fetchFromWeb()
@@ -15,13 +14,13 @@ buoy46022.fetchFromWeb()
 # Load data from .h5 file if available
 #buoy46022.loadFromH5()
 
-# Declare required parameters for an ESSC object
+# Declare required parameters
 depth = 391.4  # Depth at measurement point (m)
 size_bin = 250.  # Enter chosen bin size
 # used for inverse FORM calculation
 
-# Create ESSC object using above parameters
-essc= ESSC.ESSC(depth, size_bin, buoy46022)
+# Create EA object using above parameters
+essc= ESSC.EA(depth, size_bin, buoy46022)
 
 
 Time_SS = 1.  # Sea state duration (hrs)
