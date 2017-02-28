@@ -29,13 +29,13 @@ import os
 import glob
 
 
-class ESSC:
+class EA:
 
-    def __init__(self,depth,size_bin,buoy):
+    def __init__(self, depth, size_bin, buoy):
         '''
         Parameters
         ___________
-            depth : int 
+            depth : int
                 Depth at measurement point (m)
             size_bin : float
                 chosen bin size
@@ -54,22 +54,22 @@ class ESSC:
         self.depth = depth
         self.buoy = buoy
         self.size_bin = size_bin
-        
+
         self.Hs_ReturnContours = None
         self.Hs_SampleCA = None
         self.Hs_SampleFSS = None
-        
+
         self.T_ReturnContours = None
         self.T_SampleCA = None
         self.T_SampleFSS = None
-        
+
         self.Weight_points = None
 
         self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
 
 
 
-    def __generateParams(self,size_bin):
+    def __generateParams(self, size_bin):
         pca = PCA(n_components=2)
         pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
         coeff = abs(pca.components_)  # Apply correct/expected sign convention
@@ -116,11 +116,8 @@ class ESSC:
         return coeff, shift, comp1_params, sigma_param, mu_param
 
 
-
-
-
-    def getContours(self, time_ss,time_r, nb_steps):
-        '''WDRT Extreme Sea State Contour (ESSC) function
+    def getContours(self, time_ss, time_r, nb_steps):
+        '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
         method.
@@ -137,7 +134,7 @@ class ESSC:
         To obtain the contours for a NDBC buoy::
             import numpy as np
             import WDRT.NDBCdata as NDBCdata
-            import WDRT.ESSC as ESSC
+            import WDRT.EA as EA
             # Pull spectral data from NDBC website
             url = "http://www.ndbc.noaa.gov/station_history.php?station=46022"
             swdList, freqList, dateVals = NDBCdata.fetchFromWeb(46089, savePath='data')
@@ -168,7 +165,7 @@ class ESSC:
             Time_r = np.array([100])  # Return periods (yrs) of interest
             SteepMax = 0.07  # Optional: enter estimate of breaking steepness
             # Contour generation example
-            Hs_Return, T_Return, _, _, _, _, _ = ESSC.getContours(Hs, T, depth, size_bin, nb_steps, Time_SS,
+            Hs_Return, T_Return, _, _, _, _, _ = EA.getContours(Hs, T, depth, size_bin, nb_steps, Time_SS,
                                                            Time_r)
             # Sample Generation Example
             num_contour_points = 20  # Number of points to be sampled for each
@@ -176,7 +173,7 @@ class ESSC:
             contour_probs = 10 ** (-1 * np.array([1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]))
             # Probabilities defining sampling contour bounds.
             random_seed = 2  # Random seed for sample generation
-            Hs_Sample, T_Sample, Weight_Sample = ESSC.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
+            Hs_Sample, T_Sample, Weight_Sample = EA.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
         '''
 
         self.time_ss = time_ss
@@ -206,7 +203,7 @@ class ESSC:
 
         # Re-rotate
 
-        # Principal component rotation formula princomp_inv defined outside of ESSC
+        # Principal component rotation formula princomp_inv defined outside of EA
         # function
 
         # Calculate Hs and T along the contour
@@ -217,10 +214,9 @@ class ESSC:
         return Hs_Return, T_Return
 
 
-
     def getSamples(self, num_contour_points, contour_probs, random_seed = None):
-        '''WDRT Extreme Sea State Contour (ESSC) Sampling function
-        This function calculates samples of Hs and T using the ESSC function to
+        '''WDRT Extreme Sea State Contour (EA) Sampling function
+        This function calculates samples of Hs and T using the EA function to
         sample between contours of user-defined probabilities.
         Parameters
         ----------
@@ -232,7 +228,7 @@ class ESSC:
             less than 1.
         random_seed: int (optional)
             Random seed for sample generation, required for sample
-            repeatability. If left blank, a seed will automatically be 
+            repeatability. If left blank, a seed will automatically be
             generated.
         Returns
         -------
@@ -247,7 +243,7 @@ class ESSC:
         -------
         To get weighted samples from a set of contours::
             import numpy as np
-            import ESSC
+            import EA
             # Load data from existing text files
             # swdList, freqList, dateVals = NDBCdata.loadFromText(
             #     os.path.join('data', 'NDBC46022'))
@@ -285,7 +281,7 @@ class ESSC:
             contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))
             # Probabilities defining sampling contour bounds.
             random_seed = 2 # Random seed for sample generation
-            Hs_Sample,T_Sample,Weight_points = ESSC.getSamples(Hs,T,
+            Hs_Sample,T_Sample,Weight_points = EA.getSamples(Hs,T,
             num_contour_points,contour_probs,random_seed,depth,size_bin,nb_steps,
             Time_SS,Time_r)
         '''
@@ -354,7 +350,7 @@ class ESSC:
         return Hs_Sample, T_Sample, Weight_points
 
 
-    def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs,random_seed):
+    def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs, random_seed):
         """
         Calculates radius, angle, and weight for each sample point
         """
@@ -428,8 +424,6 @@ class ESSC:
             Comp1_sample, Comp2_sample, self.coeff, self.shift)
 
         return Hs_Sample, T_Sample
-        
-
 
 
     def getContourPoints(self, T_Sample):
@@ -616,15 +610,15 @@ class ESSC:
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
         plt.ylabel('Sig. wave height, $H_s$ [m]')
-        
+
         plt.show()
 
 
 
-    def __mu_fcn(self,x, mu_p_1, mu_p_2):
+    def __mu_fcn(self, x, mu_p_1, mu_p_2):
         ''' Linear fitting function for the mean(mu) of Component 2 normal
         distribution as a function of the Component 1 mean for each bin.
-        Used in the ESSC and getSamples functions.
+        Used in the EA and getSamples functions.
         Parameters
         ----------
         mu_p: np.array
@@ -644,7 +638,7 @@ class ESSC:
     def __sigma_fcn(self,sig_p, x):
         '''Quadratic fitting formula for the standard deviation(sigma) of Component
         2 normal distribution as a function of the Component 1 mean for each bin.
-        Used in the ESSC and getSamples functions.
+        Used in the EA and getSamples functions.
         Parameters
         ----------
         sig_p: np.array
@@ -661,9 +655,9 @@ class ESSC:
         return sigma_fit
 
 
-    def __princomp_inv(self,princip_data1, princip_data2, coeff, shift):
+    def __princomp_inv(self, princip_data1, princip_data2, coeff, shift):
         '''Takes the inverse of the principal component rotation given data,
-        coefficients, and shift. Used in the ESSC and getSamples functions.
+        coefficients, and shift. Used in the EA and getSamples functions.
         Parameters
         ----------
         princip_data1: np.array
@@ -693,11 +687,11 @@ class ESSC:
         return original1, original2
 
 
-        
 
 
 
-    def __betafcn(self,sig_p, rho):
+
+    def __betafcn(self, sig_p, rho):
         '''Penalty calculation for sigma parameter fitting function to impose
         positive value constraint.
         Parameters
@@ -728,9 +722,9 @@ class ESSC:
             Beta2 = rho
         return Beta1, Beta2
 
-    # Sigma function sigma_fcn defined outside of ESSC function
+    # Sigma function sigma_fcn defined outside of EA function
 
-    def __objfun(self,sig_p, x, y_actual):
+    def __objfun(self, sig_p, x, y_actual):
         '''Sum of least square error objective function used in sigma
         minimization.
         Parameters
@@ -752,7 +746,7 @@ class ESSC:
         obj_fun_result = np.sum((self.__sigma_fcn(sig_p, x) - y_actual)**2)
         return obj_fun_result  # Sum of least square error
 
-    def __objfun_penalty(self,sig_p, x, y_actual, Beta1, Beta2):
+    def __objfun_penalty(self, sig_p, x, y_actual, Beta1, Beta2):
         '''Penalty function used for sigma function constrained optimization.
         Parameters
         ----------
@@ -782,7 +776,7 @@ class ESSC:
                        Beta2 * (-sig_p[2] + (sig_p[1]**2) / (4 * sig_p[0]))**2)
         return penalty_fcn
 
-    def __sigma_fits(self,Comp1_mean, sigma_vals):
+    def __sigma_fits(self, Comp1_mean, sigma_vals):
         '''Sigma parameter fitting function using penalty optimization.
         Parameters
         ----------
