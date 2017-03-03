@@ -48,7 +48,7 @@ class EA:
             SteepMax : float
                 Optional: estimate of breaking steepness
             buoy : NDBCData
-                buoy object obtained from the NDBCData module
+                ESSC.Buoy Object
         '''
 
         self.depth = depth
@@ -1081,8 +1081,9 @@ class Buoy:
 
         >>> import NDBCdata
         >>> buoy = NDBCdata.buoy(46022)
-        >>> NDBCdata.loadFromH5('./NDBC460022')
+        >>> NDBCdata.loadFromH5('./NDBC46022')
         """
+
         fileName = dirPath + "/NDBC" + str(self.buoyNum) + ".h5"
 
 
@@ -1100,6 +1101,7 @@ class Buoy:
         # for i in self.swdList:
         #     print i
         self._prepData()
+
 
     def saveData(self, savePath='./Data/'):
         '''

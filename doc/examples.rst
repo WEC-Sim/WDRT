@@ -13,7 +13,7 @@ Environmental contours describing extreme sea states can be used for numerical o
 These environmental contours, characterized by combinations of significant wave height (:math:`H_s`) and either energy period (:math:`T_e`) or peak period (:math:`T_p`), provide inputs that are associated with a certain reliability interval.
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.
 
-For this example (``$WDRT_SOURCE/examples/example_shortTermExtreme.py``), we will consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
+For this example (``$WDRT_SOURCE/examples/example_envSampling.py``), we will consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
 
 .. figure::  _static/example_envSampling.png
    :align: center

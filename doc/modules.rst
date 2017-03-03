@@ -28,13 +28,6 @@ WDRT.longTermExtreme module
     :undoc-members:
     :show-inheritance:
 
-WDRT.NDBCdata module
---------------------------
-
-.. automodule:: WDRT.NDBCdata
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 WDRT.ESSC module
 ----------------------
