@@ -201,11 +201,6 @@ class EA:
         Comp2_R = stats.norm.ppf(stats.norm.cdf(U2, loc=0, scale=1),
                                  loc=mu_R, scale=sigma_R)
 
-        # Re-rotate
-
-        # Principal component rotation formula princomp_inv defined outside of EA
-        # function
-
         # Calculate Hs and T along the contour
         Hs_Return, T_Return = self.__princomp_inv(Comp1_R, Comp2_R, self.coeff, self.shift)
         Hs_Return = np.maximum(0, Hs_Return)  # Remove negative values
@@ -916,8 +911,6 @@ class Buoy:
 
         if(saveType is "h5"):
             saveDir = os.path.join(self.savePath, 'NDBC%s-raw.h5' %(self.buoyNum))
-            # if not os.path.exists(saveDir):
-            #     os.makedirs(saveDir)
             print "Saving in :", saveDir
             f = h5py.File(saveDir, 'w')
 
@@ -1033,10 +1026,13 @@ class Buoy:
                         break
         if dirPath == None:
             raise IOError("Could not find directory containing NDBC data")
-        if len(glob.glob(os.path.join(dirPath,'SWD*.txt'))) == 0:
+
+        fileList = glob.glob(os.path.join(dirPath,'SWD*.txt'))
+
+        if len(fileList) == 0:
             raise IOError("No NDBC data files found in " + dirPath)
             
-        for fileName in glob.glob(os.path.join(dirPath,'SWD*.txt')):
+        for fileName in fileList:
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
             frequency = f.readline().split()
@@ -1097,7 +1093,8 @@ class Buoy:
         if fileName == None:
             fileName = dirPath + "/NDBC" + str(self.buoyNum) + "-raw.h5"
 
-
+        else:
+            fileName = dirPath + "/"+ fileName
         print "Reading from: ", fileName
         try:
             f = h5py.File(fileName, 'r')
@@ -1107,14 +1104,11 @@ class Buoy:
 
         for file in f:
             if("frequency" in file):
-                #print file
                 self.freqList.append(f[file][:])
             elif("date_values" in file):
                 self.dateList.append(f[file][:])
             else:
                 self.swdList.append(f[file][:])
-        # for i in self.swdList:
-        #     print i
         self._prepData()
 
 
