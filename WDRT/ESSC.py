@@ -894,14 +894,18 @@ class Buoy:
         ndbcURL = requests.get(url)
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
-        b = ndbcHTML.findAll("b", text="Spectral wave density data: ")
+        headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
 
-        if len(b) == 2:
-            b = b[1]
+        if len(headers) == 0:
+            raise Exception("Spectral wave density data for given buoy not found")
+            
+
+        if len(headers) == 2:
+            headers = headers[1]
         else:
-            b = b[0]
+            headers = headers[0]
 
-        links = [a["href"] for a in b.find_next_siblings("a", href=True)]
+        links = [a["href"] for a in headers.find_next_siblings("a", href=True)]
 
         if(saveType is 'txt'):
             # Grab the device number so the filename is more specific
@@ -1027,7 +1031,11 @@ class Buoy:
                     if ("NDBC%s" % self.buoyNum) in dirs:
                         dirPath = os.path.join(dirpath,dirs)
                         break
-
+        if dirPath == None:
+            raise IOError("Could not find directory containing NDBC data")
+        if len(glob.glob(os.path.join(dirPath,'SWD*.txt'))) == 0:
+            raise IOError("No NDBC data files found in " + dirPath)
+            
         for fileName in glob.glob(os.path.join(dirPath,'SWD*.txt')):
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
@@ -1066,7 +1074,7 @@ class Buoy:
             self.dateList.append(dateValues)
         self._prepData()
 
-    def loadFromH5(self, dirPath = "./Data"):
+    def loadFromH5(self, dirPath = "./Data", fileName = None):
         """
         Loads NDBCdata previously saved in a .h5 file
 
@@ -1075,20 +1083,27 @@ class Buoy:
             dirPath : string
                 Relative path to directory containing the NDBC .h5 file (created by
                 NBDCdata.fetchFromWeb).
+            fileName : string
+                Name of the .h5 file. If left blank, it's assumed the file's name has
+                not changed since it was created previously (i.e. "NDBC#####-raw.h5")
         Example
         -------
         To load data from previously downloaded files
 
         >>> import NDBCdata
         >>> buoy = NDBCdata.buoy(46022)
-        >>> NDBCdata.loadFromH5('./NDBC46022')
+        >>> NDBCdata.loadFromH5("./Data")
         """
-
-        fileName = dirPath + "/NDBC" + str(self.buoyNum) + ".h5"
+        if fileName == None:
+            fileName = dirPath + "/NDBC" + str(self.buoyNum) + "-raw.h5"
 
 
         print "Reading from: ", fileName
-        f = h5py.File(fileName, 'r')
+        try:
+            f = h5py.File(fileName, 'r')
+        except IOError:
+            raise IOError("Could not find file: " + fileName)
+    
 
         for file in f:
             if("frequency" in file):
