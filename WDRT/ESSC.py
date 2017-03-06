@@ -865,7 +865,7 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="h5", savePath=None):
+    def fetchFromWeb(self, saveType="txt", savePath=None):
 
         '''Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
