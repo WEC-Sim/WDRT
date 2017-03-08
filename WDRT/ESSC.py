@@ -39,14 +39,6 @@ class EA:
                 Depth at measurement point (m)
             size_bin : float
                 chosen bin size
-            nb_steps : float
-                discretization of the circle in the normal space
-            time_ss : float
-                Sea state duration (hrs)
-            time_r : np array
-                return periods (yrs) of interest
-            SteepMax : float
-                Optional: estimate of breaking steepness
             buoy : NDBCData
                 ESSC.Buoy Object
         '''
@@ -121,6 +113,18 @@ class EA:
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
         method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
         Returns
         -------
         Hs_Return : np.array
@@ -129,6 +133,9 @@ class EA:
         T_ReturnContours : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
         Example
         -------
         To obtain the contours for a NDBC buoy::
@@ -192,6 +199,7 @@ class EA:
         '''WDRT Extreme Sea State Contour (EA) Sampling function
         This function calculates samples of Hs and T using the EA function to
         sample between contours of user-defined probabilities.
+
         Parameters
         ----------
         num_contour_points : int
@@ -204,6 +212,7 @@ class EA:
             Random seed for sample generation, required for sample
             repeatability. If left blank, a seed will automatically be
             generated.
+
         Returns
         -------
         Hs_Samples: np.array
@@ -213,9 +222,11 @@ class EA:
         Weight_points: np.array
             Vector of probabilistic weights for each sampling point
             to be used in risk calculations.
+
         Example
         -------
         To get weighted samples from a set of contours::
+
             import numpy as np
             import EA
             # Load data from existing text files
@@ -382,14 +393,12 @@ class EA:
 
     def getContourPoints(self, T_Sample):
         '''Get points along a specified environmental contour.
+
         Parameters
         ----------
-            T_Return : nparray
-                points defining period of return contour
-            Hs_Return : nparray
-                points defining sig. wave height of return contour
             T_Sample : nparray
                 points for sampling along return contour
+
         Returns
         -------
             Hs_SampleCA : nparray
@@ -431,14 +440,14 @@ class EA:
         and shallow water, as appropriate:
         deep water:h/lambda >= 1/2, tanh(kh)~1, lambda = (g.*T.^2)./(2*.pi)
         shallow water:h/lambda <= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5
+
         Parameters
         ----------
-        depth: float
-            Water depth at site [m].
         SteepMax: float
             Wave breaking steepness estimate (e.g., 0.07).
         T_vals :np.array
             Array of T values [sec] at which to calculate the breaking height.
+
         Returns
         -------
         SteepH: np.array
@@ -446,19 +455,31 @@ class EA:
             steepness curve.
         T_steep: np.array
             T values [sec] over which the steepness curve is defined.
+        
         Example
         -------
         To find limit the steepness of waves on a contour by breaking::
+        
             import numpy as np
             import WDRT.ESSC as ESSC
 
-            # make Buoy and EA objects as in the previous examples
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy(46022)
+            buoy.fetchFromWeb()
 
-              ...
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            size_bin = 250.  # Enter chosen bin size
 
+            # Create Environtmal Analysis object using above parameters
+            ea = ESSC.ea(depth, size_bin, buoy)
+
+
+            T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
             SteepMax = 0.07  # Optional: enter estimate of breaking steepness
             SteepH = ea.steepness(SteepMax,T_vals)
         '''
+
         # Calculate the wavelength at a given depth at each value of T
         lambdaT = []
 
@@ -790,12 +811,7 @@ class Buoy:
         List of datetime objects.
     '''
 
-    swdList = []
-    freqList = []
-    dateList = []
-    Hs = []
-    T = []
-    dateNum = []
+  
 
     def __init__(self, buoyNum, savePath = './Data/'):
 
@@ -809,6 +825,13 @@ class Buoy:
 
 
         '''
+        self.swdList = []
+        self.freqList = []
+        self.dateList = []
+        self.Hs = []
+        self.T = []
+        self.dateNum = []
+
         self.buoyNum = buoyNum
         self.savePath = savePath
 
