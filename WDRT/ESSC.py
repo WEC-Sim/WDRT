@@ -133,47 +133,26 @@ class EA:
         -------
         To obtain the contours for a NDBC buoy::
             import numpy as np
-            import WDRT.NDBCdata as NDBCdata
             import WDRT.EA as EA
             # Pull spectral data from NDBC website
-            url = "http://www.ndbc.noaa.gov/station_history.php?station=46022"
-            swdList, freqList, dateVals = NDBCdata.fetchFromWeb(46089, savePath='data')
-            # Find relevant stats (Hs and Te)
-            n = len(swdList)
-            Hs = []
-            T = []
-            DateNum = []
-            for ii in range(n):
-                tmp1, tmp2 = NDBCdata.getStats(swdList[ii], freqList[ii])
-                Hs.extend(tmp1)
-                T.extend(tmp2)
-                DateNum.extend(NDBCdata.getDateNums(dateVals[ii]))
-            Hs = np.array(Hs, dtype=np.float)
-            T = np.array(T, dtype=np.float)
-            DateNum = np.array(DateNum, dtype=np.float)
-            # Removing NaN data, assigning T label depending on input (Te or Tp)
-            Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))  # Find NaN data in Hs or T
-            DateNum = DateNum[Nanrem]  # Remove any NaN data from DateNum
-            Hs = Hs[Nanrem]  # Remove any NaN data from Hs
-            T = T[Nanrem]  # Remove any NaN data from T
+            buoy = ESSC.buoy(46022)
+            buoy.fetchFromWeb()
+
             # Declare required parameters
             depth = 391.4  # Depth at measurement point (m)
             size_bin = 250.  # Enter chosen bin size
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Create Environtmal Analysis object using above parameters
+            ea = ESSC.ea(depth, size_bin, buoy)
+
             # used for inverse FORM calculation
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = np.array([100])  # Return periods (yrs) of interest
-            SteepMax = 0.07  # Optional: enter estimate of breaking steepness
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
             # Contour generation example
-            Hs_Return, T_Return, _, _, _, _, _ = EA.getContours(Hs, T, depth, size_bin, nb_steps, Time_SS,
-                                                           Time_r)
-            # Sample Generation Example
-            num_contour_points = 20  # Number of points to be sampled for each
-            # contour interval.
-            contour_probs = 10 ** (-1 * np.array([1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]))
-            # Probabilities defining sampling contour bounds.
-            random_seed = 2  # Random seed for sample generation
-            Hs_Sample, T_Sample, Weight_Sample = EA.getSamples(Hs, T, num_contour_points, contour_probs, random_seed, depth, size_bin, nb_steps, Time_SS, Time_r)
+            Hs_Return, T_Return = ea.getContours(Time_SS, Time_r, nb_steps)
         '''
 
         self.time_ss = time_ss
@@ -240,44 +219,24 @@ class EA:
             import numpy as np
             import EA
             # Load data from existing text files
-            # swdList, freqList, dateVals = NDBCdata.loadFromText(
-            #     os.path.join('data', 'NDBC46022'))
-            # Find relevant stats (Hs and Te)
-            n = len(swdList)
-            Hs = []
-            T = []
-            DateNum = []
-            for ii in range(n):
-                tmp1, tmp2 = NDBCdata.getStats(swdList[ii], freqList[ii])
-                Hs.extend(tmp1)
-                T.extend(tmp2)
-                DateNum.extend(NDBCdata.getDateNums(dateVals[ii]))
-            Hs = np.array(Hs, dtype=np.float)
-            T = np.array(T, dtype=np.float)
-            DateNum = np.array(DateNum, dtype=np.float)
-            # Removing NaN data, assigning T label depending on input (Te or Tp)
-            Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))  # Find NaN data in Hs or T
-            DateNum = DateNum[Nanrem]  # Remove any NaN data from DateNum
-            Hs = Hs[Nanrem]  # Remove any NaN data from Hs
-            T = T[Nanrem]  # Remove any NaN data from T
+            buoy = ESSC.Buoy(46022)
+            buoy.loadFromText()
+
             depth = float(675) # Depth at measurement point (m)
             size_bin = float(250) # Enter chosen bin size
             nb_steps = float(1000) # Enter discretization of the circle in the
+
             # normal space. Used for inverse FORM calculation.
             Time_SS = float(1) # Sea state duration (hrs)
             Time_r = np.array([100]) # Return periods (yrs) of interest
-            # Removing NaN data, assigning T label depending on input (Te or Tp)
-            Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs)) # Find NaN data
-            DateNum = DateNum[Nanrem] #Remove any NaN data from DateNum
-            Hs = Hs[Nanrem] #Remove any NaN data from Hs
-            T = T[Nanrem] #Remove any NaN data from T
             num_contour_points = 10 # Number of points to be sampled for each
+
             # contour interval.
             contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))
+
             # Probabilities defining sampling contour bounds.
             random_seed = 2 # Random seed for sample generation
-            Hs_Sample,T_Sample,Weight_points = EA.getSamples(Hs,T,
-            num_contour_points,contour_probs,random_seed,depth,size_bin,nb_steps,
+            Hs_Sample,T_Sample,Weight_points = EA.getSamples(nb_steps,
             Time_SS,Time_r)
         '''
 
@@ -491,20 +450,14 @@ class EA:
         -------
         To find limit the steepness of waves on a contour by breaking::
             import numpy as np
-            import BreakingSteepness
-            data_file = np.load('NDBC46022_1996_2012_Hs_Te.npz')
-            DateNum = data_file['DateNum']
-            T = data_file['T']
-            Hs = data_file['Hs']
-            depth = 391.1  # Depth at measurement point (m)
+            import WDRT.ESSC as ESSC
+
+            # make Buoy and EA objects as in the previous examples
+
+              ...
+
             SteepMax = 0.07  # Optional: enter estimate of breaking steepness
-            # Removing NaN data, assigning T label depending on input (Te or Tp)
-            Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs)) #Find NaN data in Hs or T
-            DateNum = DateNum[Nanrem] #Remove any NaN data from DateNum
-            Hs = Hs[Nanrem] #Remove any NaN data from Hs
-            T = T[Nanrem] #Remove any NaN data from T
-            T_vals = np.arange(0.1,np.amax(T),0.1)
-            SteepH = BreakingSteepness.steepness(depth,SteepMax,T_vals)
+            SteepH = ea.steepness(SteepMax,T_vals)
         '''
         # Calculate the wavelength at a given depth at each value of T
         lambdaT = []
@@ -596,6 +549,10 @@ class EA:
 
 
     def plotData(self):
+        """
+        Display a plot of the 100-year return contour, full sea state samples
+        and contour samples
+        """
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
@@ -876,6 +833,11 @@ class Buoy:
             Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
+        Example
+        _________
+        >>> import WDRT.ESSC as ESSC
+        >>> buoy = ESSC.Buoy(46022)
+        >>> buoy.fetchFromWeb()
         '''
         numLines = 0
         numCols = 0
@@ -1010,9 +972,9 @@ class Buoy:
         -------
         To load data from previously downloaded files
 
-        >>> import ESSC
+        >>> import WDRT.ESSC as ESSC
         >>> buoy = ESSC.buoy(46022)
-        >>> ESSC.loadFromText('./Data/NDBC460022')
+        >>> buoy.loadFromText('./Data/NDBC460022')
         '''
         dateVals = []
         spectralVals = []
@@ -1086,9 +1048,9 @@ class Buoy:
         -------
         To load data from previously downloaded files
 
-        >>> import NDBCdata
-        >>> buoy = NDBCdata.buoy(46022)
-        >>> NDBCdata.loadFromH5("./Data")
+        >>> import WDRT.ESSC as ESSC
+        >>> buoy = ESSC.Buoy(46022)
+        >>> buoy.loadFromH5("./Data")
         """
         if fileName == None:
             fileName = dirPath + "/NDBC" + str(self.buoyNum) + "-raw.h5"
