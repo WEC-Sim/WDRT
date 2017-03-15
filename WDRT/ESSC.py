@@ -61,7 +61,7 @@ class EA:
 
 
 
-    def __generateParams(self, size_bin):
+    def __generateParams(self, size_bin = 250.0):
         pca = PCA(n_components=2)
         pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
         coeff = abs(pca.components_)  # Apply correct/expected sign convention
@@ -108,7 +108,7 @@ class EA:
         return coeff, shift, comp1_params, sigma_param, mu_param
 
 
-    def getContours(self, time_ss, time_r, nb_steps):
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -421,6 +421,7 @@ class EA:
         y = y1[ms]
 
         si = interp.interp1d(x, y)
+
         Hs_SampleCA = si(T_Sample)
 
         self.T_SampleCA = T_Sample
@@ -458,8 +459,8 @@ class EA:
         
         Example
         -------
+
         To find limit the steepness of waves on a contour by breaking::
-        
             import numpy as np
             import WDRT.ESSC as ESSC
 
