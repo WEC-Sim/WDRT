@@ -27,6 +27,7 @@ import re
 from datetime import datetime, date
 import os
 import glob
+import copy
 
 
 class EA:
@@ -90,7 +91,6 @@ class EA:
         bin_inds = np.digitize(ranks, bins=edges) - 1
         Comp2_bins_params = np.zeros((2, int(max(bin_inds) + 1)))
         Comp1_mean = np.array([])
-
 
         for bin_loop in range(np.max(bin_inds) + 1):
             mask_bins = bin_inds == bin_loop  # Find location of bin values
@@ -508,6 +508,44 @@ class EA:
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
         return SteepH
+
+
+    def bootStrap(self, bootSize, plotResults = True):
+        n = len(self.buoy.Hs);
+        Hs_Return_Boot = np.zeros([int(self.nb_steps),bootSize])
+        T_Return_Boot = np.zeros([int(self.nb_steps),bootSize])
+        buoycopy = copy.deepcopy(self.buoy);
+
+        for i in range(bootSize):
+            boot_inds = np.random.randint(0,high=n,size=n)
+            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = self.Hs_ReturnContours, self.T_ReturnContours
+
+        contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
+        contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
+        contourmean_Hs = np.mean(Hs_Return_Boot, axis=1)
+
+        contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
+        contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
+        contourmean_T = np.mean(T_Return_Boot, axis=1)
+        self.contourMean_Hs = contourmean_Hs
+        self.contourMean_T = contourmean_T
+
+        def plotResults():
+            plt.figure()
+            plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
+            plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+            plt.plot(contour97_5_T, contour97_5_Hs, 'r--', label='95% bootstrap confidence interval')
+            plt.plot(contour2_5_T, contour2_5_Hs, 'r--')
+            plt.plot(contourmean_T, contourmean_Hs, 'r-', label='Mean bootstrap contour')
+            plt.legend(loc='lower right', fontsize='small')
+            plt.grid(True)
+            plt.xlabel('Energy period, $T_e$ [s]')
+            plt.ylabel('Sig. wave height, $H_s$ [m]')
+            plt.show()
+        if plotResults:
+            plotResults()
+
+        return contourmean_Hs, contourmean_T
 
 
 
