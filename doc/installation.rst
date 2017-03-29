@@ -3,7 +3,8 @@ Installation
 
 Downloading `WDRT`
 ------------------------
-`WDRT` is distributed through the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_. The toolbox can either be downloaded via ``git`` or simply by visiting the the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_ and downloading it directly.
+`WDRT` is distributed through the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_.
+The toolbox can either be downloaded via ``git`` or simply by visiting the the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_ and downloading it directly.
 
 .. note::
 

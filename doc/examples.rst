@@ -28,7 +28,7 @@ Short-term extreme response analysis
 ------------------------------------
 A short term extreme distribution is the answer to “If a device is in sea-state X for Y amount of time, what will be the largest Z observed?", where X is the environmental condition, Y the short-term period, and Z the response parameter of interest (e.g. the mooring load, bending moment).
 The short-term extreme response module provides five different methods for obtaining this distribution based on observations of the quantity of interest "Z" at the desired sea-state "X".
-These methods are described in detail in :ref:`Michelen and Coe 2015 <pubs>`
+These methods are described in detail in :ref:`Michelen and Coe 2015 <pubs>`.
 
 In this example the Weibull tail-fit method is used.
 The proccess of obtaiing the sort-term extreme distribution using the Weibull tail-fit method is as follows:
@@ -42,7 +42,7 @@ The proccess of obtaiing the sort-term extreme distribution using the Weibull ta
 
 		F^{\prime}(x_i) = \frac{i}{N+1}
 
-	where :math:`x_i` is the :math:`i^{\textrm{th}}`-ordered peak
+	where :math:`x_i` is the :math:`i^{\textrm{th}}`-ordered peak.
 
 	3. Fit Weibull distributions to seven subsets of the points (:math:`x_i`, :math:`F^{\prime}(x_i)`) corresponding to :math:`F^{\prime}(x_i) > \left(0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65 \right)`.
 
@@ -130,7 +130,9 @@ For this example, we will simply load data that was previously produced with a s
 
 3. Short term extreme statistics 
 ''''''''''''''''''''''''''''''''
-The extreme response for each sea state can be defined as a percentile, :math:`\alpha`, in the extreme response distributions. The percentile chosen here should ideally be based on some experience with similar systems. Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
+The extreme response for each sea state can be defined as a percentile, :math:`\alpha`, in the extreme response distributions.
+The percentile chosen here should ideally be based on some experience with similar systems.
+Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
 
 .. literalinclude:: ../examples/example_contourApproach.py
 	:language: python
@@ -139,7 +141,9 @@ The extreme response for each sea state can be defined as a percentile, :math:`\
 
 5. Determine design load condition(s) 
 '''''''''''''''''''''''''''''''''''''
-For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI). The DLC is defined as the scenario that gives the largest response. To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.
+For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI).
+The DLC is defined as the scenario that gives the largest response.
+To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.
 
 .. literalinclude:: ../examples/example_contourApproach.py
 	:language: python
@@ -305,7 +309,9 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
 Most-likely extreme response (MLER)
 -----------------------------------
 
-The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
+The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves.
+The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states.
+The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
 An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``.
 
@@ -313,9 +319,14 @@ An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``
 	:language: python
    	:linenos:
 
-In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016). The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the `Wave Energy Converter Simulator, or WEC- Sim <https://wec-sim.github.io/WEC-Sim/>`_. 
+In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016).
+The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the `Wave Energy Converter Simulator, or WEC- Sim <https://wec-sim.github.io/WEC-Sim/>`_. 
 
-The figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the "heave conditioned" and "pitch conditioned" curves. This is expected because the maximum heave and pitch are most likely to occur at different times.
+The figure below explains how the MLER waves were generated and used.
+For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum.
+A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment).
+For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the "heave conditioned" and "pitch conditioned" curves.
+This is expected because the maximum heave and pitch are most likely to occur at different times.
 
 .. figure::  _static/MLER.png
    :align: center
