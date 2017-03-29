@@ -29,8 +29,90 @@ import os
 import glob
 import copy
 
-
 class EA:
+
+    def __init__():
+        return
+
+
+    def saveData(self, savePath = './Data'):
+    """
+    Saves all available data obtained via the EA module to
+    a .h5 file
+
+    Params
+    ______
+    savePath : string
+        relevent path where the .h5 file will be created and
+        saved
+    """
+    fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
+    with h5py.File(fileString, 'w') as f:
+
+        gp = f.create_group('parameters')
+        f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
+        f.time_r = gp.create_dataset('time_r', data=self.time_r)
+        f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
+        f.coeff = gp.create_dataset('coeff', data=self.coeff)
+        f.shift = gp.create_dataset('shift', data=self.shift)
+        f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
+        f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
+        f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
+
+        if(self.buoy.Hs is not None):
+            self.buoy._saveData(fileObj=f)
+
+        if(self.Hs_ReturnContours is not None):
+            grc = f.create_group('ReturnContours')
+            f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
+            f_T_Return.attrs['units'] = 's'
+            f_T_Return.attrs['description'] = 'contour, energy period'
+            f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+            f_Hs_Return.attrs['units'] = 'm'
+            f_Hs_Return.attrs['description'] = 'contours, significant wave height'
+
+        # Samples for full sea state long term analysis
+        if(self.Hs_SampleFSS is not None):
+            gfss = f.create_group('Samples_FullSeaState')
+            f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+            f_Hs_SampleFSS.attrs['units'] = 'm'
+            f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
+            f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
+            f_T_SampleFSS.attrs['units'] = 's'
+            f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
+            f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+            f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
+
+        # Samples for contour approach long term analysis
+        if(self.Hs_SampleCA is not None):
+            gca = f.create_group('Samples_ContourApproach')
+            f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
+            f_Hs_sampleCA.attrs['units'] = 'm'
+            f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
+            f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
+            f_T_sampleCA.attrs['units'] = 's'
+            f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
+
+
+    def plotData(self):
+        """
+        Display a plot of the 100-year return contour, full sea state samples
+        and contour samples
+        """
+        plt.figure()
+        plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
+        plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        plt.legend(loc='lower right', fontsize='small')
+        plt.grid(True)
+        plt.xlabel('Energy period, $T_e$ [s]')
+        plt.ylabel('Sig. wave height, $H_s$ [m]')
+
+        plt.show()    
+
+
+class PCA(EA):
 
     def __init__(self, depth, size_bin, buoy):
         '''
@@ -576,82 +658,6 @@ class EA:
 
 
 
-    def saveData(self, savePath = './Data'):
-        """
-        Saves all available data obtained via the EA module to
-        a .h5 file
-
-        Params
-        ______
-        savePath : string
-            relevent path where the .h5 file will be created and
-            saved
-        """
-        fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
-        with h5py.File(fileString, 'w') as f:
-
-            gp = f.create_group('parameters')
-            f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
-            f.time_r = gp.create_dataset('time_r', data=self.time_r)
-            f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
-            f.coeff = gp.create_dataset('coeff', data=self.coeff)
-            f.shift = gp.create_dataset('shift', data=self.shift)
-            f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
-            f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
-            f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
-
-            if(self.buoy.Hs is not None):
-                self.buoy._saveData(fileObj=f)
-
-            if(self.Hs_ReturnContours is not None):
-                grc = f.create_group('ReturnContours')
-                f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
-                f_T_Return.attrs['units'] = 's'
-                f_T_Return.attrs['description'] = 'contour, energy period'
-                f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
-                f_Hs_Return.attrs['units'] = 'm'
-                f_Hs_Return.attrs['description'] = 'contours, significant wave height'
-
-            # Samples for full sea state long term analysis
-            if(self.Hs_SampleFSS is not None):
-                gfss = f.create_group('Samples_FullSeaState')
-                f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
-                f_Hs_SampleFSS.attrs['units'] = 'm'
-                f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-                f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
-                f_T_SampleFSS.attrs['units'] = 's'
-                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
-                f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
-                f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
-
-            # Samples for contour approach long term analysis
-            if(self.Hs_SampleCA is not None):
-                gca = f.create_group('Samples_ContourApproach')
-                f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
-                f_Hs_sampleCA.attrs['units'] = 'm'
-                f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-                f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
-                f_T_sampleCA.attrs['units'] = 's'
-                f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
-
-
-    def plotData(self):
-        """
-        Display a plot of the 100-year return contour, full sea state samples
-        and contour samples
-        """
-        plt.figure()
-        plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
-        plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
-        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
-        plt.legend(loc='lower right', fontsize='small')
-        plt.grid(True)
-        plt.xlabel('Energy period, $T_e$ [s]')
-        plt.ylabel('Sig. wave height, $H_s$ [m]')
-
-        plt.show()
-
 
 
     def __mu_fcn(self, x, mu_p_1, mu_p_2):
@@ -854,6 +860,34 @@ class EA:
             rho = 10 * rho  # Increase penalization
         sig_final = sig_1
         return sig_final
+
+
+
+
+
+
+
+
+class FC(EA):
+    def __init__():
+        return
+
+
+
+
+
+
+class Rosen(EA):
+    def __init__():
+        return
+
+
+
+
+
+
+
+
 
 
 class Buoy:
