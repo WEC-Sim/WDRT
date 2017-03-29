@@ -936,8 +936,34 @@ the root.</td>
 </table>
 <dl class="method">
 <dt id="WDRT.ESSC.EA.bootStrap">
-<code class="descname">bootStrap</code><span class="sig-paren">(</span><em>bootSize</em>, <em>plotResults=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.bootStrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.bootStrap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">bootStrap</code><span class="sig-paren">(</span><em>boot_size=1000</em>, <em>plotResults=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.bootStrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.bootStrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get 95% confidence bounds about a contour using the bootstrap
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>boot_size</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Number of bootstrap samples that will be used to calculate 95%
+confidence interval. Should be large enough to calculate stable
+statistics. If left blank will be set to 1000.</li>
+<li><strong>plotResults</strong> (<em>boolean</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Option for showing plot of bootstrap confidence bounds. If left
+blank will be set to True and plot will be shown.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>contourmean_Hs</strong> (<em>nparray</em>) &#8211; Hs values for mean contour calculated as the average over all
+bootstrap contours.</li>
+<li><strong>contourmean_Hs</strong> (<em>nparray</em>) &#8211; T values for mean contour calculated as the average over all
+bootstrap contours.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="WDRT.ESSC.EA.getContourPoints">

@@ -656,15 +656,41 @@
         <span class="k">return</span> <span class="n">SteepH</span></div>
 
 
-<div class="viewcode-block" id="EA.bootStrap"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.EA.bootStrap">[docs]</a>    <span class="k">def</span> <span class="nf">bootStrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bootSize</span><span class="p">,</span> <span class="n">plotResults</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="EA.bootStrap"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.EA.bootStrap">[docs]</a>    <span class="k">def</span> <span class="nf">bootStrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boot_size</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">plotResults</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get 95% confidence bounds about a contour using the bootstrap </span>
+<span class="sd">        method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            boot_size: int (optional)</span>
+<span class="sd">                Number of bootstrap samples that will be used to calculate 95%</span>
+<span class="sd">                confidence interval. Should be large enough to calculate stable</span>
+<span class="sd">                statistics. If left blank will be set to 1000. </span>
+<span class="sd">            plotResults: boolean (optional)</span>
+<span class="sd">                Option for showing plot of bootstrap confidence bounds. If left</span>
+<span class="sd">                blank will be set to True and plot will be shown.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            contourmean_Hs : nparray</span>
+<span class="sd">                Hs values for mean contour calculated as the average over all </span>
+<span class="sd">                bootstrap contours.</span>
+<span class="sd">            contourmean_Hs : nparray</span>
+<span class="sd">                T values for mean contour calculated as the average over all </span>
+<span class="sd">                bootstrap contours.</span>
+<span class="sd">        &#39;&#39;&#39;</span>        
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">);</span>
-        <span class="n">Hs_Return_Boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">),</span><span class="n">bootSize</span><span class="p">])</span>
-        <span class="n">T_Return_Boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">),</span><span class="n">bootSize</span><span class="p">])</span>
+<span class="c1">#        boot_size = 1000</span>
+        <span class="n">Hs_Return_Boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">,</span><span class="n">boot_size</span><span class="p">])</span>
+        <span class="n">T_Return_Boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">,</span><span class="n">boot_size</span><span class="p">])</span>
         <span class="n">buoycopy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="p">);</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bootSize</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">boot_size</span><span class="p">):</span>
             <span class="n">boot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">n</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">Hs_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">T_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span>
+            <span class="n">buoycopy</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">[</span><span class="n">boot_inds</span><span class="p">])</span>
+            <span class="n">buoycopy</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">boot_inds</span><span class="p">])</span>
+            <span class="n">essccopy</span><span class="o">=</span> <span class="n">EA</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_bin</span><span class="p">,</span> <span class="n">buoycopy</span><span class="p">)</span>
+            <span class="n">Hs_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">T_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">essccopy</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">)</span>
 
         <span class="n">contour97_5_Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">Hs_Return_Boot</span><span class="p">,</span><span class="mf">97.5</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">contour2_5_Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">Hs_Return_Boot</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -673,6 +699,7 @@
         <span class="n">contour97_5_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">T_Return_Boot</span><span class="p">,</span><span class="mf">97.5</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">contour2_5_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">T_Return_Boot</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">contourmean_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">T_Return_Boot</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">contourMean_Hs</span> <span class="o">=</span> <span class="n">contourmean_Hs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contourMean_T</span> <span class="o">=</span> <span class="n">contourmean_T</span>
 
@@ -1056,7 +1083,7 @@
             <span class="n">savePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">savePath</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.ndbc.noaa.gov/station_history.php?station=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span>
-        <span class="n">ndbcURL</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">ndbcURL</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;http&quot;</span><span class="p">:</span><span class="s2">&quot;http://wwwproxy.sandia.gov:80&quot;</span><span class="p">})</span>
         <span class="n">ndbcURL</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="n">ndbcHTML</span> <span class="o">=</span> <span class="n">bs4</span><span class="o">.</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">ndbcURL</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">ndbcHTML</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Spectral wave density data: &quot;</span><span class="p">)</span>
