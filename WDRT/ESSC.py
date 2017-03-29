@@ -510,15 +510,41 @@ class EA:
         return SteepH
 
 
-    def bootStrap(self, bootSize, plotResults = True):
+    def bootStrap(self, boot_size = 1000, plotResults = True):
+        '''Get 95% confidence bounds about a contour using the bootstrap 
+        method.
+
+        Parameters
+        ----------
+            boot_size: int (optional)
+                Number of bootstrap samples that will be used to calculate 95%
+                confidence interval. Should be large enough to calculate stable
+                statistics. If left blank will be set to 1000. 
+            plotResults: boolean (optional)
+                Option for showing plot of bootstrap confidence bounds. If left
+                blank will be set to True and plot will be shown.
+
+        Returns
+        -------
+            contourmean_Hs : nparray
+                Hs values for mean contour calculated as the average over all 
+                bootstrap contours.
+            contourmean_Hs : nparray
+                T values for mean contour calculated as the average over all 
+                bootstrap contours.
+        '''        
         n = len(self.buoy.Hs);
-        Hs_Return_Boot = np.zeros([int(self.nb_steps),bootSize])
-        T_Return_Boot = np.zeros([int(self.nb_steps),bootSize])
+#        boot_size = 1000
+        Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
+        T_Return_Boot = np.zeros([self.nb_steps,boot_size])
         buoycopy = copy.deepcopy(self.buoy);
 
-        for i in range(bootSize):
+        for i in range(boot_size):
             boot_inds = np.random.randint(0,high=n,size=n)
-            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = self.Hs_ReturnContours, self.T_ReturnContours
+            buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
+            buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
+            essccopy= EA(self.depth, self.size_bin, buoycopy)
+            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
         contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
@@ -527,6 +553,7 @@ class EA:
         contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
         contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
         contourmean_T = np.mean(T_Return_Boot, axis=1)
+        
         self.contourMean_Hs = contourmean_Hs
         self.contourMean_T = contourmean_T
 
@@ -910,7 +937,7 @@ class Buoy:
             savePath = self.savePath
 
         url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
-        ndbcURL = requests.get(url)
+        ndbcURL = requests.get(url,proxies = {"http":"http://wwwproxy.sandia.gov:80"})
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
