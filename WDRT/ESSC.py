@@ -33,6 +33,11 @@ class EA:
 
     def __init__():
         return
+    def getContours():
+        return
+    
+    def getSamples():
+        return
 
 
     def saveData(self, savePath = './Data'):
@@ -110,6 +115,192 @@ class EA:
         plt.ylabel('Sig. wave height, $H_s$ [m]')
 
         plt.show()    
+
+
+
+
+    def getContourPoints(self, T_Sample):
+        '''Get points along a specified environmental contour.
+
+        Parameters
+        ----------
+            T_Sample : nparray
+                points for sampling along return contour
+
+        Returns
+        -------
+            Hs_SampleCA : nparray
+                points sampled along return contour
+        '''
+        amin = np.argmin(self.T_ReturnContours)
+        amax = np.argmax(self.T_ReturnContours)
+
+        w1 = self.Hs_ReturnContours[amin:amax]
+        w2 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
+        if (np.max(w1) > np.max(w2)):
+            x1 = self.T_ReturnContours[amin:amax]
+            y = self.Hs_ReturnContours[amin:amax]
+        else:
+            x1 = np.concatenate((self.T_ReturnContours[amax:], self.T_ReturnContours[:amin]))
+            y1 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
+
+        ms = np.argsort(x1)
+        x = x1[ms]
+        y = y1[ms]
+
+        si = interp.interp1d(x, y)
+
+        Hs_SampleCA = si(T_Sample)
+
+        self.T_SampleCA = T_Sample
+        self.Hs_SampleCA = Hs_SampleCA
+        return Hs_SampleCA
+
+
+    def steepness(self, SteepMax, T_vals):
+        '''This function calculates a steepness curve to be plotted on an H vs. T
+        diagram.  First, the function calculates the wavelength based on the
+        depth and T. The T vector can be the input data vector, or will be
+        created below to cover the span of possible T values.
+        The function solves the dispersion relation for water waves
+        using the Newton-Raphson method. All outputs are solved for exactly
+        using: (w^2*h/g=kh*tanh(khG)
+        Approximations that could be used in place of this code for deep
+        and shallow water, as appropriate:
+        deep water:h/lambda >= 1/2, tanh(kh)~1, lambda = (g.*T.^2)./(2*.pi)
+        shallow water:h/lambda <= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5
+
+        Parameters
+        ----------
+        SteepMax: float
+            Wave breaking steepness estimate (e.g., 0.07).
+        T_vals :np.array
+            Array of T values [sec] at which to calculate the breaking height.
+
+        Returns
+        -------
+        SteepH: np.array
+            H values [m] that correspond to the T_mesh values creating the
+            steepness curve.
+        T_steep: np.array
+            T values [sec] over which the steepness curve is defined.
+        
+        Example
+        -------
+
+        To find limit the steepness of waves on a contour by breaking::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy(46022)
+            buoy.fetchFromWeb()
+
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            size_bin = 250.  # Enter chosen bin size
+
+            # Create Environtmal Analysis object using above parameters
+            ea = ESSC.ea(depth, size_bin, buoy)
+
+
+            T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
+            SteepMax = 0.07  # Optional: enter estimate of breaking steepness
+            SteepH = ea.steepness(SteepMax,T_vals)
+        '''
+
+        # Calculate the wavelength at a given depth at each value of T
+        lambdaT = []
+
+        g = 9.81  # [m/s^2]
+        omega = ((2 * np.pi) / T_vals)
+        lambdaT = []
+
+        for i in range(len(T_vals)):
+            # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
+            kh = (omega[i]**2) * self.depth / \
+                (g * (np.tanh((omega[i]**2) * self.depth / g)**0.5))
+            # Find solution using the Newton-Raphson Method
+            for j in range(1000):
+                kh0 = kh
+                f0 = (omega[i]**2) * self.depth / g - kh0 * np.tanh(kh0)
+                df0 = -np.tanh(kh) - kh * (1 - np.tanh(kh)**2)
+                kh = -f0 / df0 + kh0
+                f = (omega[i]**2) * self.depth / g - kh * np.tanh(kh)
+                if abs(f0 - f) < 10**(-6):
+                    break
+
+            lambdaT.append((2 * np.pi) / (kh / self.depth))
+            del kh, kh0
+
+        lambdaT = np.array(lambdaT, dtype=np.float)
+        SteepH = lambdaT * SteepMax
+        return SteepH
+
+
+    def bootStrap(self, boot_size = 1000, plotResults = True):
+        '''Get 95% confidence bounds about a contour using the bootstrap 
+        method.
+
+        Parameters
+        ----------
+            boot_size: int (optional)
+                Number of bootstrap samples that will be used to calculate 95%
+                confidence interval. Should be large enough to calculate stable
+                statistics. If left blank will be set to 1000. 
+            plotResults: boolean (optional)
+                Option for showing plot of bootstrap confidence bounds. If left
+                blank will be set to True and plot will be shown.
+
+        Returns
+        -------
+            contourmean_Hs : nparray
+                Hs values for mean contour calculated as the average over all 
+                bootstrap contours.
+            contourmean_Hs : nparray
+                T values for mean contour calculated as the average over all 
+                bootstrap contours.
+        '''        
+        n = len(self.buoy.Hs);
+#        boot_size = 1000
+        Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
+        T_Return_Boot = np.zeros([self.nb_steps,boot_size])
+        buoycopy = copy.deepcopy(self.buoy);
+
+        for i in range(boot_size):
+            boot_inds = np.random.randint(0,high=n,size=n)
+            buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
+            buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
+            essccopy= EA(self.depth, self.size_bin, buoycopy)
+            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
+
+        contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
+        contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
+        contourmean_Hs = np.mean(Hs_Return_Boot, axis=1)
+
+        contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
+        contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
+        contourmean_T = np.mean(T_Return_Boot, axis=1)
+        
+        self.contourMean_Hs = contourmean_Hs
+        self.contourMean_T = contourmean_T
+
+        def plotResults():
+            plt.figure()
+            plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
+            plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+            plt.plot(contour97_5_T, contour97_5_Hs, 'r--', label='95% bootstrap confidence interval')
+            plt.plot(contour2_5_T, contour2_5_Hs, 'r--')
+            plt.plot(contourmean_T, contourmean_Hs, 'r-', label='Mean bootstrap contour')
+            plt.legend(loc='lower right', fontsize='small')
+            plt.grid(True)
+            plt.xlabel('Energy period, $T_e$ [s]')
+            plt.ylabel('Sig. wave height, $H_s$ [m]')
+            plt.show()
+        if plotResults:
+            plotResults()
+
+        return contourmean_Hs, contourmean_T
 
 
 class PCA(EA):
@@ -471,190 +662,6 @@ class PCA(EA):
             Comp1_sample, Comp2_sample, self.coeff, self.shift)
 
         return Hs_Sample, T_Sample
-
-
-    def getContourPoints(self, T_Sample):
-        '''Get points along a specified environmental contour.
-
-        Parameters
-        ----------
-            T_Sample : nparray
-                points for sampling along return contour
-
-        Returns
-        -------
-            Hs_SampleCA : nparray
-                points sampled along return contour
-        '''
-        amin = np.argmin(self.T_ReturnContours)
-        amax = np.argmax(self.T_ReturnContours)
-
-        w1 = self.Hs_ReturnContours[amin:amax]
-        w2 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
-        if (np.max(w1) > np.max(w2)):
-            x1 = self.T_ReturnContours[amin:amax]
-            y = self.Hs_ReturnContours[amin:amax]
-        else:
-            x1 = np.concatenate((self.T_ReturnContours[amax:], self.T_ReturnContours[:amin]))
-            y1 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
-
-        ms = np.argsort(x1)
-        x = x1[ms]
-        y = y1[ms]
-
-        si = interp.interp1d(x, y)
-
-        Hs_SampleCA = si(T_Sample)
-
-        self.T_SampleCA = T_Sample
-        self.Hs_SampleCA = Hs_SampleCA
-        return Hs_SampleCA
-
-
-    def steepness(self, SteepMax, T_vals):
-        '''This function calculates a steepness curve to be plotted on an H vs. T
-        diagram.  First, the function calculates the wavelength based on the
-        depth and T. The T vector can be the input data vector, or will be
-        created below to cover the span of possible T values.
-        The function solves the dispersion relation for water waves
-        using the Newton-Raphson method. All outputs are solved for exactly
-        using: (w^2*h/g=kh*tanh(khG)
-        Approximations that could be used in place of this code for deep
-        and shallow water, as appropriate:
-        deep water:h/lambda >= 1/2, tanh(kh)~1, lambda = (g.*T.^2)./(2*.pi)
-        shallow water:h/lambda <= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5
-
-        Parameters
-        ----------
-        SteepMax: float
-            Wave breaking steepness estimate (e.g., 0.07).
-        T_vals :np.array
-            Array of T values [sec] at which to calculate the breaking height.
-
-        Returns
-        -------
-        SteepH: np.array
-            H values [m] that correspond to the T_mesh values creating the
-            steepness curve.
-        T_steep: np.array
-            T values [sec] over which the steepness curve is defined.
-        
-        Example
-        -------
-
-        To find limit the steepness of waves on a contour by breaking::
-            import numpy as np
-            import WDRT.ESSC as ESSC
-
-            # Pull spectral data from NDBC website
-            buoy = ESSC.buoy(46022)
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
-            # Create Environtmal Analysis object using above parameters
-            ea = ESSC.ea(depth, size_bin, buoy)
-
-
-            T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
-            SteepMax = 0.07  # Optional: enter estimate of breaking steepness
-            SteepH = ea.steepness(SteepMax,T_vals)
-        '''
-
-        # Calculate the wavelength at a given depth at each value of T
-        lambdaT = []
-
-        g = 9.81  # [m/s^2]
-        omega = ((2 * np.pi) / T_vals)
-        lambdaT = []
-
-        for i in range(len(T_vals)):
-            # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
-            kh = (omega[i]**2) * self.depth / \
-                (g * (np.tanh((omega[i]**2) * self.depth / g)**0.5))
-            # Find solution using the Newton-Raphson Method
-            for j in range(1000):
-                kh0 = kh
-                f0 = (omega[i]**2) * self.depth / g - kh0 * np.tanh(kh0)
-                df0 = -np.tanh(kh) - kh * (1 - np.tanh(kh)**2)
-                kh = -f0 / df0 + kh0
-                f = (omega[i]**2) * self.depth / g - kh * np.tanh(kh)
-                if abs(f0 - f) < 10**(-6):
-                    break
-
-            lambdaT.append((2 * np.pi) / (kh / self.depth))
-            del kh, kh0
-
-        lambdaT = np.array(lambdaT, dtype=np.float)
-        SteepH = lambdaT * SteepMax
-        return SteepH
-
-
-    def bootStrap(self, boot_size = 1000, plotResults = True):
-        '''Get 95% confidence bounds about a contour using the bootstrap 
-        method.
-
-        Parameters
-        ----------
-            boot_size: int (optional)
-                Number of bootstrap samples that will be used to calculate 95%
-                confidence interval. Should be large enough to calculate stable
-                statistics. If left blank will be set to 1000. 
-            plotResults: boolean (optional)
-                Option for showing plot of bootstrap confidence bounds. If left
-                blank will be set to True and plot will be shown.
-
-        Returns
-        -------
-            contourmean_Hs : nparray
-                Hs values for mean contour calculated as the average over all 
-                bootstrap contours.
-            contourmean_Hs : nparray
-                T values for mean contour calculated as the average over all 
-                bootstrap contours.
-        '''        
-        n = len(self.buoy.Hs);
-#        boot_size = 1000
-        Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
-        T_Return_Boot = np.zeros([self.nb_steps,boot_size])
-        buoycopy = copy.deepcopy(self.buoy);
-
-        for i in range(boot_size):
-            boot_inds = np.random.randint(0,high=n,size=n)
-            buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
-            buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            essccopy= EA(self.depth, self.size_bin, buoycopy)
-            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
-
-        contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
-        contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
-        contourmean_Hs = np.mean(Hs_Return_Boot, axis=1)
-
-        contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
-        contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
-        contourmean_T = np.mean(T_Return_Boot, axis=1)
-        
-        self.contourMean_Hs = contourmean_Hs
-        self.contourMean_T = contourmean_T
-
-        def plotResults():
-            plt.figure()
-            plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
-            plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-            plt.plot(contour97_5_T, contour97_5_Hs, 'r--', label='95% bootstrap confidence interval')
-            plt.plot(contour2_5_T, contour2_5_Hs, 'r--')
-            plt.plot(contourmean_T, contourmean_Hs, 'r-', label='Mean bootstrap contour')
-            plt.legend(loc='lower right', fontsize='small')
-            plt.grid(True)
-            plt.xlabel('Energy period, $T_e$ [s]')
-            plt.ylabel('Sig. wave height, $H_s$ [m]')
-            plt.show()
-        if plotResults:
-            plotResults()
-
-        return contourmean_Hs, contourmean_T
 
 
 
