@@ -36,62 +36,62 @@ class EA:
         return
 
     def saveData(self, savePath='./Data'):
-    """
-    Saves all available data obtained via the EA module to
-    a .h5 file
+        """
+        Saves all available data obtained via the EA module to
+        a .h5 file
 
-    Params
-    ______
-    savePath : string
-        relevent path where the .h5 file will be created and
-        saved
-    """
-    fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
-    with h5py.File(fileString, 'w') as f:
+        Params
+        ______
+        savePath : string
+            relevent path where the .h5 file will be created and
+            saved
+        """
+        fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
+        with h5py.File(fileString, 'w') as f:
 
-        gp = f.create_group('parameters')
-        f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
-        f.time_r = gp.create_dataset('time_r', data=self.time_r)
-        f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
-        f.coeff = gp.create_dataset('coeff', data=self.coeff)
-        f.shift = gp.create_dataset('shift', data=self.shift)
-        f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
-        f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
-        f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
+            gp = f.create_group('parameters')
+            f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
+            f.time_r = gp.create_dataset('time_r', data=self.time_r)
+            f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
+            f.coeff = gp.create_dataset('coeff', data=self.coeff)
+            f.shift = gp.create_dataset('shift', data=self.shift)
+            f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
+            f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
+            f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
 
-        if(self.buoy.Hs is not None):
-            self.buoy._saveData(fileObj=f)
+            if(self.buoy.Hs is not None):
+                self.buoy._saveData(fileObj=f)
 
-        if(self.Hs_ReturnContours is not None):
-            grc = f.create_group('ReturnContours')
-            f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
-            f_T_Return.attrs['units'] = 's'
-            f_T_Return.attrs['description'] = 'contour, energy period'
-            f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
-            f_Hs_Return.attrs['units'] = 'm'
-            f_Hs_Return.attrs['description'] = 'contours, significant wave height'
+            if(self.Hs_ReturnContours is not None):
+                grc = f.create_group('ReturnContours')
+                f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
+                f_T_Return.attrs['units'] = 's'
+                f_T_Return.attrs['description'] = 'contour, energy period'
+                f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+                f_Hs_Return.attrs['units'] = 'm'
+                f_Hs_Return.attrs['description'] = 'contours, significant wave height'
 
-        # Samples for full sea state long term analysis
-        if(self.Hs_SampleFSS is not None):
-            gfss = f.create_group('Samples_FullSeaState')
-            f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
-            f_Hs_SampleFSS.attrs['units'] = 'm'
-            f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-            f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
-            f_T_SampleFSS.attrs['units'] = 's'
-            f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
-            f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
-            f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
+            # Samples for full sea state long term analysis
+            if(self.Hs_SampleFSS is not None):
+                gfss = f.create_group('Samples_FullSeaState')
+                f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+                f_Hs_SampleFSS.attrs['units'] = 'm'
+                f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
+                f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
+                f_T_SampleFSS.attrs['units'] = 's'
+                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
+                f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
-        # Samples for contour approach long term analysis
-        if(self.Hs_SampleCA is not None):
-            gca = f.create_group('Samples_ContourApproach')
-            f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
-            f_Hs_sampleCA.attrs['units'] = 'm'
-            f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-            f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
-            f_T_sampleCA.attrs['units'] = 's'
-            f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
+            # Samples for contour approach long term analysis
+            if(self.Hs_SampleCA is not None):
+                gca = f.create_group('Samples_ContourApproach')
+                f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
+                f_Hs_sampleCA.attrs['units'] = 'm'
+                f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
+                f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
+                f_T_sampleCA.attrs['units'] = 's'
+                f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
     def plotData(self):
         """
@@ -291,15 +291,15 @@ class EA:
 
         return contourmean_Hs, contourmean_T
 
-    def __getCopulaParams(self,n_size,bin_1_limit,bin_step)
+    def __getCopulaParams(self,n_size,bin_1_limit,bin_step):
         sorted_idx = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
         Hs = self.buoy.Hs[sorted_idx]
         T = self.buoy.T[sorted_idx]
 
         # Estimate parameters for Weibull distribution for component 1 (Hs) using MLE
         # Estimate parameters for Lognormal distribution for component 2 (T) using MLE
-        para_dist_1=scipy.stats.exponweib.fit(Hs,floc=0,fa=1)
-        para_dist_2=scipy.stats.norm.fit(np.log(T))
+        para_dist_1=stats.exponweib.fit(Hs,floc=0,fa=1)
+        para_dist_2=stats.norm.fit(np.log(T))
 
         # Binning
         ind = np.array([])
@@ -315,17 +315,17 @@ class EA:
         para_dist_cond = []
         hss = []
 
-        para_dist_cond.append(scipy.stats.norm.fit(np.log(T[range(0,int(ind[0]))])))  # parameters for first bin
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(0,int(ind[0]))])))  # parameters for first bin
         hss.append(np.mean(Hs[range(0,int(ind[0])-1)])) # mean of Hs (component 1 for first bin)
-        para_dist_cond.append(scipy.stats.norm.fit(np.log(T[range(0,int(ind[1]))]))) # parameters for second bin
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(0,int(ind[1]))]))) # parameters for second bin
         hss.append(np.mean(Hs[range(0,int(ind[1])-1)])) # mean of Hs (component 1 for second bin)
 
         for i in range(2,num):
-            para_dist_cond.append(scipy.stats.norm.fit(np.log(T[range(int(ind[i-2]),int(ind[i]))])));
+            para_dist_cond.append(stats.norm.fit(np.log(T[range(int(ind[i-2]),int(ind[i]))])));
             hss.append(np.mean(Hs[range(int(ind[i-2]),int(ind[i]))]))
 
         # Estimate coefficient using least square solution (mean: third order, sigma: 2nd order)
-        para_dist_cond.append(scipy.stats.norm.fit(np.log(T[range(int(ind[num-2]),int(len(Hs)))])));  # parameters for last bin
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(int(ind[num-2]),int(len(Hs)))])));  # parameters for last bin
         hss.append(np.mean(Hs[range(int(ind[num-2]),int(len(Hs)))])) # mean of Hs (component 1 for last bin)
 
         para_dist_cond = np.array(para_dist_cond)
@@ -341,7 +341,7 @@ class EA:
 
         return para_dist_1, para_dist_2, mean_cond, std_cond
 
-class PCA(EA):
+class PCA_EA(EA):
 
     def __init__(self, depth, size_bin, buoy):
         '''
@@ -928,7 +928,7 @@ class GaussianCopula(EA):
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
 
-    def getContours(self, time_ss, time_r):
+    def getContours(self, time_ss, time_r,nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -963,19 +963,19 @@ class GaussianCopula(EA):
         time_ss = float(1)
         time_r = float(50)
         p_f = 1 / (365 * (24 / time_ss) * time_r)
-        beta = scipy.stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
         # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
         U1 = beta * np.cos(theta)
         U2 = beta * np.sin(theta)
 
-        comp_1 = scipy.stats.exponweib.ppf(scipy.stats.norm.cdf(U1),a=para_dist_1[0],c=para_dist_1[1],loc=para_dist_1[2],scale=para_dist_1[3])
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
 
-        tau = scipy.stats.kendalltau(Tp,Hs)[0] # Calculate Kendall's tau
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
         rho_gau=np.sin(tau*np.pi/2.)
 
-        z2_Gau=scipy.stats.norm.cdf(U2*np.sqrt(1.-rho_gau**2.)+rho_gau*U1);
-        comp_2_Gaussian = scipy.stats.lognorm.ppf(z2_Gau,s=para_dist_2[1],loc=0,scale=np.exp(para_dist_2[0])) #lognormalinverse
+        z2_Gau=stats.norm.cdf(U2*np.sqrt(1.-rho_gau**2.)+rho_gau*U1);
+        comp_2_Gaussian = stats.lognorm.ppf(z2_Gau,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0])) #lognormalinverse
 
         Hs_Return = comp_1
         T_Return = comp_2_Gaussian
@@ -1024,7 +1024,7 @@ class Rosenblatt(EA):
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
 
-    def getContours(self, time_ss, time_r):
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -1059,18 +1059,18 @@ class Rosenblatt(EA):
         time_ss = float(1)
         time_r = float(50)
         p_f = 1 / (365 * (24 / time_ss) * time_r)
-        beta = scipy.stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
         # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
         U1 = beta * np.cos(theta)
         U2 = beta * np.sin(theta)
 
-        comp_1 = scipy.stats.exponweib.ppf(scipy.stats.norm.cdf(U1),a=para_dist_1[0],c=para_dist_1[1],loc=para_dist_1[2],scale=para_dist_1[3])
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
 
-        lamda_cond=mean_cond[0]+mean_cond[1]*comp_1+mean_cond[2]*comp_1**2+mean_cond[3]*comp_1**3      # mean of Ln(T) as a function of Hs
-        sigma_cond=std_cond[0]+std_cond[1]*comp_1+std_cond[2]*comp_1**2                                # Standard deviation of Ln(T) as a function of Hs
+        lamda_cond=self.mean_cond[0]+self.mean_cond[1]*comp_1+self.mean_cond[2]*comp_1**2+self.mean_cond[3]*comp_1**3      # mean of Ln(T) as a function of Hs
+        sigma_cond=self.std_cond[0]+self.std_cond[1]*comp_1+self.std_cond[2]*comp_1**2                                # Standard deviation of Ln(T) as a function of Hs
 
-        comp_2_Rosenblatt = scipy.stats.lognorm.ppf(scipy.stats.norm.cdf(U2),s=sigma_cond,loc=0,scale=np.exp(lamda_cond))  # lognormal inverse
+        comp_2_Rosenblatt = stats.lognorm.ppf(stats.norm.cdf(U2),s=sigma_cond,loc=0,scale=np.exp(lamda_cond))  # lognormal inverse
 
         Hs_Return = comp_1
         T_Return = comp_2_Rosenblatt
@@ -1083,7 +1083,7 @@ class Rosenblatt(EA):
         raise NotImplementedError
 
 
-class ClaytonCopula(EA)
+class ClaytonCopula(EA):
     def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
@@ -1119,7 +1119,7 @@ class ClaytonCopula(EA)
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
 
-    def getContours(self, time_ss, time_r):
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -1154,19 +1154,19 @@ class ClaytonCopula(EA)
         time_ss = float(1)
         time_r = float(50)
         p_f = 1 / (365 * (24 / time_ss) * time_r)
-        beta = scipy.stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
         # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
         U1 = beta * np.cos(theta)
         U2 = beta * np.sin(theta)
 
-        comp_1 = scipy.stats.exponweib.ppf(scipy.stats.norm.cdf(U1),a=para_dist_1[0],c=para_dist_1[1],loc=para_dist_1[2],scale=para_dist_1[3])
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
 
-        tau = scipy.stats.kendalltau(Tp,Hs)[0] # Calculate Kendall's tau
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
         theta_clay = (2.*tau)/(1.-tau)
 
-        z2_Clay=((1.-scipy.stats.norm.cdf(U1)**(-theta_clay)+scipy.stats.norm.cdf(U1)**(-theta_clay)/scipy.stats.norm.cdf(U2))**(theta_clay/(1.+theta_clay)))**(-1./theta_clay)
-        comp_2_Clay = scipy.stats.lognorm.ppf(z2_Clay,s=para_dist_2[1],loc=0,scale=np.exp(para_dist_2[0])) #lognormalinverse
+        z2_Clay=((1.-stats.norm.cdf(U1)**(-theta_clay)+stats.norm.cdf(U1)**(-theta_clay)/stats.norm.cdf(U2))**(theta_clay/(1.+theta_clay)))**(-1./theta_clay)
+        comp_2_Clayton = stats.lognorm.ppf(z2_Clay,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0])) #lognormalinverse
 
         Hs_Return = comp_1
         T_Return = comp_2_Clayton
@@ -1181,7 +1181,7 @@ class ClaytonCopula(EA)
 
 class GumbelCopula(EA):
 
-    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
         ___________
@@ -1212,11 +1212,12 @@ class GumbelCopula(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.Ndata = Ndata
         self.min_limit_2 = 0.
         self.max_limit_2 = np.ceil(np.amax(self.buoy.T)*2)
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
 
-    def getContours(self, time_ss, time_r):
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -1251,34 +1252,34 @@ class GumbelCopula(EA):
         time_ss = float(1)
         time_r = float(50)
         p_f = 1 / (365 * (24 / time_ss) * time_r)
-        beta = scipy.stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
         # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
         U1 = beta * np.cos(theta)
         U2 = beta * np.sin(theta)
 
-        comp_1 = scipy.stats.exponweib.ppf(scipy.stats.norm.cdf(U1),a=para_dist_1[0],c=para_dist_1[1],loc=para_dist_1[2],scale=para_dist_1[3])
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
 
-        tau = scipy.stats.kendalltau(Tp,Hs)[0] # Calculate Kendall's tau
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
         theta_gum = 1./(1.-tau)
 
-        fi_u1=scipy.stats.norm.cdf(U1);
-        fi_u2=scipy.stats.norm.cdf(U2);
-        x2 = np.linspace(min_limit_2,max_limit_2,Ndata)
-        z2 = scipy.stats.lognorm.cdf(x2,s=para_dist_2[1],loc=0,scale=np.exp(para_dist_2[0]))
+        fi_u1=stats.norm.cdf(U1);
+        fi_u2=stats.norm.cdf(U2);
+        x2 = np.linspace(self.min_limit_2,self.max_limit_2,self.Ndata)
+        z2 = stats.lognorm.cdf(x2,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0]))
 
-        comp_2_Gumb = np.zeros(N)
-        for k in range(0,N):
-            z1 = np.linspace(fi_u1[k],fi_u1[k],Ndata)
+        comp_2_Gumb = np.zeros(nb_steps)
+        for k in range(0,int(nb_steps)):
+            z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
             Z = np.array((z1,z2))
-            Y = gumbelCopula(Z, theta_gum)
+            Y = self.__gumbelCopula(Z, theta_gum)
             Y =np.nan_to_num(Y) # Need to look into this
-            p_x2_x1 = Y*(scipy.stats.lognorm.pdf(x2, s = para_dist_2[1], loc=0, scale = np.exp(para_dist_2[0])))
+            p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0])))
             dum = np.cumsum(p_x2_x1)
-            cdf = dum/(dum[Ndata-1])
+            cdf = dum/(dum[self.Ndata-1])
             table = np.array((x2, cdf))
             table = table.T
-            for j in range(Ndata):
+            for j in range(self.Ndata):
                 if fi_u2[k] <= table[0,1]:
                     comp_2_Gumb[k] = min(table[:,0])
                     break
@@ -1298,7 +1299,7 @@ class GumbelCopula(EA):
     def getSamples(self):
         raise NotImplementedError
 
-    def __gumbelCopula(u, alpha):
+    def __gumbelCopula(self,u, alpha):
         v = -np.log(u)
         v = np.sort(v, axis = 0)
         vmin = v[0,:]
