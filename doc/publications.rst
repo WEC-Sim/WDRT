@@ -35,7 +35,7 @@ Related publications
 
 -- A. C. Eckert-Gallup, C. J. Sallaberry, A. R. Dallman, V. S. Neary, `Application of principal component analysis (PCA) and improved joint probability distributions to the inverse first-order reliability method (I-FORM) for predicting extreme sea states <http://www.sciencedirect.com/science/article/pii/S0029801815006721>`_, Ocean Engineering 112 (2016) 307 – 319. doi:http://dx.doi.org/10.1016/j.oceaneng.2015.12.018.
 
--- C. Michelen, R. Coe, `Comparison of methods for estimating short-term extreme response of wave energy converters <http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7401878&tag=1>`_, in: OCEANS 2015 - MTS/IEEE Washington, IEEE, Washington, D.C., 2015.
+-- C. Michelen, R. Coe, `Comparison of methods for estimating short-term extreme response of wave energy converters <http://ieeexplore.ieee.org/document/7401878/>`_, in: OCEANS 2015 - MTS/IEEE Washington, IEEE, Washington, D.C., 2015.
 
 -- Y.-H. Yu, J. Van Rij, R. G. Coe, M. Lawson, `Development and application of a methodology for predicting wave energy converters design load <http://proceedings.asmedigitalcollection.asme.org/proceeding.aspx?articleID=2465994>`_, in: Proceedings of the 34th International Conference on Ocean, Offshore and Arctic Engineering, ASME, St. Johns, Canada, 2015.
 
