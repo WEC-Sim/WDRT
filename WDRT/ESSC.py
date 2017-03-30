@@ -19,7 +19,7 @@ import scipy.optimize as optim
 import scipy.interpolate as interp
 import matplotlib.pyplot as plt
 import h5py
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA as skPCA
 import requests
 import bs4
 import urllib2
@@ -34,6 +34,10 @@ class EA:
 
     def __init__():
         return
+    def getContours():
+        return
+    def getSamples():
+        return
 
     def saveData(self, savePath='./Data'):
         """
@@ -46,7 +50,7 @@ class EA:
             relevent path where the .h5 file will be created and
             saved
         """
-        fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
+        fileString = savePath + '/NDBC' + str(self.buoy.buoyNum) + '.h5'
         with h5py.File(fileString, 'w') as f:
 
             gp = f.create_group('parameters')
@@ -250,17 +254,17 @@ class EA:
                 T values for mean contour calculated as the average over all
                 bootstrap contours.
         '''
-        n = len(self.buoy.Hs);
-#        boot_size = 1000
+        n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
         T_Return_Boot = np.zeros([self.nb_steps,boot_size])
         buoycopy = copy.deepcopy(self.buoy);
 
         for i in range(boot_size):
-            boot_inds = np.random.randint(0,high=n,size=n)
+            print i
+            boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            essccopy= EA(self.depth, self.size_bin, buoycopy)
+            essccopy = PCA(self.depth, self.size_bin, buoycopy)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -341,7 +345,7 @@ class EA:
 
         return para_dist_1, para_dist_2, mean_cond, std_cond
 
-class PCA_EA(EA):
+class PCA(EA):
 
     def __init__(self, depth, size_bin, buoy):
         '''
@@ -372,7 +376,7 @@ class PCA_EA(EA):
         self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
 
     def __generateParams(self, size_bin=250.0):
-        pca = PCA(n_components=2)
+        pca = skPCA(n_components=2)
         pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
         coeff = abs(pca.components_)  # Apply correct/expected sign convention
         coeff[1, 1] = -1.0 * coeff[1, 1]  # Apply correct/expected sign convention
@@ -926,9 +930,9 @@ class GaussianCopula(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
-    def getContours(self, time_ss, time_r,nb_steps = 1000):
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
@@ -1022,7 +1026,7 @@ class Rosenblatt(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
@@ -1117,7 +1121,7 @@ class ClaytonCopula(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
@@ -1215,7 +1219,7 @@ class GumbelCopula(EA):
         self.Ndata = Ndata
         self.min_limit_2 = 0.
         self.max_limit_2 = np.ceil(np.amax(self.buoy.T)*2)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self.getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Contour (EA) function
@@ -1669,56 +1673,56 @@ class Buoy:
         self.dateNum = dateNum
         return Hs, T, dateNum
 
-    def _getDateNums(dateArr):
-        '''datetime objects
+def _getDateNums(dateArr):
+    '''datetime objects
+
+    Parameters
+    ----------
+        dateArr : np.array
+            Array of a specific years date vals from NDBC.fetchFromWeb
+
+    Returns
+    -------
+        dateNum : np.array
+            Array of datetime objects.
+    '''
+    dateNum = []
+    for times in dateArr:
+        if  times[0] < 1900:
+            times[0] = 1900 + times[0]
+        if times[0] < 2005:
+            dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                                   times[2], times[3])))
+        else:
+            dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                                   times[2], times[3],
+                                                   times[4])))
+    return dateNum
+
+def _getStats(swdArr, freqArr):
+        '''Significant wave height and energy period
 
         Parameters
         ----------
-            dateArr : np.array
-                Array of a specific years date vals from NDBC.fetchFromWeb
+            swdArr : np.array
+                Numpy array of the spectral wave density data for a specific year
+            freqArr: np.array
+                Numpy array that contains the frequency values for a specific year
 
         Returns
         -------
-            dateNum : np.array
-                Array of datetime objects.
+            Hm0 : list
+                Significant wave height.
+            Te : list
+                Energy period.
         '''
-        dateNum = []
-        for times in dateArr:
-            if  times[0] < 1900:
-                times[0] = 1900 + times[0]
-            if times[0] < 2005:
-                dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                       times[2], times[3])))
-            else:
-                dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                       times[2], times[3],
-                                                       times[4])))
-        return dateNum
+        Hm0 = []
+        Te = []
 
-    def _getStats(swdArr, freqArr):
-            '''Significant wave height and energy period
-
-            Parameters
-            ----------
-                swdArr : np.array
-                    Numpy array of the spectral wave density data for a specific year
-                freqArr: np.array
-                    Numpy array that contains the frequency values for a specific year
-
-            Returns
-            -------
-                Hm0 : list
-                    Significant wave height.
-                Te : list
-                    Energy period.
-            '''
-            Hm0 = []
-            Te = []
-
-            for line in swdArr:
-                m_1 = np.trapz(line * freqArr ** (-1), freqArr)
-                m0 = np.trapz(line, freqArr)
-                Hm0.append(4.004 * m0 ** 0.5)
-                np.seterr(all='ignore')
-                Te.append(m_1 / m0)
-            return Hm0, Te
+        for line in swdArr:
+            m_1 = np.trapz(line * freqArr ** (-1), freqArr)
+            m0 = np.trapz(line, freqArr)
+            Hm0.append(4.004 * m0 ** 0.5)
+            np.seterr(all='ignore')
+            Te.append(m_1 / m0)
+        return Hm0, Te
