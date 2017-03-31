@@ -39,29 +39,28 @@ class EA:
     def getSamples():
         return
 
-    def saveData(self, savePath='./Data'):
+    def saveData(self, fileName=None):
         """
         Saves all available data obtained via the EA module to
         a .h5 file
 
         Params
         ______
-        savePath : string
-            relevent path where the .h5 file will be created and
+        fileName : string
+            relevent path and filename where the .h5 file will be created and
             saved
         """
-        fileString = savePath + '/NDBC' + str(self.buoy.buoyNum) + '.h5'
-        with h5py.File(fileString, 'w') as f:
+        if (fileName is None):
+            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+        else:
+            _, file_extension = os.path.splitext(fileName)
+            if not file_extension:
+                fileName = fileName + '.h5'
+        with h5py.File(fileName, 'w') as f:
 
+            f.create_dataset('method', data=self.method)
             gp = f.create_group('parameters')
-            f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
-            f.time_r = gp.create_dataset('time_r', data=self.time_r)
-            f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
-            f.coeff = gp.create_dataset('coeff', data=self.coeff)
-            f.shift = gp.create_dataset('shift', data=self.shift)
-            f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
-            f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
-            f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
+            self._saveParams(gp)
 
             if(self.buoy.Hs is not None):
                 self.buoy._saveData(fileObj=f)
@@ -76,7 +75,7 @@ class EA:
                 f_Hs_Return.attrs['description'] = 'contours, significant wave height'
 
             # Samples for full sea state long term analysis
-            if(self.Hs_SampleFSS is not None):
+            if(hasattr(self, 'Hs_SampleFSS') and self.Hs_SampleFSS is not None):
                 gfss = f.create_group('Samples_FullSeaState')
                 f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
                 f_Hs_SampleFSS.attrs['units'] = 'm'
@@ -88,7 +87,7 @@ class EA:
                 f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
             # Samples for contour approach long term analysis
-            if(self.Hs_SampleCA is not None):
+            if(hasattr(self, 'Hs_SampleCA') and self.Hs_SampleCA is not None):
                 gca = f.create_group('Samples_ContourApproach')
                 f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
                 f_Hs_sampleCA.attrs['units'] = 'm'
@@ -352,9 +351,10 @@ class EA:
 
         return para_dist_1, para_dist_2, mean_cond, std_cond
 
+
 class PCA(EA):
 
-    def __init__(self, depth, buoy, size_bin = 250.0):
+    def __init__(self, depth, buoy, size_bin=250.):
         '''
         Parameters
         ___________
@@ -365,7 +365,7 @@ class PCA(EA):
             buoy : NDBCData
                 ESSC.Buoy Object
         '''
-        self.method = "PCA"
+        self.method = "Principle component analysis"
         self.depth = depth
         self.buoy = buoy
         self.size_bin = size_bin
@@ -426,6 +426,16 @@ class PCA(EA):
         sigma_param = self.__sigma_fits(Comp1_mean, Comp2_bins_params[1, :])
 
         return coeff, shift, comp1_params, sigma_param, mu_param
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nb_steps', data=self.nb_steps)
+        groupObj.create_dataset('time_r', data=self.time_r)
+        groupObj.create_dataset('time_ss', data=self.time_ss)
+        groupObj.create_dataset('coeff', data=self.coeff)
+        groupObj.create_dataset('shift', data=self.shift)
+        groupObj.create_dataset('comp1_params', data=self.comp1_params)
+        groupObj.create_dataset('sigma_param', data=self.sigma_param)
+        groupObj.create_dataset('mu_param', data=self.mu_param)
 
     def getContours(self, time_ss, time_r, nb_steps=1000):
         '''WDRT Extreme Sea State PCA Contour function
@@ -920,7 +930,7 @@ class GaussianCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-        self.method = "GaussianCopula"
+        self.method = "Gaussian Copula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1020,6 +1030,15 @@ class GaussianCopula(EA):
 
     def getSamples(self):
         raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
 
 
 class Rosenblatt(EA):
@@ -1139,6 +1158,15 @@ class Rosenblatt(EA):
     def getSamples(self):
         raise NotImplementedError
 
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
+
 
 class ClaytonCopula(EA):
     def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
@@ -1156,7 +1184,7 @@ class ClaytonCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-        self.method = "ClaytonCopula"
+        self.method = "Clayton Copula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1258,9 +1286,17 @@ class ClaytonCopula(EA):
     def getSamples(self):
         raise NotImplementedError
 
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
+
 
 class GumbelCopula(EA):
-
     def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
@@ -1276,7 +1312,7 @@ class GumbelCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-        self.method = "GumbelCopula"
+        self.method = "Gumbel Copula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1397,12 +1433,24 @@ class GumbelCopula(EA):
 
         self.Hs_ReturnContours = Hs_Return
         self.T_ReturnContours = T_Return
-        return Hs_Return,T_Return
+        return Hs_Return, T_Return
 
     def getSamples(self):
         raise NotImplementedError
 
-    def __gumbelCopula(self,u, alpha):
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('Ndata', data=self.Ndata)
+        groupObj.create_dataset('min_limit_2', data=self.min_limit_2)
+        groupObj.create_dataset('max_limit_2', data=self.max_limit_2)
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
+
+    def __gumbelCopula(self, u, alpha):
         ''' Calculates the Gumbel copula density
         Parameters
         ----------
@@ -1417,10 +1465,10 @@ class GumbelCopula(EA):
                    Copula density function.
         '''
         v = -np.log(u)
-        v = np.sort(v, axis = 0)
-        vmin = v[0,:]
-        vmax = v[1,:]
-        nlogC = vmax*(1+(vmin/vmax)**alpha)**(1/alpha)
+        v = np.sort(v, axis=0)
+        vmin = v[0, :]
+        vmax = v[1, :]
+        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
         y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
         return(y)
 
@@ -1689,18 +1737,14 @@ class Buoy:
             self.dateList.append(dateValues)
         self._prepData()
 
-    def loadFromH5(self, dirPath="./Data", fileName=None):
+    def loadFromH5(self, fileName):
         """
         Loads NDBCdata previously saved in a .h5 file
 
         Parameters
         ----------
-            dirPath : string
-                Relative path to directory containing the NDBC .h5 file (created by
-                NBDCdata.fetchFromWeb).
             fileName : string
-                Name of the .h5 file. If left blank, it's assumed the file's name has
-                not changed since it was created previously (i.e. "NDBC#####-raw.h5")
+                Name of the .h5 file to load data from.
         Example
         -------
         To load data from previously downloaded files
@@ -1709,39 +1753,35 @@ class Buoy:
         >>> buoy = ESSC.Buoy(46022)
         >>> buoy.loadFromH5("./Data")
         """
-        if fileName == None:
-            fileName = dirPath + "/NDBC" + str(self.buoyNum) + "-raw.h5"
-
-        else:
-            fileName = dirPath + "/"+ fileName
+        _, file_extension = os.path.splitext(fileName)
+        if not file_extension:
+            fileName = fileName + '.h5'
         print "Reading from: ", fileName
         try:
             f = h5py.File(fileName, 'r')
         except IOError:
             raise IOError("Could not find file: " + fileName)
+        self.Hs = np.array(f['buoy_Data/Hs'][:])
+        self.T = np.array(f['buoy_Data/Te'][:])
+        self.dateNum = np.array(f['buoy_Data/dateNum'][:])
+        print "----> SUCCESS"
 
-
-        for file in f:
-            if("frequency" in file):
-                self.freqList.append(f[file][:])
-            elif("date_values" in file):
-                self.dateList.append(f[file][:])
-            else:
-                self.swdList.append(f[file][:])
-        self._prepData()
-
-
-    def saveData(self, savePath='./Data/'):
+    def saveData(self, fileName=None):
         '''
         Saves NDBCdata to hdf5 file.
 
         Parameters
         ----------
             savePath : string
-                Relative path for desired file
+                Relative path for desired file.
         '''
-        fileString = savePath + '/NDBC' + str(self.buoyNum) + '.h5'
-        f = h5py.File(fileString, 'w')
+        if (fileName is None):
+            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+        else:
+            _, file_extension = os.path.splitext(fileName)
+            if not file_extension:
+                fileName = fileName + '.h5'
+        f = h5py.File(fileName, 'w')
         self._saveData(f)
 
     def _saveData(self, fileObj):
@@ -1753,9 +1793,10 @@ class Buoy:
             f_T = gbd.create_dataset('Te', data=self.T)
             f_T.attrs['units'] = 'm'
             f_T.attrs['description'] = 'energy period'
+            f_dateNum = gbd.create_dataset('dateNum', data=self.dateNum)
+            f_dateNum.attrs['description'] = 'datenum'
         else:
             RuntimeError('Buoy object contains no data')
-
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any

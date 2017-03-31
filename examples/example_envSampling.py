@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 buoy46022 = ESSC.Buoy('46022')
 
 # Read data from ndbc.noaa.gov
-buoy46022.fetchFromWeb()
+# buoy46022.fetchFromWeb()
 
 # Load data from .txt file if avilable
-# buoy46022.loadFromText()
+buoy46022.loadFromText()
 
 # Load data from .h5 file if available
-#buoy46022.loadFromH5()
+# buoy46022.loadFromH5('./data/NDBC46022.h5')
 
 # Declare required parameters
 depth = 391.4  # Depth at measurement point (m)
@@ -82,3 +82,6 @@ Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]
 
 # Show a plot of the data
 pca46022.plotData()
+
+# Save data in h5 file
+pca46022.saveData('./data/NDBC%s' % (pca46022.buoy.buoyNum))
