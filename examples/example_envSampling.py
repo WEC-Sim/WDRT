@@ -17,14 +17,13 @@ buoy46022.loadFromText()
 
 # Declare required parameters
 depth = 391.4  # Depth at measurement point (m)
-size_bin = 250.  # Enter chosen bin size
 
 # # Create EA object using above parameters
-pca46022 = ESSC.PCA(depth, buoy46022, size_bin)
-Gauss46022 = ESSC.GaussianCopula(depth, buoy46022)
-Gumbel46022 = ESSC.GumbelCopula(depth, buoy46022)
-cc46022 = ESSC.ClaytonCopula(depth, buoy46022)
-rosen46022 = ESSC.Rosenblatt(depth, buoy46022)
+pca46022 = ESSC.PCA(buoy46022)
+Gauss46022 = ESSC.GaussianCopula(buoy46022)
+Gumbel46022 = ESSC.GumbelCopula(buoy46022)
+cc46022 = ESSC.ClaytonCopula(buoy46022)
+rosen46022 = ESSC.Rosenblatt(buoy46022)
 
 Time_SS = 1.  # Sea state duration (hrs)
 Time_R = 100  # Return periods (yrs) of interest
@@ -67,8 +66,8 @@ Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 SteepMax = 0.07  # Optional: enter estimate of breaking steepness
 T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
 
-SteepH = pca46022.steepness(SteepMax, T_vals)
-SteepH_Return = pca46022.steepness(SteepMax, pca46022.T_ReturnContours)
+SteepH = pca46022.steepness(depth, SteepMax, T_vals)
+SteepH_Return = pca46022.steepness(depth, SteepMax, pca46022.T_ReturnContours)
 
 Steep_correction = np.where(SteepH_Return < pca46022.Hs_ReturnContours)
 Hs_Return_Steep = copy.deepcopy(pca46022.Hs_ReturnContours)

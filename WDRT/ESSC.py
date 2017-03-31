@@ -149,7 +149,7 @@ class EA:
         self.Hs_SampleCA = Hs_SampleCA
         return Hs_SampleCA
 
-    def steepness(self, SteepMax, T_vals):
+    def steepness(self, depth, SteepMax, T_vals):
         '''This function calculates a steepness curve to be plotted on an H vs. T
         diagram.  First, the function calculates the wavelength based on the
         depth and T. The T vector can be the input data vector, or will be
@@ -164,6 +164,8 @@ class EA:
 
         Parameters
         ----------
+        depth: float
+            Depth at site
         SteepMax: float
             Wave breaking steepness estimate (e.g., 0.07).
         T_vals :np.array
@@ -210,19 +212,19 @@ class EA:
 
         for i in range(len(T_vals)):
             # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
-            kh = (omega[i]**2) * self.depth / \
-                (g * (np.tanh((omega[i]**2) * self.depth / g)**0.5))
+            kh = (omega[i]**2) * depth / \
+                (g * (np.tanh((omega[i]**2) * depth / g)**0.5))
             # Find solution using the Newton-Raphson Method
             for j in range(1000):
                 kh0 = kh
-                f0 = (omega[i]**2) * self.depth / g - kh0 * np.tanh(kh0)
+                f0 = (omega[i]**2) * depth / g - kh0 * np.tanh(kh0)
                 df0 = -np.tanh(kh) - kh * (1 - np.tanh(kh)**2)
                 kh = -f0 / df0 + kh0
-                f = (omega[i]**2) * self.depth / g - kh * np.tanh(kh)
+                f = (omega[i]**2) * depth / g - kh * np.tanh(kh)
                 if abs(f0 - f) < 10**(-6):
                     break
 
-            lambdaT.append((2 * np.pi) / (kh / self.depth))
+            lambdaT.append((2 * np.pi) / (kh / depth))
             del kh, kh0
 
         lambdaT = np.array(lambdaT, dtype=np.float)
@@ -262,15 +264,15 @@ class EA:
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
             if self.method == "PCA":
-                essccopy = PCA(self.depth, buoycopy, self.size_bin)
+                essccopy = PCA(buoycopy, self.size_bin)
             elif self.method == "GaussianCopula":
-                essccopy = GaussianCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+                essccopy = GaussianCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "Rosenblatt":
-                essccopy = Rosenblatt(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+                essccopy = Rosenblatt(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "ClaytonCopula":
-                essccopy = ClaytonCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+                essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "GumbelCopula":
-                essccopy = GumbelCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
+                essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -354,19 +356,16 @@ class EA:
 
 class PCA(EA):
 
-    def __init__(self, depth, buoy, size_bin=250.):
+    def __init__(self, buoy, size_bin=250.):
         '''
         Parameters
         ___________
-            depth : int
-                Depth at measurement point (m)
             size_bin : float
                 chosen bin size
             buoy : NDBCData
                 ESSC.Buoy Object
         '''
         self.method = "Principle component analysis"
-        self.depth = depth
         self.buoy = buoy
         self.size_bin = size_bin
 
@@ -915,7 +914,7 @@ class PCA(EA):
 
 class GaussianCopula(EA):
 
-    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
         ___________
@@ -931,7 +930,6 @@ class GaussianCopula(EA):
                 overlap interval for each bin
         '''
         self.method = "Gaussian Copula"
-        self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
         self.bin_1_limit = bin_1_limit
@@ -1042,7 +1040,7 @@ class GaussianCopula(EA):
 
 
 class Rosenblatt(EA):
-    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
         ___________
@@ -1058,7 +1056,6 @@ class Rosenblatt(EA):
                 overlap interval for each bin
         '''
         self.method = "Rosenblatt"
-        self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
         self.bin_1_limit = bin_1_limit
@@ -1169,7 +1166,7 @@ class Rosenblatt(EA):
 
 
 class ClaytonCopula(EA):
-    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
         ___________
@@ -1185,7 +1182,6 @@ class ClaytonCopula(EA):
                 overlap interval for each bin
         '''
         self.method = "Clayton Copula"
-        self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
         self.bin_1_limit = bin_1_limit
@@ -1297,7 +1293,7 @@ class ClaytonCopula(EA):
 
 
 class GumbelCopula(EA):
-    def __init__(self, depth, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
         ___________
@@ -1313,7 +1309,6 @@ class GumbelCopula(EA):
                 overlap interval for each bin
         '''
         self.method = "Gumbel Copula"
-        self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
         self.bin_1_limit = bin_1_limit
