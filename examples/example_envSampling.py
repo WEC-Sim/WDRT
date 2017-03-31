@@ -74,14 +74,11 @@ Steep_correction = np.where(SteepH_Return < pca46022.Hs_ReturnContours)
 Hs_Return_Steep = copy.deepcopy(pca46022.Hs_ReturnContours)
 Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]
 
-pca46022.bootStrap(boot_size=10)
-Gauss46022.bootStrap(boot_size=10)
-Gumbel46022.bootStrap(boot_size=10)
-cc46022.bootStrap(boot_size=10)
-rosen46022.bootStrap(boot_size=10)
-
-# Save data in h5 file
-pca46022.saveData()
+# pca46022.bootStrap(boot_size=10)
+# Gauss46022.bootStrap(boot_size=10)
+# Gumbel46022.bootStrap(boot_size=10)
+# cc46022.bootStrap(boot_size=10)
+# rosen46022.bootStrap(boot_size=10)
 
 # Show a plot of the data
 pca46022.plotData()
