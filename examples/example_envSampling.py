@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 buoy46022 = ESSC.Buoy('46022')
 
 # Read data from ndbc.noaa.gov
-# buoy46022.fetchFromWeb()
+buoy46022.fetchFromWeb()
 
 # Load data from .txt file if avilable
-buoy46022.loadFromText()
+# buoy46022.loadFromText()
 
 # Load data from .h5 file if available
 #buoy46022.loadFromH5()
@@ -20,7 +20,7 @@ depth = 391.4  # Depth at measurement point (m)
 size_bin = 250.  # Enter chosen bin size
 
 # # Create EA object using above parameters
-pca46022 = ESSC.PCA(depth, size_bin, buoy46022)
+pca46022 = ESSC.PCA(depth, buoy46022, size_bin)
 Gauss46022 = ESSC.GaussianCopula(depth, buoy46022)
 Gumbel46022 = ESSC.GumbelCopula(depth, buoy46022)
 cc46022 = ESSC.ClaytonCopula(depth, buoy46022)
@@ -49,18 +49,16 @@ plt.grid(True)
 plt.legend(loc='upper left', fontsize=10, fancybox=True)
 plt.show()
 
-
-
 # Sample Generation Example
 num_contour_points = 20  # Number of points to be sampled for each
 # contour interval.
-contour_probs = 10 ** (-1 * np.array([1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]))
+contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])
 # Probabilities defining sampling contour bounds.
 random_seed = 2  # Random seed for sample generation
 
 # Get samples for a full sea state long term analysis
 Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,
-                                                     contour_probs, random_seed)
+                                                     contour_returns, random_seed)
 # Get samples for a contour approach long term analysis
 T_sampleCA = np.arange(12, 26, 2)
 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
@@ -77,6 +75,10 @@ Hs_Return_Steep = copy.deepcopy(pca46022.Hs_ReturnContours)
 Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]
 
 pca46022.bootStrap(boot_size=10)
+Gauss46022.bootStrap(boot_size=10)
+Gumbel46022.bootStrap(boot_size=10)
+cc46022.bootStrap(boot_size=10)
+rosen46022.bootStrap(boot_size=10)
 
 # Save data in h5 file
 pca46022.saveData()

@@ -250,7 +250,7 @@ class EA:
             contourmean_Hs : nparray
                 Hs values for mean contour calculated as the average over all
                 bootstrap contours.
-            contourmean_Hs : nparray
+            contourmean_T : nparray
                 T values for mean contour calculated as the average over all
                 bootstrap contours.
         '''
@@ -260,11 +260,19 @@ class EA:
         buoycopy = copy.deepcopy(self.buoy);
 
         for i in range(boot_size):
-            print i
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            essccopy = PCA(self.depth, self.size_bin, buoycopy)
+            if self.method == "PCA":
+                essccopy = PCA(self.depth, buoycopy, self.size_bin)
+            elif self.method == "GaussianCopula":
+                essccopy = GaussianCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "Rosenblatt":
+                essccopy = Rosenblatt(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "ClaytonCopula":
+                essccopy = ClaytonCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "GumbelCopula":
+                essccopy = GumbelCopula(self.depth, buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -347,7 +355,7 @@ class EA:
 
 class PCA(EA):
 
-    def __init__(self, depth, size_bin, buoy):
+    def __init__(self, depth, buoy, size_bin = 250.0):
         '''
         Parameters
         ___________
@@ -358,7 +366,7 @@ class PCA(EA):
             buoy : NDBCData
                 ESSC.Buoy Object
         '''
-
+        self.method = "PCA"
         self.depth = depth
         self.buoy = buoy
         self.size_bin = size_bin
@@ -421,7 +429,7 @@ class PCA(EA):
         return coeff, shift, comp1_params, sigma_param, mu_param
 
     def getContours(self, time_ss, time_r, nb_steps=1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+        '''WDRT Extreme Sea State PCA Contour function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
         method.
@@ -442,7 +450,7 @@ class PCA(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -452,9 +460,9 @@ class PCA(EA):
         -------
         To obtain the contours for a NDBC buoy::
             import numpy as np
-            import WDRT.EA as EA
+            import WDRT.ESSC as ESSC
             # Pull spectral data from NDBC website
-            buoy = ESSC.buoy(46022)
+            buoy = ESSC.buoy('46022')
             buoy.fetchFromWeb()
 
             # Declare required parameters
@@ -462,7 +470,7 @@ class PCA(EA):
             size_bin = 250.  # Enter chosen bin size
 
             # Create Environtmal Analysis object using above parameters
-            ea = ESSC.ea(depth, size_bin, buoy)
+            pca46022 = ESSC.PCA(depth, buoy, size_bin)
 
             # used for inverse FORM calculation
             Time_SS = 1.  # Sea state duration (hrs)
@@ -471,7 +479,7 @@ class PCA(EA):
             nb_steps = 1000.  # Enter discretization of the circle in the normal space
 
             # Contour generation example
-            Hs_Return, T_Return = ea.getContours(Time_SS, Time_r, nb_steps)
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r, nb_steps)
         '''
 
         self.time_ss = time_ss
@@ -506,19 +514,19 @@ class PCA(EA):
         self.T_ReturnContours = T_Return
         return Hs_Return, T_Return
 
-    def getSamples(self, num_contour_points, contour_probs, random_seed=None):
-        '''WDRT Extreme Sea State Contour (EA) Sampling function
+    def getSamples(self, num_contour_points, contour_returns, random_seed=None):
+        '''WDRT Extreme Sea State Contour Sampling function
         This function calculates samples of Hs and T using the EA function to
-        sample between contours of user-defined probabilities.
+        sample between contours of user-defined return periods.
 
         Parameters
         ----------
         num_contour_points : int
             Number of sample points to be calculated per contour interval.
-        contour_probs: np.array
-            Vector of probabilities that define the contour intervals in
+        contour_returns: np.array
+            Vector of return periods that define the contour intervals in
             which samples will be taken. Values must be greater than zero and
-            less than 1.
+            must be in increasing order.
         random_seed: int (optional)
             Random seed for sample generation, required for sample
             repeatability. If left blank, a seed will automatically be
@@ -539,7 +547,7 @@ class PCA(EA):
         To get weighted samples from a set of contours::
 
             import numpy as np
-            import EA
+            import WDRT.ESSC as ESSC
             # Load data from existing text files
             buoy = ESSC.Buoy(46022)
             buoy.loadFromText()
@@ -554,7 +562,7 @@ class PCA(EA):
             num_contour_points = 10 # Number of points to be sampled for each
 
             # contour interval.
-            contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))
+            contour_returns = np.array([0.001,0.01,0.05,0.1,0.5,1,5,10,50,100])
 
             # Probabilities defining sampling contour bounds.
             random_seed = 2 # Random seed for sample generation
@@ -583,6 +591,7 @@ class PCA(EA):
         C1_normzeroline = stats.norm.ppf(C1_zeroline_prob, 0, 1)
         C2_normzeroline = stats.norm.ppf(C2_zeroline_prob, 0, 1)
 
+        contour_probs = 1 / (365 * (24 / self.time_ss) * contour_returns)
         # Reliability contour generation
         beta_lines = stats.norm.ppf(
             (1 - contour_probs), 0, 1)  # Calculate reliability
@@ -912,7 +921,7 @@ class GaussianCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-
+        self.method = "GaussianCopula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -933,9 +942,9 @@ class GaussianCopula(EA):
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+        '''WDRT Extreme Sea State Gaussian Copula Contour function
         This function calculates environmental contours of extreme sea states using
-        principal component analysis and the inverse first-order reliability
+        a Gaussian copula and the inverse first-order reliability
         method.
 
         Parameters
@@ -954,7 +963,7 @@ class GaussianCopula(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -962,10 +971,32 @@ class GaussianCopula(EA):
 
         Example
         -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
 
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+
+            # Create Environtmal Analysis object using above parameters
+            Gauss46022 = ESSC.GaussianCopula(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Gauss46022.getContours(Time_SS, Time_r, nb_steps)
         '''
-        time_ss = float(1)
-        time_r = float(50)
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
         p_f = 1 / (365 * (24 / time_ss) * time_r)
         beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
@@ -1008,7 +1039,7 @@ class Rosenblatt(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-
+        self.method = "Rosenblatt"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1029,9 +1060,9 @@ class Rosenblatt(EA):
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+        '''WDRT Extreme Sea State Rosenblatt Copula Contour function
         This function calculates environmental contours of extreme sea states using
-        principal component analysis and the inverse first-order reliability
+        a Rosenblatt transformation and the inverse first-order reliability
         method.
 
         Parameters
@@ -1050,7 +1081,7 @@ class Rosenblatt(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -1058,10 +1089,33 @@ class Rosenblatt(EA):
 
         Example
         -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
 
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+
+
+            # Create Environtmal Analysis object using above parameters
+            Rosen46022 = ESSC.Rosenblatt(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r, nb_steps)
         '''
-        time_ss = float(1)
-        time_r = float(50)
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
         p_f = 1 / (365 * (24 / time_ss) * time_r)
         beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
@@ -1103,7 +1157,7 @@ class ClaytonCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-
+        self.method = "ClaytonCopula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1124,9 +1178,9 @@ class ClaytonCopula(EA):
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+        '''WDRT Extreme Sea State Clayton Copula Contour function
         This function calculates environmental contours of extreme sea states using
-        principal component analysis and the inverse first-order reliability
+        a Clayton copula and the inverse first-order reliability
         method.
 
         Parameters
@@ -1145,7 +1199,7 @@ class ClaytonCopula(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -1153,10 +1207,33 @@ class ClaytonCopula(EA):
 
         Example
         -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
 
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+
+
+            # Create Environtmal Analysis object using above parameters
+            Clayton46022 = ESSC.ClaytonCopula(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r, nb_steps)
         '''
-        time_ss = float(1)
-        time_r = float(50)
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
         p_f = 1 / (365 * (24 / time_ss) * time_r)
         beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
@@ -1200,7 +1277,7 @@ class GumbelCopula(EA):
             bin_step: float
                 overlap interval for each bin
         '''
-
+        self.method = "GumbelCopula"
         self.depth = depth
         self.buoy = buoy
         self.n_size = n_size
@@ -1222,9 +1299,9 @@ class GumbelCopula(EA):
         self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+        '''WDRT Extreme Sea State Gumbel Copula Contour function
         This function calculates environmental contours of extreme sea states using
-        principal component analysis and the inverse first-order reliability
+        a Gumbel copula and the inverse first-order reliability
         method.
 
         Parameters
@@ -1243,7 +1320,7 @@ class GumbelCopula(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -1251,10 +1328,33 @@ class GumbelCopula(EA):
 
         Example
         -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
 
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            size_bin = 250.  # Enter chosen bin size
+
+            # Create Environtmal Analysis object using above parameters
+            Gumbel46022 = ESSC.GumbelCopula(depth, size_bin, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS, Time_r, nb_steps)
         '''
-        time_ss = float(1)
-        time_r = float(50)
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
         p_f = 1 / (365 * (24 / time_ss) * time_r)
         beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
         theta = np.linspace(0, 2 * np.pi, num = nb_steps)
@@ -1276,12 +1376,12 @@ class GumbelCopula(EA):
         for k in range(0,int(nb_steps)):
             z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
             Z = np.array((z1,z2))
-            Y = self.__gumbelCopula(Z, theta_gum)
-            Y =np.nan_to_num(Y) # Need to look into this
-            p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0])))
+            Y = self.__gumbelCopula(Z, theta_gum) # Copula density function
+            Y =np.nan_to_num(Y)
+            p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0]))) # pdf 2|1, f(comp_2|comp_1)=c(z1,z2)*f(comp_2)
             dum = np.cumsum(p_x2_x1)
-            cdf = dum/(dum[self.Ndata-1])
-            table = np.array((x2, cdf))
+            cdf = dum/(dum[self.Ndata-1]) # Estimate CDF from PDF
+            table = np.array((x2, cdf)) # Result of conditional CDF derived based on Gumbel copula
             table = table.T
             for j in range(self.Ndata):
                 if fi_u2[k] <= table[0,1]:
@@ -1304,6 +1404,19 @@ class GumbelCopula(EA):
         raise NotImplementedError
 
     def __gumbelCopula(self,u, alpha):
+        ''' Calculates the Gumbel copula density
+        Parameters
+        ----------
+        u: np.array
+                    Vector of equally spaced points between 0 and twice the
+                    maximum value of T.
+       alpha: float
+                    Copula parameter. Must be greater than or equal to 1.
+        Returns
+        -------
+       y: np.array
+                   Copula density function.
+        '''
         v = -np.log(u)
         v = np.sort(v, axis = 0)
         vmin = v[0,:]
@@ -1717,12 +1830,12 @@ def _getStats(swdArr, freqArr):
                 Energy period.
         '''
         Hm0 = []
-        Te = []
+        T = []
 
         for line in swdArr:
             m_1 = np.trapz(line * freqArr ** (-1), freqArr)
             m0 = np.trapz(line, freqArr)
             Hm0.append(4.004 * m0 ** 0.5)
             np.seterr(all='ignore')
-            Te.append(m_1 / m0)
-        return Hm0, Te
+            T.append(m_1 / m0)
+        return Hm0, T
