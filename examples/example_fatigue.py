@@ -4,6 +4,7 @@
 
 import numpy as np
 import WDRT.fatigue as fatigue
+import os
 
 # Reduced size joint probability distribution
 # Wave energy periods
@@ -31,7 +32,7 @@ Feq_1y = 0
 for i in range(h):
     for j in range(t):
         # Read pre-calculated PTO force histories for each sea state
-        Fpto = np.loadtxt('examples\data\FptoH' +
+        Fpto = np.loadtxt(os.path.join('data','FptoH') +
                           str(int(Hs[i][j])) +
                           'T' + str(int(Te[i][j])) + '.txt')
         # Equivalent fatigue load for a 1 hour timeframe
