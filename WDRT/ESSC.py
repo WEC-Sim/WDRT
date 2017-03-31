@@ -111,7 +111,6 @@ class EA:
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
         plt.ylabel('Sig. wave height, $H_s$ [m]')
-
         plt.show()
 
     def getContourPoints(self, T_Sample):
