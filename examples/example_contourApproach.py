@@ -9,6 +9,7 @@ import WDRT.shortTermExtreme as ste
 import h5py
 import os
 
+
 # Load data from example_envSampling.py
 envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
 Hs = np.array(envFile['buoy_Data/Hs'])
@@ -68,8 +69,8 @@ ax = fig.add_subplot(111, projection='3d', autoscale_on=True)
 ax.plot(T_Return, Hs_Return, np.zeros_like(T_Return), 'k')
 ax.plot(T_sample, Hs_sample, np.zeros_like(Hs_sample), 'yo')
 for i in range(len(T_sample)):
-    ax.plot([T_sample[i], T_sample[i]], [Hs_sample[i], Hs_sample[i]], [0, ev[i]],
-            '-', linewidth=2, color='b', alpha=.5)
+    ax.plot([T_sample[i], T_sample[i]], [Hs_sample[i], Hs_sample[i]],
+            [0, ev[i]], '-', linewidth=2, color='b', alpha=0.5)
 ax.plot(T_sample, Hs_sample, ev, '-o')
 ax.set_xlabel('Energy period, $T_e$ (s)')
 ax.set_ylabel('Sig. wave height, $H_s$ (m)')
@@ -82,6 +83,5 @@ plt.plot(r95 * np.ones(2), plt.ylim(), 'r--')
 plt.grid(True)
 plt.xlabel('$x$')
 plt.ylabel('$CDF(x)$')
-plt.show()
 
 plt.show()

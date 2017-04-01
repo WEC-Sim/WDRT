@@ -22,9 +22,13 @@ Contributors
 * Ryan Coe, Sandia National Laboratories
 * Carlos Michelen, Sandia National Laboratories
 * Aubrey Eckert-Gallup, Sandia National Laboratories
+* Nevin Martin, Sandia National Laboratories
+* Tyler Esterly, Sandia National Laboratories
 * Jennifer van Rij, National Renewable Energy Laboratory
 * Yi-Hsiang Yu, National Renewable Energy Laboratory
 * Eliot Quon, National Renewable Energy Laboratory
+* Lance Manuel, University of Texas at Austin
+* Phong Nguyen, University of Texas at Austin
 
 Contents
 ========

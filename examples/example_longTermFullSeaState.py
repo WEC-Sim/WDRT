@@ -74,4 +74,5 @@ plt.ylabel('$CCDF(x)$')
 plt.xlim((0, 30))
 plt.ylim((1e-1 / (yLs[-1] * 365.25 * 24 * 1), 1))
 plt.legend(loc='upper right')
+
 plt.show()

@@ -5,7 +5,7 @@ import WDRT.shortTermExtreme as ecm
 import WDRT.fatigue as fatigue
 
 # load response time series
-data = ecm.loadtxt('data/data.csv',delimiter=',')
+data = ecm.loadtxt('data/data.csv', delimiter=',')
 t = data['t']
 response = data['data']
 

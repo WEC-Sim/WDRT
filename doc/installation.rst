@@ -1,9 +1,10 @@
 Installation
-==========================
+============
 
 Downloading `WDRT`
-------------------------
-`WDRT` is distributed through the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_. The toolbox can either be downloaded via ``git`` or simply by visiting the the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_ and downloading it directly.
+------------------
+`WDRT` is distributed through the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_.
+The toolbox can either be downloaded via ``git`` or simply by visiting the the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_ and downloading it directly.
 
 .. note::
 
@@ -38,6 +39,12 @@ The following installation procedure allows for easier updating of the code with
 
 **Step 2:** Add the ``$WDRT_SOURCE`` directory to your `PYTHONPATH <https://docs.python.org/2/using/cmdline.html#environment-variables>`_ environment variable (`Windows <https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables>`_, `Mac OSX <https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration>`_, `Linux <https://wiki.archlinux.org/index.php/Environment_variables>`_).
 
-**Step 3:** Verify the installation's functionality::
+**Step 3:** Verify the installation's functionality by running the examples located in``$WDRT_SOURCE/examples``
 
-	python verifyInstall.py
+.. code-block:: none
+
+	cd examples
+	python example_envSamplying.py
+	python example_contourApproach.py
+	python example_shortTermExtreme.py
+	python example_fatigue.py
