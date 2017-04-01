@@ -166,7 +166,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="downloading-wdrt">
 <h2>Downloading <cite>WDRT</cite><a class="headerlink" href="#downloading-wdrt" title="Permalink to this headline">¶</a></h2>
-<p><cite>WDRT</cite> is distributed through the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a>. The toolbox can either be downloaded via <code class="docutils literal"><span class="pre">git</span></code> or simply by visiting the the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a> and downloading it directly.</p>
+<p><cite>WDRT</cite> is distributed through the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a>.
+The toolbox can either be downloaded via <code class="docutils literal"><span class="pre">git</span></code> or simply by visiting the the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a> and downloading it directly.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">You may place the downloaded <cite>WDRT</cite> in any location you like; for the remainder of these instructions, the folder that contains the <cite>WDRT</cite> source code will be referred to as <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>.</p>
@@ -204,8 +205,12 @@ These packages can easily be installed using using <a class="reference external"
 </pre></div>
 </div>
 <p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
-<p><strong>Step 3:</strong> Verify the installation&#8217;s functionality:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">verifyInstall</span><span class="o">.</span><span class="n">py</span>
+<p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
+python example_envSamplying.py
+python example_contourApproach.py
+python example_shortTermExtreme.py
+python example_fatigue.py
 </pre></div>
 </div>
 </div>
