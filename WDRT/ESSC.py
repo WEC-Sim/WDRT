@@ -19,7 +19,7 @@ import scipy.optimize as optim
 import scipy.interpolate as interp
 import matplotlib.pyplot as plt
 import h5py
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA as skPCA
 import requests
 import bs4
 import urllib2
@@ -29,75 +29,72 @@ import os
 import glob
 import copy
 
+
 class EA:
 
     def __init__():
         return
     def getContours():
         return
-    
     def getSamples():
         return
 
+    def saveData(self, fileName=None):
+        """
+        Saves all available data obtained via the EA module to
+        a .h5 file
 
-    def saveData(self, savePath = './Data'):
-    """
-    Saves all available data obtained via the EA module to
-    a .h5 file
+        Params
+        ______
+        fileName : string
+            relevent path and filename where the .h5 file will be created and
+            saved
+        """
+        if (fileName is None):
+            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+        else:
+            _, file_extension = os.path.splitext(fileName)
+            if not file_extension:
+                fileName = fileName + '.h5'
+        with h5py.File(fileName, 'w') as f:
 
-    Params
-    ______
-    savePath : string
-        relevent path where the .h5 file will be created and
-        saved
-    """
-    fileString = savePath + '/NDBC' +  str(self.buoy.buoyNum) + '.h5'
-    with h5py.File(fileString, 'w') as f:
+            f.create_dataset('method', data=self.method)
+            gp = f.create_group('parameters')
+            self._saveParams(gp)
 
-        gp = f.create_group('parameters')
-        f.nb_steps = gp.create_dataset('nb_steps', data=self.nb_steps)
-        f.time_r = gp.create_dataset('time_r', data=self.time_r)
-        f.time_ss = gp.create_dataset('time_ss', data=self.time_ss)
-        f.coeff = gp.create_dataset('coeff', data=self.coeff)
-        f.shift = gp.create_dataset('shift', data=self.shift)
-        f.comp1_params = gp.create_dataset('comp1_params', data=self.comp1_params)
-        f.sigma_param = gp.create_dataset('sigma_param', data=self.sigma_param)
-        f.mu_param = gp.create_dataset('mu_param', data=self.mu_param)
+            if(self.buoy.Hs is not None):
+                self.buoy._saveData(fileObj=f)
 
-        if(self.buoy.Hs is not None):
-            self.buoy._saveData(fileObj=f)
+            if(self.Hs_ReturnContours is not None):
+                grc = f.create_group('ReturnContours')
+                f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
+                f_T_Return.attrs['units'] = 's'
+                f_T_Return.attrs['description'] = 'contour, energy period'
+                f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+                f_Hs_Return.attrs['units'] = 'm'
+                f_Hs_Return.attrs['description'] = 'contours, significant wave height'
 
-        if(self.Hs_ReturnContours is not None):
-            grc = f.create_group('ReturnContours')
-            f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
-            f_T_Return.attrs['units'] = 's'
-            f_T_Return.attrs['description'] = 'contour, energy period'
-            f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
-            f_Hs_Return.attrs['units'] = 'm'
-            f_Hs_Return.attrs['description'] = 'contours, significant wave height'
+            # Samples for full sea state long term analysis
+            if(hasattr(self, 'Hs_SampleFSS') and self.Hs_SampleFSS is not None):
+                gfss = f.create_group('Samples_FullSeaState')
+                f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+                f_Hs_SampleFSS.attrs['units'] = 'm'
+                f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
+                f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
+                f_T_SampleFSS.attrs['units'] = 's'
+                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
+                f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
-        # Samples for full sea state long term analysis
-        if(self.Hs_SampleFSS is not None):
-            gfss = f.create_group('Samples_FullSeaState')
-            f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
-            f_Hs_SampleFSS.attrs['units'] = 'm'
-            f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-            f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
-            f_T_SampleFSS.attrs['units'] = 's'
-            f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
-            f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
-            f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
-
-        # Samples for contour approach long term analysis
-        if(self.Hs_SampleCA is not None):
-            gca = f.create_group('Samples_ContourApproach')
-            f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
-            f_Hs_sampleCA.attrs['units'] = 'm'
-            f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-            f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
-            f_T_sampleCA.attrs['units'] = 's'
-            f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
-
+            # Samples for contour approach long term analysis
+            if(hasattr(self, 'Hs_SampleCA') and self.Hs_SampleCA is not None):
+                gca = f.create_group('Samples_ContourApproach')
+                f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
+                f_Hs_sampleCA.attrs['units'] = 'm'
+                f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
+                f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
+                f_T_sampleCA.attrs['units'] = 's'
+                f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
     def plotData(self):
         """
@@ -113,11 +110,7 @@ class EA:
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
         plt.ylabel('Sig. wave height, $H_s$ [m]')
-
-        plt.show()    
-
-
-
+        plt.show()
 
     def getContourPoints(self, T_Sample):
         '''Get points along a specified environmental contour.
@@ -156,8 +149,7 @@ class EA:
         self.Hs_SampleCA = Hs_SampleCA
         return Hs_SampleCA
 
-
-    def steepness(self, SteepMax, T_vals):
+    def steepness(self, depth, SteepMax, T_vals):
         '''This function calculates a steepness curve to be plotted on an H vs. T
         diagram.  First, the function calculates the wavelength based on the
         depth and T. The T vector can be the input data vector, or will be
@@ -172,6 +164,8 @@ class EA:
 
         Parameters
         ----------
+        depth: float
+            Depth at site
         SteepMax: float
             Wave breaking steepness estimate (e.g., 0.07).
         T_vals :np.array
@@ -184,7 +178,7 @@ class EA:
             steepness curve.
         T_steep: np.array
             T values [sec] over which the steepness curve is defined.
-        
+
         Example
         -------
 
@@ -218,28 +212,27 @@ class EA:
 
         for i in range(len(T_vals)):
             # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
-            kh = (omega[i]**2) * self.depth / \
-                (g * (np.tanh((omega[i]**2) * self.depth / g)**0.5))
+            kh = (omega[i]**2) * depth / \
+                (g * (np.tanh((omega[i]**2) * depth / g)**0.5))
             # Find solution using the Newton-Raphson Method
             for j in range(1000):
                 kh0 = kh
-                f0 = (omega[i]**2) * self.depth / g - kh0 * np.tanh(kh0)
+                f0 = (omega[i]**2) * depth / g - kh0 * np.tanh(kh0)
                 df0 = -np.tanh(kh) - kh * (1 - np.tanh(kh)**2)
                 kh = -f0 / df0 + kh0
-                f = (omega[i]**2) * self.depth / g - kh * np.tanh(kh)
+                f = (omega[i]**2) * depth / g - kh * np.tanh(kh)
                 if abs(f0 - f) < 10**(-6):
                     break
 
-            lambdaT.append((2 * np.pi) / (kh / self.depth))
+            lambdaT.append((2 * np.pi) / (kh / depth))
             del kh, kh0
 
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
         return SteepH
 
-
-    def bootStrap(self, boot_size = 1000, plotResults = True):
-        '''Get 95% confidence bounds about a contour using the bootstrap 
+    def bootStrap(self, boot_size=1000, plotResults=True):
+        '''Get 95% confidence bounds about a contour using the bootstrap
         method.
 
         Parameters
@@ -247,7 +240,7 @@ class EA:
             boot_size: int (optional)
                 Number of bootstrap samples that will be used to calculate 95%
                 confidence interval. Should be large enough to calculate stable
-                statistics. If left blank will be set to 1000. 
+                statistics. If left blank will be set to 1000.
             plotResults: boolean (optional)
                 Option for showing plot of bootstrap confidence bounds. If left
                 blank will be set to True and plot will be shown.
@@ -255,23 +248,31 @@ class EA:
         Returns
         -------
             contourmean_Hs : nparray
-                Hs values for mean contour calculated as the average over all 
+                Hs values for mean contour calculated as the average over all
                 bootstrap contours.
-            contourmean_Hs : nparray
-                T values for mean contour calculated as the average over all 
+            contourmean_T : nparray
+                T values for mean contour calculated as the average over all
                 bootstrap contours.
-        '''        
-        n = len(self.buoy.Hs);
-#        boot_size = 1000
+        '''
+        n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
         T_Return_Boot = np.zeros([self.nb_steps,boot_size])
         buoycopy = copy.deepcopy(self.buoy);
 
         for i in range(boot_size):
-            boot_inds = np.random.randint(0,high=n,size=n)
+            boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            essccopy= EA(self.depth, self.size_bin, buoycopy)
+            if self.method == "PCA":
+                essccopy = PCA(buoycopy, self.size_bin)
+            elif self.method == "GaussianCopula":
+                essccopy = GaussianCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "Rosenblatt":
+                essccopy = Rosenblatt(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "ClaytonCopula":
+                essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
+            elif self.method == "GumbelCopula":
+                essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -281,7 +282,7 @@ class EA:
         contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
         contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
         contourmean_T = np.mean(T_Return_Boot, axis=1)
-        
+
         self.contourMean_Hs = contourmean_Hs
         self.contourMean_T = contourmean_T
 
@@ -302,22 +303,69 @@ class EA:
 
         return contourmean_Hs, contourmean_T
 
+    def __getCopulaParams(self,n_size,bin_1_limit,bin_step):
+        sorted_idx = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
+        Hs = self.buoy.Hs[sorted_idx]
+        T = self.buoy.T[sorted_idx]
+
+        # Estimate parameters for Weibull distribution for component 1 (Hs) using MLE
+        # Estimate parameters for Lognormal distribution for component 2 (T) using MLE
+        para_dist_1=stats.exponweib.fit(Hs,floc=0,fa=1)
+        para_dist_2=stats.norm.fit(np.log(T))
+
+        # Binning
+        ind = np.array([])
+        ind = np.append(ind,sum(Hs_val <= bin_1_limit for Hs_val in Hs))
+        for i in range(1,200):
+            bin_i_limit = bin_1_limit+bin_step*(i)
+            ind = np.append(ind,sum(Hs_val <= bin_i_limit for Hs_val in Hs))
+            if (ind[i-0]-ind[i-1]) < n_size:
+                break
+
+        # Parameters for conditional distribution of T|Hs for each bin
+        num=len(ind) # num+1: number of bins
+        para_dist_cond = []
+        hss = []
+
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(0,int(ind[0]))])))  # parameters for first bin
+        hss.append(np.mean(Hs[range(0,int(ind[0])-1)])) # mean of Hs (component 1 for first bin)
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(0,int(ind[1]))]))) # parameters for second bin
+        hss.append(np.mean(Hs[range(0,int(ind[1])-1)])) # mean of Hs (component 1 for second bin)
+
+        for i in range(2,num):
+            para_dist_cond.append(stats.norm.fit(np.log(T[range(int(ind[i-2]),int(ind[i]))])));
+            hss.append(np.mean(Hs[range(int(ind[i-2]),int(ind[i]))]))
+
+        # Estimate coefficient using least square solution (mean: third order, sigma: 2nd order)
+        para_dist_cond.append(stats.norm.fit(np.log(T[range(int(ind[num-2]),int(len(Hs)))])));  # parameters for last bin
+        hss.append(np.mean(Hs[range(int(ind[num-2]),int(len(Hs)))])) # mean of Hs (component 1 for last bin)
+
+        para_dist_cond = np.array(para_dist_cond)
+        hss = np.array(hss)
+
+        phi_mean = np.column_stack((np.ones(num+1),hss[:],hss[:]**2,hss[:]**3))
+        phi_std = np.column_stack((np.ones(num+1),hss[:],hss[:]**2))
+
+        # Estimate coefficients of mean of Ln(T|Hs)(vector 4x1) (cubic in Hs)
+        mean_cond = np.linalg.lstsq(phi_mean,para_dist_cond[:,0])[0]
+        # Estimate coefficients of standard deviation of Ln(T|Hs) (vector 3x1) (quadratic in Hs)
+        std_cond = np.linalg.lstsq(phi_std,para_dist_cond[:,1])[0]
+
+        return para_dist_1, para_dist_2, mean_cond, std_cond
+
 
 class PCA(EA):
 
-    def __init__(self, depth, size_bin, buoy):
+    def __init__(self, buoy, size_bin=250.):
         '''
         Parameters
         ___________
-            depth : int
-                Depth at measurement point (m)
             size_bin : float
                 chosen bin size
             buoy : NDBCData
                 ESSC.Buoy Object
         '''
-
-        self.depth = depth
+        self.method = "Principle component analysis"
         self.buoy = buoy
         self.size_bin = size_bin
 
@@ -333,10 +381,8 @@ class PCA(EA):
 
         self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
 
-
-
-    def __generateParams(self, size_bin = 250.0):
-        pca = PCA(n_components=2)
+    def __generateParams(self, size_bin=250.0):
+        pca = skPCA(n_components=2)
         pca.fit(np.array((self.buoy.Hs - self.buoy.Hs.mean(axis=0), self.buoy.T - self.buoy.T.mean(axis=0))).T)
         coeff = abs(pca.components_)  # Apply correct/expected sign convention
         coeff[1, 1] = -1.0 * coeff[1, 1]  # Apply correct/expected sign convention
@@ -380,9 +426,18 @@ class PCA(EA):
 
         return coeff, shift, comp1_params, sigma_param, mu_param
 
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nb_steps', data=self.nb_steps)
+        groupObj.create_dataset('time_r', data=self.time_r)
+        groupObj.create_dataset('time_ss', data=self.time_ss)
+        groupObj.create_dataset('coeff', data=self.coeff)
+        groupObj.create_dataset('shift', data=self.shift)
+        groupObj.create_dataset('comp1_params', data=self.comp1_params)
+        groupObj.create_dataset('sigma_param', data=self.sigma_param)
+        groupObj.create_dataset('mu_param', data=self.mu_param)
 
-    def getContours(self, time_ss, time_r, nb_steps = 1000):
-        '''WDRT Extreme Sea State Contour (EA) function
+    def getContours(self, time_ss, time_r, nb_steps=1000):
+        '''WDRT Extreme Sea State PCA Contour function
         This function calculates environmental contours of extreme sea states using
         principal component analysis and the inverse first-order reliability
         method.
@@ -403,7 +458,7 @@ class PCA(EA):
         Hs_Return : np.array
             Calculated Hs values along the contour boundary following
             return to original input orientation.
-        T_ReturnContours : np.array
+        T_Return : np.array
            Calculated T values along the contour boundary following
            return to original input orientation.
         nb_steps : float
@@ -413,9 +468,9 @@ class PCA(EA):
         -------
         To obtain the contours for a NDBC buoy::
             import numpy as np
-            import WDRT.EA as EA
+            import WDRT.ESSC as ESSC
             # Pull spectral data from NDBC website
-            buoy = ESSC.buoy(46022)
+            buoy = ESSC.buoy('46022')
             buoy.fetchFromWeb()
 
             # Declare required parameters
@@ -423,7 +478,7 @@ class PCA(EA):
             size_bin = 250.  # Enter chosen bin size
 
             # Create Environtmal Analysis object using above parameters
-            ea = ESSC.ea(depth, size_bin, buoy)
+            pca46022 = ESSC.PCA(depth, buoy, size_bin)
 
             # used for inverse FORM calculation
             Time_SS = 1.  # Sea state duration (hrs)
@@ -432,7 +487,7 @@ class PCA(EA):
             nb_steps = 1000.  # Enter discretization of the circle in the normal space
 
             # Contour generation example
-            Hs_Return, T_Return = ea.getContours(Time_SS, Time_r, nb_steps)
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r, nb_steps)
         '''
 
         self.time_ss = time_ss
@@ -467,20 +522,19 @@ class PCA(EA):
         self.T_ReturnContours = T_Return
         return Hs_Return, T_Return
 
-
-    def getSamples(self, num_contour_points, contour_probs, random_seed = None):
-        '''WDRT Extreme Sea State Contour (EA) Sampling function
+    def getSamples(self, num_contour_points, contour_returns, random_seed=None):
+        '''WDRT Extreme Sea State Contour Sampling function
         This function calculates samples of Hs and T using the EA function to
-        sample between contours of user-defined probabilities.
+        sample between contours of user-defined return periods.
 
         Parameters
         ----------
         num_contour_points : int
             Number of sample points to be calculated per contour interval.
-        contour_probs: np.array
-            Vector of probabilities that define the contour intervals in
+        contour_returns: np.array
+            Vector of return periods that define the contour intervals in
             which samples will be taken. Values must be greater than zero and
-            less than 1.
+            must be in increasing order.
         random_seed: int (optional)
             Random seed for sample generation, required for sample
             repeatability. If left blank, a seed will automatically be
@@ -501,7 +555,7 @@ class PCA(EA):
         To get weighted samples from a set of contours::
 
             import numpy as np
-            import EA
+            import WDRT.ESSC as ESSC
             # Load data from existing text files
             buoy = ESSC.Buoy(46022)
             buoy.loadFromText()
@@ -516,7 +570,7 @@ class PCA(EA):
             num_contour_points = 10 # Number of points to be sampled for each
 
             # contour interval.
-            contour_probs = 10**(-1*np.array([1,2,2.5,3,3.5,4,4.5,5,5.5,6]))
+            contour_returns = np.array([0.001,0.01,0.05,0.1,0.5,1,5,10,50,100])
 
             # Probabilities defining sampling contour bounds.
             random_seed = 2 # Random seed for sample generation
@@ -545,6 +599,7 @@ class PCA(EA):
         C1_normzeroline = stats.norm.ppf(C1_zeroline_prob, 0, 1)
         C2_normzeroline = stats.norm.ppf(C2_zeroline_prob, 0, 1)
 
+        contour_probs = 1 / (365 * (24 / self.time_ss) * contour_returns)
         # Reliability contour generation
         beta_lines = stats.norm.ppf(
             (1 - contour_probs), 0, 1)  # Calculate reliability
@@ -583,10 +638,7 @@ class PCA(EA):
         self.T_SampleFSS = T_Sample
         self.Weight_SampleFSS = Weight_points
 
-
-
         return Hs_Sample, T_Sample, Weight_points
-
 
     def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs, random_seed):
         """
@@ -642,7 +694,6 @@ class PCA(EA):
 
         return Sample_alpha, Sample_beta, Weight_points
 
-
     def __transformSamples(self, Sample_alpha, Sample_beta):
         Sample_U1 = Sample_beta * np.cos(Sample_alpha)
         Sample_U2 = Sample_beta * np.sin(Sample_alpha)
@@ -662,9 +713,6 @@ class PCA(EA):
             Comp1_sample, Comp2_sample, self.coeff, self.shift)
 
         return Hs_Sample, T_Sample
-
-
-
 
 
     def __mu_fcn(self, x, mu_p_1, mu_p_2):
@@ -737,11 +785,6 @@ class PCA(EA):
                              (coeff[0, 0] * (princip_data2[i] -
                                              shift))) / (coeff[0, 1]**2 + coeff[0, 0]**2))
         return original1, original2
-
-
-
-
-
 
     def __betafcn(self, sig_p, rho):
         '''Penalty calculation for sigma parameter fitting function to impose
@@ -869,32 +912,560 @@ class PCA(EA):
         return sig_final
 
 
+class GaussianCopula(EA):
+
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+        '''
+        Parameters
+        ___________
+            depth : int
+                Depth at measurement point (m)
+            buoy : NDBCData
+                ESSC.Buoy Object
+            n_size: float
+                minimum bin size used for Copula contour methods
+            bin_1_limit: float
+                maximum value of Hs for the first bin
+            bin_step: float
+                overlap interval for each bin
+        '''
+        self.method = "Gaussian Copula"
+        self.buoy = buoy
+        self.n_size = n_size
+        self.bin_1_limit = bin_1_limit
+        self.bin_step = bin_step
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State Gaussian Copula Contour function
+        This function calculates environmental contours of extreme sea states using
+        a Gaussian copula and the inverse first-order reliability
+        method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
+
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+
+            # Create Environtmal Analysis object using above parameters
+            Gauss46022 = ESSC.GaussianCopula(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Gauss46022.getContours(Time_SS, Time_r, nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
+
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
+        rho_gau=np.sin(tau*np.pi/2.)
+
+        z2_Gau=stats.norm.cdf(U2*np.sqrt(1.-rho_gau**2.)+rho_gau*U1);
+        comp_2_Gaussian = stats.lognorm.ppf(z2_Gau,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0])) #lognormalinverse
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Gaussian
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
 
 
+class Rosenblatt(EA):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+        '''
+        Parameters
+        ___________
+            depth : int
+                Depth at measurement point (m)
+            buoy : NDBCData
+                ESSC.Buoy Object
+            n_size: float
+                minimum bin size used for Copula contour methods
+            bin_1_limit: float
+                maximum value of Hs for the first bin
+            bin_step: float
+                overlap interval for each bin
+        '''
+        self.method = "Rosenblatt"
+        self.buoy = buoy
+        self.n_size = n_size
+        self.bin_1_limit = bin_1_limit
+        self.bin_step = bin_step
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State Rosenblatt Copula Contour function
+        This function calculates environmental contours of extreme sea states using
+        a Rosenblatt transformation and the inverse first-order reliability
+        method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
+
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
 
 
+            # Create Environtmal Analysis object using above parameters
+            Rosen46022 = ESSC.Rosenblatt(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r, nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
+
+        lamda_cond=self.mean_cond[0]+self.mean_cond[1]*comp_1+self.mean_cond[2]*comp_1**2+self.mean_cond[3]*comp_1**3      # mean of Ln(T) as a function of Hs
+        sigma_cond=self.std_cond[0]+self.std_cond[1]*comp_1+self.std_cond[2]*comp_1**2                                # Standard deviation of Ln(T) as a function of Hs
+
+        comp_2_Rosenblatt = stats.lognorm.ppf(stats.norm.cdf(U2),s=sigma_cond,loc=0,scale=np.exp(lamda_cond))  # lognormal inverse
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Rosenblatt
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
 
 
-class FC(EA):
-    def __init__():
-        return
+class ClaytonCopula(EA):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+        '''
+        Parameters
+        ___________
+            depth : int
+                Depth at measurement point (m)
+            buoy : NDBCData
+                ESSC.Buoy Object
+            n_size: float
+                minimum bin size used for Copula contour methods
+            bin_1_limit: float
+                maximum value of Hs for the first bin
+            bin_step: float
+                overlap interval for each bin
+        '''
+        self.method = "Clayton Copula"
+        self.buoy = buoy
+        self.n_size = n_size
+        self.bin_1_limit = bin_1_limit
+        self.bin_step = bin_step
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State Clayton Copula Contour function
+        This function calculates environmental contours of extreme sea states using
+        a Clayton copula and the inverse first-order reliability
+        method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
+
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
 
 
+            # Create Environtmal Analysis object using above parameters
+            Clayton46022 = ESSC.ClaytonCopula(depth, buoy)
+
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
+
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r, nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
+
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
+        theta_clay = (2.*tau)/(1.-tau)
+
+        z2_Clay=((1.-stats.norm.cdf(U1)**(-theta_clay)+stats.norm.cdf(U1)**(-theta_clay)/stats.norm.cdf(U2))**(theta_clay/(1.+theta_clay)))**(-1./theta_clay)
+        comp_2_Clayton = stats.lognorm.ppf(z2_Clay,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0])) #lognormalinverse
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Clayton
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
 
 
+class GumbelCopula(EA):
+    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
+        '''
+        Parameters
+        ___________
+            depth : int
+                Depth at measurement point (m)
+            buoy : NDBCData
+                ESSC.Buoy Object
+            n_size: float
+                minimum bin size used for Copula contour methods
+            bin_1_limit: float
+                maximum value of Hs for the first bin
+            bin_step: float
+                overlap interval for each bin
+        '''
+        self.method = "Gumbel Copula"
+        self.buoy = buoy
+        self.n_size = n_size
+        self.bin_1_limit = bin_1_limit
+        self.bin_step = bin_step
 
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+#        self.Weight_points = None
 
-class Rosen(EA):
-    def __init__():
-        return
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.Ndata = Ndata
+        self.min_limit_2 = 0.
+        self.max_limit_2 = np.ceil(np.amax(self.buoy.T)*2)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
 
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State Gumbel Copula Contour function
+        This function calculates environmental contours of extreme sea states using
+        a Gumbel copula and the inverse first-order reliability
+        method.
 
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
 
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
 
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            import numpy as np
+            import WDRT.ESSC as ESSC
+            # Pull spectral data from NDBC website
+            buoy = ESSC.buoy('46022')
+            buoy.fetchFromWeb()
 
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            size_bin = 250.  # Enter chosen bin size
 
+            # Create Environtmal Analysis object using above parameters
+            Gumbel46022 = ESSC.GumbelCopula(depth, size_bin, buoy)
 
+            # used for inverse FORM calculation
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = np.array([100])  # Return periods (yrs) of interest
 
+            nb_steps = 1000.  # Enter discretization of the circle in the normal space
+
+            # Contour generation example
+            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS, Time_r, nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        # Vary U1, U2 along circle sqrt(U1^2+U2^2)=beta
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+
+        comp_1 = stats.exponweib.ppf(stats.norm.cdf(U1),a=self.para_dist_1[0],c=self.para_dist_1[1],loc=self.para_dist_1[2],scale=self.para_dist_1[3])
+
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0] # Calculate Kendall's tau
+        theta_gum = 1./(1.-tau)
+
+        fi_u1=stats.norm.cdf(U1);
+        fi_u2=stats.norm.cdf(U2);
+        x2 = np.linspace(self.min_limit_2,self.max_limit_2,self.Ndata)
+        z2 = stats.lognorm.cdf(x2,s=self.para_dist_2[1],loc=0,scale=np.exp(self.para_dist_2[0]))
+
+        comp_2_Gumb = np.zeros(nb_steps)
+        for k in range(0,int(nb_steps)):
+            z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
+            Z = np.array((z1,z2))
+            Y = self.__gumbelCopula(Z, theta_gum) # Copula density function
+            Y =np.nan_to_num(Y)
+            p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0]))) # pdf 2|1, f(comp_2|comp_1)=c(z1,z2)*f(comp_2)
+            dum = np.cumsum(p_x2_x1)
+            cdf = dum/(dum[self.Ndata-1]) # Estimate CDF from PDF
+            table = np.array((x2, cdf)) # Result of conditional CDF derived based on Gumbel copula
+            table = table.T
+            for j in range(self.Ndata):
+                if fi_u2[k] <= table[0,1]:
+                    comp_2_Gumb[k] = min(table[:,0])
+                    break
+                elif fi_u2[k] <= table[j,1]:
+                    comp_2_Gumb[k] = (table[j,0]+table[j-1,0])/2
+                    break
+                else:
+                    comp_2_Gumb[k] = table[:,0].max()
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Gumb
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('Ndata', data=self.Ndata)
+        groupObj.create_dataset('min_limit_2', data=self.min_limit_2)
+        groupObj.create_dataset('max_limit_2', data=self.max_limit_2)
+        groupObj.create_dataset('n_size', data=self.n_size)
+        groupObj.create_dataset('bin_1_limit', data=self.bin_1_limit)
+        groupObj.create_dataset('bin_step', data=self.bin_step)
+        groupObj.create_dataset('para_dist_1', data=self.para_dist_1)
+        groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
+        groupObj.create_dataset('mean_cond', data=self.mean_cond)
+        groupObj.create_dataset('std_cond', data=self.std_cond)
+
+    def __gumbelCopula(self, u, alpha):
+        ''' Calculates the Gumbel copula density
+        Parameters
+        ----------
+        u: np.array
+                    Vector of equally spaced points between 0 and twice the
+                    maximum value of T.
+       alpha: float
+                    Copula parameter. Must be greater than or equal to 1.
+        Returns
+        -------
+       y: np.array
+                   Copula density function.
+        '''
+        v = -np.log(u)
+        v = np.sort(v, axis=0)
+        vmin = v[0, :]
+        vmax = v[1, :]
+        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
+        y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
+        return(y)
 
 
 class Buoy:
@@ -918,7 +1489,7 @@ class Buoy:
         List of datetime objects.
     '''
 
-  
+
 
     def __init__(self, buoyNum, savePath = './Data/'):
 
@@ -985,7 +1556,7 @@ class Buoy:
 
         if len(headers) == 0:
             raise Exception("Spectral wave density data for given buoy not found")
-            
+
 
         if len(headers) == 2:
             headers = headers[1]
@@ -1084,8 +1655,7 @@ class Buoy:
                 swdFile.close()
         self._prepData()
 
-
-    def loadFromText(self, dirPath = None):
+    def loadFromText(self, dirPath=None):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -1110,20 +1680,20 @@ class Buoy:
         spectralVals = []
         numLines = 0
 
-        if dirPath == None:
+        if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
                 for dirs in subdirs:
                     if ("NDBC%s" % self.buoyNum) in dirs:
                         dirPath = os.path.join(dirpath,dirs)
                         break
-        if dirPath == None:
+        if dirPath is None:
             raise IOError("Could not find directory containing NDBC data")
 
         fileList = glob.glob(os.path.join(dirPath,'SWD*.txt'))
 
         if len(fileList) == 0:
             raise IOError("No NDBC data files found in " + dirPath)
-            
+
         for fileName in fileList:
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
@@ -1162,18 +1732,14 @@ class Buoy:
             self.dateList.append(dateValues)
         self._prepData()
 
-    def loadFromH5(self, dirPath = "./Data", fileName = None):
+    def loadFromH5(self, fileName):
         """
         Loads NDBCdata previously saved in a .h5 file
 
         Parameters
         ----------
-            dirPath : string
-                Relative path to directory containing the NDBC .h5 file (created by
-                NBDCdata.fetchFromWeb).
             fileName : string
-                Name of the .h5 file. If left blank, it's assumed the file's name has
-                not changed since it was created previously (i.e. "NDBC#####-raw.h5")
+                Name of the .h5 file to load data from.
         Example
         -------
         To load data from previously downloaded files
@@ -1182,39 +1748,35 @@ class Buoy:
         >>> buoy = ESSC.Buoy(46022)
         >>> buoy.loadFromH5("./Data")
         """
-        if fileName == None:
-            fileName = dirPath + "/NDBC" + str(self.buoyNum) + "-raw.h5"
-
-        else:
-            fileName = dirPath + "/"+ fileName
+        _, file_extension = os.path.splitext(fileName)
+        if not file_extension:
+            fileName = fileName + '.h5'
         print "Reading from: ", fileName
         try:
             f = h5py.File(fileName, 'r')
         except IOError:
             raise IOError("Could not find file: " + fileName)
-    
+        self.Hs = np.array(f['buoy_Data/Hs'][:])
+        self.T = np.array(f['buoy_Data/Te'][:])
+        self.dateNum = np.array(f['buoy_Data/dateNum'][:])
+        print "----> SUCCESS"
 
-        for file in f:
-            if("frequency" in file):
-                self.freqList.append(f[file][:])
-            elif("date_values" in file):
-                self.dateList.append(f[file][:])
-            else:
-                self.swdList.append(f[file][:])
-        self._prepData()
-
-
-    def saveData(self, savePath='./Data/'):
+    def saveData(self, fileName=None):
         '''
         Saves NDBCdata to hdf5 file.
 
         Parameters
         ----------
             savePath : string
-                Relative path for desired file
+                Relative path for desired file.
         '''
-        fileString = savePath + '/NDBC' + str(self.buoyNum) + '.h5'
-        f = h5py.File(fileString, 'w')
+        if (fileName is None):
+            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+        else:
+            _, file_extension = os.path.splitext(fileName)
+            if not file_extension:
+                fileName = fileName + '.h5'
+        f = h5py.File(fileName, 'w')
         self._saveData(f)
 
     def _saveData(self, fileObj):
@@ -1226,9 +1788,10 @@ class Buoy:
             f_T = gbd.create_dataset('Te', data=self.T)
             f_T.attrs['units'] = 'm'
             f_T.attrs['description'] = 'energy period'
+            f_dateNum = gbd.create_dataset('dateNum', data=self.dateNum)
+            f_dateNum.attrs['description'] = 'datenum'
         else:
             RuntimeError('Buoy object contains no data')
-
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any
@@ -1284,8 +1847,6 @@ def _getDateNums(dateArr):
                                                    times[4])))
     return dateNum
 
-
-
 def _getStats(swdArr, freqArr):
         '''Significant wave height and energy period
 
@@ -1304,12 +1865,12 @@ def _getStats(swdArr, freqArr):
                 Energy period.
         '''
         Hm0 = []
-        Te = []
+        T = []
 
         for line in swdArr:
             m_1 = np.trapz(line * freqArr ** (-1), freqArr)
             m0 = np.trapz(line, freqArr)
             Hm0.append(4.004 * m0 ** 0.5)
             np.seterr(all='ignore')
-            Te.append(m_1 / m0)
-        return Hm0, Te
+            T.append(m_1 / m0)
+        return Hm0, T
