@@ -1,0 +1,1089 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>WDRT.shortTermExtreme &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="WDRT 1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">WDRT</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>WDRT.shortTermExtreme</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for WDRT.shortTermExtreme</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2016 Sandia Corporation and the National Renewable Energy</span>
+<span class="c1"># Laboratory</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="sd">&#39;&#39;&#39;WDRT shortTermExtreme module</span>
+
+<span class="sd">This module contains tools for analysis of short-term (sea-state specific)</span>
+<span class="sd">extremes, as well as some usefull statistical methods.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="ecmDist"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist">[docs]</a><span class="k">class</span> <span class="nc">ecmDist</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;Class for extreme response distributions.</span>
+
+<span class="sd">    Class provides basic functionality for statistical distributions as needed</span>
+<span class="sd">    for extreme value analysis. Can be initialized via either PDF or CDF.</span>
+
+<span class="sd">    Note: For pdf, cdf, and ppf toggle ecmDist.{function}.bounds_error to give</span>
+<span class="sd">    an error or a NaN if input is outside of bounds(x).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        pdf : scipy.interpolate.interpolate.interp1d</span>
+<span class="sd">            Probability density function</span>
+<span class="sd">        cdf : scipy.interpolate.interpolate.interp1d</span>
+<span class="sd">            Cumulative distribution function</span>
+<span class="sd">        ppf : scipy.interpolate.interpolate.interp1d</span>
+<span class="sd">            Percent point function (inverse cdf)</span>
+<span class="sd">        getExpVal: method</span>
+<span class="sd">            Expected value of distribution</span>
+<span class="sd">        gerRthValue: method</span>
+<span class="sd">            Rth percentile value of distribution</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Class initialization function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            x : np.array</span>
+<span class="sd">                Response variable</span>
+<span class="sd">            pdf : np.array</span>
+<span class="sd">                Probability density function for x</span>
+<span class="sd">            cdf : np.array</span>
+<span class="sd">                Cumulative distribution function (a.k.a. distribution function)</span>
+<span class="sd">                for x</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        To create an ecmDist object, you can use either the PDF::</span>
+
+<span class="sd">        &gt;&gt;&gt; myDist1 = ste.ecmDist(x=my_x, pdf=my_PDF)</span>
+<span class="sd">        or the CDF::</span>
+
+<span class="sd">        &gt;&gt;&gt; myDist2 = ste.ecmDist(x=my_x, cdf=my_CDF)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># if only CDF is entered</span>
+        <span class="k">if</span> <span class="n">pdf</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">cdf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">pdf</span> <span class="o">=</span> <span class="n">cdf2pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># if only PDF is entered</span>
+        <span class="k">elif</span> <span class="n">cdf</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">pdf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="n">pdf2cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># if both CDF and PDF are entered</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pdf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;pdf and/or cdf arguments must not be None&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ccdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ecmDist.getExpVal"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist.getExpVal">[docs]</a>    <span class="k">def</span> <span class="nf">getExpVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Expected value from ecmDist.</span>
+
+<span class="sd">        Finds expected value (mean) from distribution.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            ev : float</span>
+<span class="sd">                Expected value (mean)</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        In order to find the expected value from the distribution</span>
+
+<span class="sd">        &gt;&gt;&gt; vExp = myDist.getExpVal()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">m0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">ev</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">/</span> <span class="n">m0</span>
+        <span class="k">return</span> <span class="n">ev</span></div>
+
+<div class="viewcode-block" id="ecmDist.getRthVal"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist.getRthVal">[docs]</a>    <span class="k">def</span> <span class="nf">getRthVal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Rth percentile value from ecmDist.</span>
+
+<span class="sd">        Finds value of cumulative distribution function for a given percentile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            r : float</span>
+<span class="sd">                Target percentile (0 &lt; r &lt; 1)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            xr : float</span>
+<span class="sd">                Response for rth percentile</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        In order to find the 95th percentile value from the distribution::</span>
+
+<span class="sd">        &gt;&gt;&gt; v95 = myDist.getRthVal(r=0.95)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">r</span><span class="p">))</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">xr</span></div></div>
+
+
+<div class="viewcode-block" id="empiricalPdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.empiricalPdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalPdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Returns an empirical probability density function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Response variable</span>
+<span class="sd">        bins : int</span>
+<span class="sd">            Number of bins</span>
+<span class="sd">        m : float</span>
+<span class="sd">            Number of points below min(x).</span>
+<span class="sd">            Use if x consists of only values above a certain minimum and PDF</span>
+<span class="sd">            for entire population wanted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        x_pdf : np.array</span>
+<span class="sd">            Bin (x) locations</span>
+<span class="sd">        pdf : np.array</span>
+<span class="sd">            PDF values at x_pdf</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pdf</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">m</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="mf">1.</span><span class="o">*</span><span class="n">m</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">pdf</span> <span class="o">*</span> <span class="n">area</span>
+    <span class="n">x_pdf</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">x_pdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">ii</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+    <span class="n">x_pdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_pdf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x_pdf</span><span class="p">,</span> <span class="n">pdf</span></div>
+
+
+<div class="viewcode-block" id="empiricalCdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.empiricalCdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalCdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Returns an empirical cumulative distribution function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Response variable</span>
+<span class="sd">        m : float</span>
+<span class="sd">            Number of points below min(x).</span>
+<span class="sd">            Use if x consists of only values above a certain minimum and CDF</span>
+<span class="sd">            for entire population wanted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        x_cdf : np.array</span>
+<span class="sd">            x locations</span>
+<span class="sd">        cdf : np.array</span>
+<span class="sd">            CDF values at x_cdf</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_cdf</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x_cdf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">[</span><span class="n">m</span><span class="p">:]</span></div>
+
+
+<div class="viewcode-block" id="cdf2pdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.cdf2pdf">[docs]</a><span class="k">def</span> <span class="nf">cdf2pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Calculates a probability density function from the cumulative</span>
+<span class="sd">    distribution function via numerical differentiation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Response variable</span>
+<span class="sd">        cdf : np.array</span>
+<span class="sd">            Cumulative distribution function values at x</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        pdf : np.array</span>
+<span class="sd">            Probability density function values at x</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
+    <span class="n">spl</span><span class="o">.</span><span class="n">set_smoothing_factor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">spl_1</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pdf</span> <span class="o">=</span> <span class="n">spl_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pdf</span></div>
+
+
+<div class="viewcode-block" id="pdf2cdf"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.pdf2cdf">[docs]</a><span class="k">def</span> <span class="nf">pdf2cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Calculates a cumulative distribution function from the probability</span>
+<span class="sd">    density function via numerical integration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Response variable</span>
+<span class="sd">        pdf : np.array</span>
+<span class="sd">            Probability density function values at x</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        cdf : np.array</span>
+<span class="sd">            Cumulative distribution function values at x</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">)</span>
+    <span class="n">spl</span><span class="o">.</span><span class="n">set_smoothing_factor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">spl_1</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">spl_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cdf</span></div>
+
+
+<div class="viewcode-block" id="loadtxt"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.loadtxt">[docs]</a><span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;ws&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Loads data from a ASCII file.</span>
+<span class="sd">    First line is header with same delimiter as data, followed by data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Filename</span>
+<span class="sd">        delimiter: str</span>
+<span class="sd">            Data delimiter. Default &#39;ws&#39; for whitespace, use &#39;,&#39; for CSV files.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        data : dictionary</span>
+<span class="sd">            Data as a dictionary:</span>
+<span class="sd">                keys: str</span>
+<span class="sd">                    Header name for each column.</span>
+<span class="sd">                values: np.array</span>
+<span class="sd">                    Column data</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">delimiter</span><span class="o">==</span><span class="s1">&#39;ws&#39;</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">data_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)</span>
+        <span class="n">data_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">icol</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="n">icol</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">data_raw</span><span class="p">[:,</span><span class="n">icol</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="globalPeaks"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.globalPeaks">[docs]</a><span class="k">def</span> <span class="nf">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Finds the global peaks (maxima between consecutive zero up-crossings)</span>
+<span class="sd">    of a zero-centered response time-series</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        t : np.array</span>
+<span class="sd">            Time vector</span>
+<span class="sd">        data : np.array</span>
+<span class="sd">            Response time-series</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        t_peaks : np.array</span>
+<span class="sd">            Time vector for peaks</span>
+<span class="sd">        peaks : np.array</span>
+<span class="sd">            Peaks of the response time-series</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># eliminate zeros</span>
+    <span class="n">zeroMask</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">zeroMask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="c1"># zero up-crossings</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">zeroUpCrossings_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">diff</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">zeroUpCrossings_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">zeroUpCrossings_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">zeroUpCrossings_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zeroUpCrossings_index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># global peaks</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">zeroUpCrossings_index</span><span class="p">)</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">t_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">peak_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">zeroUpCrossings_index</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">zeroUpCrossings_index</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+        <span class="n">t_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t_peaks</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="n">zeroUpCrossings_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">peak_index</span><span class="p">])</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">peaks</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">zeroUpCrossings_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">peak_index</span><span class="p">])</span>
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">t_peaks</span><span class="p">,</span> <span class="n">peaks</span></div>
+
+
+<div class="viewcode-block" id="blockMaxima"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.blockMaxima">[docs]</a><span class="k">def</span> <span class="nf">blockMaxima</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Finds the block maxima of a time-series.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        t : np.array</span>
+<span class="sd">            Time vector corresponding to x</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        block_maxima: np.array</span>
+<span class="sd">            Block maxima (i.e. largest peak in each block)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">nblock</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">t_st</span><span class="p">)</span>
+    <span class="n">block_maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">nblock</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">iblock</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nblock</span><span class="p">):</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="n">x</span><span class="p">[(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="n">iblock</span> <span class="o">*</span> <span class="n">t_st</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">iblock</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">t_st</span><span class="p">)]</span>
+        <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
+        <span class="n">block_maxima</span><span class="p">[</span><span class="n">iblock</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">block_maxima</span></div>
+
+
+<div class="viewcode-block" id="extremeDistribution_Weibull"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_Weibull">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_Weibull</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">locFlag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the all peaks</span>
+<span class="sd">    Weibull method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        x_e : np.array</span>
+<span class="sd">            Array of x values at which to evaluate the short-term extreme CDF</span>
+<span class="sd">        t_x : float</span>
+<span class="sd">            Time length of the x array</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+<span class="sd">        locFlag : boolean</span>
+<span class="sd">            locFlag = 0: Location parameter of Weibull distribution is forced to zero</span>
+<span class="sd">            locFlag = 1: Location parameter of Weibull distribution is calculated in fit</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        stextreme_dist: ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        stextreme_dist: ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        peaks_dist: scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the peaks.</span>
+<span class="sd">        peaks_params: np.array length 4</span>
+<span class="sd">            Parameters of peak&#39;s distribution (Weibull)</span>
+<span class="sd">            [shape_a, shape_c, loc, scale].</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># peaks distribution</span>
+    <span class="k">if</span> <span class="n">locFlag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">peaks_params</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">floc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">locFlag</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">peaks_params</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f0</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">peaks_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                 <span class="n">c</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="n">loc</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                 <span class="n">scale</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="c1"># short-term extreme distribution</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">t_st</span> <span class="o">/</span> <span class="n">t_x</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">N_st</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="n">weib_cdf</span> <span class="o">=</span> <span class="n">peaks_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">)</span>
+    <span class="n">ste_cdf</span> <span class="o">=</span> <span class="n">weib_cdf</span> <span class="o">**</span> <span class="n">N_st</span>
+    <span class="n">stextreme_dist</span> <span class="o">=</span> <span class="n">ecmDist</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">ste_cdf</span><span class="p">)</span>
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">peaks_params</span></div>
+
+
+<div class="viewcode-block" id="extremeDistribution_WeibullTailFit"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">avg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the Weibull tail</span>
+<span class="sd">    fit method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        x_e : np.array</span>
+<span class="sd">            Array of x values at which to evaluate the short-term extreme CDF</span>
+<span class="sd">        t_x : float</span>
+<span class="sd">            Time length of the x array</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+<span class="sd">        avg : float</span>
+<span class="sd">            The average of the time response, if this was substracted before</span>
+<span class="sd">            identifying global peaks. Else it is assumed that the average is</span>
+<span class="sd">            zero.</span>
+<span class="sd">        p0 : list length 2: [float, float]</span>
+<span class="sd">            Initial guess for the Weibull parameters [shape, scale]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        stextreme_dist: ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        stextreme_dist : ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        peaks_dist : scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the peaks.</span>
+<span class="sd">        subset_shape_params : np.array length 7</span>
+<span class="sd">            Shape parameter for each of the seven Weibull fits for the</span>
+<span class="sd">            subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</span>
+<span class="sd">        subset_scale_params : np.array length 7</span>
+<span class="sd">            Scale parameter for each of the seven Weibull fits for the</span>
+<span class="sd">            subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</span>
+<span class="sd">        peaks_params: np.array length 4</span>
+<span class="sd">            Parameters of peak&#39;s distribution (Weibull)</span>
+<span class="sd">            [shape_a, shape_c, loc, scale].</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Two-parameter weibull distribution def</span>
+    <span class="k">def</span> <span class="nf">weibCDF</span><span class="p">(</span><span class="n">yy</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="p">((</span><span class="n">yy</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span><span class="o">**</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1"># Initial guess for Weibull parameters</span>
+    <span class="k">if</span> <span class="n">p0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">p0_tmp</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">floc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">p0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0_tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">p0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0_tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="c1"># Approximate CDF</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">F</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="c1"># Divide into seven sets</span>
+    <span class="n">subset_shape_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">subset_scale_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">setLim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.60</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">set</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+        <span class="n">xset</span> <span class="o">=</span> <span class="n">x</span><span class="p">[(</span><span class="n">F</span> <span class="o">&gt;</span> <span class="n">setLim</span><span class="p">[</span><span class="nb">set</span><span class="p">])]</span>
+        <span class="n">Fset</span> <span class="o">=</span> <span class="n">F</span><span class="p">[(</span><span class="n">F</span> <span class="o">&gt;</span> <span class="n">setLim</span><span class="p">[</span><span class="nb">set</span><span class="p">])]</span>
+        <span class="n">popt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">weibCDF</span><span class="p">,</span> <span class="n">xset</span><span class="p">,</span> <span class="n">Fset</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">)</span>
+        <span class="n">subset_shape_params</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">subset_scale_params</span><span class="p">[</span><span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># peaks distribution</span>
+    <span class="n">peaks_params</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">subset_shape_params</span><span class="p">),</span> <span class="n">avg</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">subset_scale_params</span><span class="p">)]</span>
+    <span class="n">peaks_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                 <span class="n">c</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="n">loc</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                 <span class="n">scale</span><span class="o">=</span><span class="n">peaks_params</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="c1"># short-term extreme</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">t_st</span> <span class="o">/</span> <span class="n">t_x</span>
+    <span class="n">N_st</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="n">weib_cdf</span> <span class="o">=</span> <span class="n">weibCDF</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">peaks_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">peaks_params</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">ste_cdf</span> <span class="o">=</span> <span class="n">weib_cdf</span> <span class="o">**</span> <span class="n">N_st</span>
+    <span class="n">stextreme_dist</span> <span class="o">=</span> <span class="n">ecmDist</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">ste_cdf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">subset_shape_params</span><span class="p">,</span> \
+               <span class="n">subset_scale_params</span><span class="p">,</span> <span class="n">peaks_params</span></div>
+
+
+<div class="viewcode-block" id="extremeDistribution_peaksOverThreshold"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_peaksOverThreshold">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_peaksOverThreshold</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the peaks over</span>
+<span class="sd">    threshold method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        x_e : np.array</span>
+<span class="sd">            Array of x values at which to evaluate the short-term extreme CDF</span>
+<span class="sd">        t_x : float</span>
+<span class="sd">            Time length of the x array</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+<span class="sd">        u : float</span>
+<span class="sd">            Threshold below which peaks (x) are ignored</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        stextreme_dist: ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        stextreme_dist : ecmDist object</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        peaks_dist : ecmDist object</span>
+<span class="sd">            Probability distribution of the peaks.</span>
+<span class="sd">        peaksOverThreshold_dist: scipy.stats rv_frozen</span>
+<span class="sd">            Probaility distribution of the peaks over threshold.</span>
+<span class="sd">        pot_params: np.array length 3</span>
+<span class="sd">            Parameters of peak over threshold&#39;s distribution (Generalized</span>
+<span class="sd">            Pareto)[shape_c, loc, scale].</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># peaks over threshold</span>
+    <span class="n">pot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span><span class="p">[(</span><span class="n">pot</span> <span class="o">&gt;</span> <span class="n">u</span><span class="p">)]</span> <span class="o">-</span> <span class="n">u</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">Npot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pot</span><span class="p">)</span>
+    <span class="c1"># Fit a generalized Pareto</span>
+    <span class="n">pot_params</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">genpareto</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">pot</span><span class="p">,</span> <span class="n">floc</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+    <span class="n">peaksOverThreshold_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">genpareto</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="n">pot_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                              <span class="n">loc</span><span class="o">=</span><span class="n">pot_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                              <span class="n">scale</span><span class="o">=</span><span class="n">pot_params</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="c1"># peaks</span>
+    <span class="n">x_e_pot</span> <span class="o">=</span> <span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;=</span><span class="n">u</span><span class="p">]</span>
+    <span class="n">genpareto_cdf</span> <span class="o">=</span> <span class="n">peaksOverThreshold_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e_pot</span><span class="o">-</span><span class="n">u</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">genpareto_cdf</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">*</span><span class="n">Npot</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">peaks_cdf</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">A</span><span class="p">)</span>
+    <span class="n">peaks_dist</span> <span class="o">=</span> <span class="n">ecmDist</span><span class="p">(</span><span class="n">x_e_pot</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">peaks_cdf</span><span class="p">)</span>
+    <span class="c1"># short-term extreme</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">t_st</span> <span class="o">/</span> <span class="n">t_x</span>
+    <span class="n">N_st</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">*</span><span class="n">N</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="n">ste_cdf</span> <span class="o">=</span> <span class="n">peaks_cdf</span> <span class="o">**</span> <span class="n">N_st</span>
+    <span class="n">stextreme_dist</span> <span class="o">=</span> <span class="n">ecmDist</span><span class="p">(</span><span class="n">x_e_pot</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">ste_cdf</span><span class="p">)</span>
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">peaksOverThreshold_dist</span><span class="p">,</span> <span class="n">pot_params</span></div>
+
+
+<div class="viewcode-block" id="extremeDistribution_blockMaximaGEV"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGEV">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGEV</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the block maxima</span>
+<span class="sd">    method and the Generalized Extreme Value distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        t : np.array</span>
+<span class="sd">            Time vector corresponding to x</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        stextreme_dist: scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        stextreme_dist : scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        ste_params: np.array length 3</span>
+<span class="sd">            Parameters of the short term extreme distribution (Generalized</span>
+<span class="sd">            Extreme Value) [shape_c, loc, scale].</span>
+<span class="sd">        block_maxima: np.array</span>
+<span class="sd">            Block maxima (i.e. largest peak in each block).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">block_maxima</span> <span class="o">=</span> <span class="n">blockMaxima</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">)</span>
+    <span class="n">ste_parameters</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">genextreme</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">block_maxima</span><span class="p">)</span>
+    <span class="n">stextreme_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">genextreme</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="n">ste_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                      <span class="n">loc</span><span class="o">=</span><span class="n">ste_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                      <span class="n">scale</span><span class="o">=</span><span class="n">ste_parameters</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">ste_parameters</span><span class="p">,</span> <span class="n">block_maxima</span></div>
+
+
+<div class="viewcode-block" id="extremeDistribution_blockMaximaGumb"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGumb">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_blockMaximaGumb</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the block maxima</span>
+<span class="sd">    method and the Gumbel (right) distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        t : np.array</span>
+<span class="sd">            Time vector corresponding to x</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        stextreme_dist: scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        stextreme_dist : scipy.stats rv_frozen</span>
+<span class="sd">            Probability distribution of the short-term extreme.</span>
+<span class="sd">        ste_params: np.array length 2</span>
+<span class="sd">            Parameters of the short term extreme distribution (Gumbel_r)</span>
+<span class="sd">            [loc, scale].</span>
+<span class="sd">        block_maxima: np.array</span>
+<span class="sd">            Block maxima (i.e. largest peak in each block).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">block_maxima</span> <span class="o">=</span> <span class="n">blockMaxima</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">)</span>
+    <span class="n">ste_parameters</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gumbel_r</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">block_maxima</span><span class="p">)</span>
+    <span class="n">stextreme_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gumbel_r</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">ste_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">scale</span><span class="o">=</span><span class="n">ste_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">ste_parameters</span><span class="p">,</span> <span class="n">block_maxima</span></div>
+
+
+<div class="viewcode-block" id="goodnessOfFitPlots"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.goodnessOfFitPlots">[docs]</a><span class="k">def</span> <span class="nf">goodnessOfFitPlots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">prob_func</span><span class="p">,</span> <span class="n">x_pdf</span><span class="p">,</span> <span class="n">bins_pdf</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">np_return</span><span class="o">=</span><span class="mi">100001</span><span class="p">,</span> <span class="n">m_prob</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">response_name</span><span class="o">=</span><span class="s1">&#39;Response&#39;</span><span class="p">,</span> <span class="n">response_name_2</span><span class="o">=</span><span class="s1">&#39;Peaks&#39;</span><span class="p">,</span> <span class="n">response_units</span><span class="o">=</span><span class="s1">&#39;Response Units&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Creates plots showing the goodness of fit of a probability model to the</span>
+<span class="sd">    actual data. The four subplots are: the probability plot, the quantile plot,</span>
+<span class="sd">    the return level plot, and probability density function (PDF) plot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        data : np.array</span>
+<span class="sd">            Data which the probability model represents</span>
+<span class="sd">        prob_func : {scipy.stats rv_frozen} or {ecmDist object}</span>
+<span class="sd">            Probability function that models the data.</span>
+<span class="sd">        x_pdf : np.array</span>
+<span class="sd">            Array of x values at which to evaluate the PDF.</span>
+<span class="sd">        bins_pdf : int</span>
+<span class="sd">            Number of bins to use for the PDF plot.</span>
+<span class="sd">        np_return: int</span>
+<span class="sd">            Number of points to use in the return level plot.</span>
+<span class="sd">        m_prob: float</span>
+<span class="sd">            Number of points below min(data).</span>
+<span class="sd">            Use if data consists of only values above a certain minimum and</span>
+<span class="sd">            goodness of fit plots for entire population wanted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fgof : matplotlib.pyplot figure</span>
+<span class="sd">            Figure containing the four goodness of fit subplots.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># nan instead of error if out-of-range</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+    <span class="c1"># figure</span>
+    <span class="n">fgof</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax1</span> <span class="o">=</span> <span class="n">fgof</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Probability Plot&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Fit CDF&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Empirical CDF&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">fgof</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Quantile Plot&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Fit Inverse CDF&#39;</span><span class="p">)</span>
+    <span class="n">ylabel</span> <span class="o">=</span> <span class="n">response_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">response_name_2</span> <span class="o">+</span> <span class="s1">&#39; [&#39;</span> <span class="o">+</span> <span class="n">response_units</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">ax3</span> <span class="o">=</span> <span class="n">fgof</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Return Level Plot&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Return Period [&#39;</span> <span class="o">+</span> <span class="n">response_name_2</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
+    <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Return level [&#39;</span> <span class="o">+</span> <span class="n">response_units</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="c1"># plt.ticklabel_format(style=&#39;sci&#39;, axis=&#39;x&#39;, scilimits=(0, 0))</span>
+    <span class="n">ax4</span> <span class="o">=</span> <span class="n">fgof</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PDF&#39;</span><span class="p">)</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="n">response_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">response_name_2</span> <span class="o">+</span> <span class="s1">&#39; [&#39;</span> <span class="o">+</span> <span class="n">response_units</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;PDF&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="c1"># probability plot</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span><span class="n">cdf_emp</span> <span class="o">=</span> <span class="n">empiricalCdf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="n">m_prob</span><span class="p">)</span>
+    <span class="n">cdf_model</span> <span class="o">=</span> <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">cdf_emp_p</span> <span class="o">=</span> <span class="n">cdf_emp</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cdf_model</span><span class="p">)]</span>
+    <span class="n">cdf_model</span> <span class="o">=</span> <span class="n">cdf_model</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cdf_model</span><span class="p">)]</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cdf_emp_p</span><span class="p">,</span> <span class="n">cdf_model</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span><span class="n">unit</span><span class="p">,</span><span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+    <span class="c1"># quantile plot</span>
+    <span class="n">inv_cdf_model</span> <span class="o">=</span> <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">cdf_emp</span><span class="p">)</span>
+    <span class="n">data_q</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">inv_cdf_model</span><span class="p">)]</span>
+    <span class="n">inv_cdf_model</span> <span class="o">=</span> <span class="n">inv_cdf_model</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">inv_cdf_model</span><span class="p">)]</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">inv_cdf_model</span><span class="p">,</span><span class="n">data_q</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">unit2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unit2</span><span class="p">,</span><span class="n">unit2</span><span class="p">,</span><span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+    <span class="c1"># return level plot</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">np_return</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">p</span>
+    <span class="n">xp</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">p</span>
+    <span class="n">zp</span> <span class="o">=</span> <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xp</span><span class="p">,</span><span class="n">zp</span><span class="p">,</span><span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">cdf_emp</span><span class="p">),</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="c1"># pdf plot</span>
+    <span class="n">xpdf_emp</span><span class="p">,</span><span class="n">pdf_emp</span> <span class="o">=</span> <span class="n">empiricalPdf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">bins_pdf</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="n">m_prob</span><span class="p">)</span>
+    <span class="n">pdf_model</span> <span class="o">=</span> <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_pdf</span><span class="p">)</span>
+    <span class="n">x_pdf</span> <span class="o">=</span> <span class="n">x_pdf</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pdf_model</span><span class="p">)]</span>
+    <span class="n">pdf_model</span> <span class="o">=</span> <span class="n">pdf_model</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pdf_model</span><span class="p">)]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">xpdf_emp</span><span class="p">,</span><span class="n">pdf_emp</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mf">0.75</span><span class="o">*</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">bins_pdf</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">),</span><span class="s1">&#39;bo&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_pdf</span><span class="p">,</span> <span class="n">pdf_model</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax4</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax4</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="c1"># revert to error instead of nan if out-of-range</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">fgof</span></div>
+
+
+<div class="viewcode-block" id="compare_methods"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.compare_methods">[docs]</a><span class="k">def</span> <span class="nf">compare_methods</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span><span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">],</span><span class="n">lines</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">]):</span>
+    <span class="sd">&#39;&#39;&#39;Compares the results obtained using different methods to approximate the</span>
+<span class="sd">    short-term extreme distribution. The methods are:</span>
+<span class="sd">    1 - All peaks Weibull,</span>
+<span class="sd">    2 - Weibull tail fit,</span>
+<span class="sd">    3 - Peaks over threshold,</span>
+<span class="sd">    4 - Block maxima GEV,</span>
+<span class="sd">    5 - Block maxima Gumbel,</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        x : np.array</span>
+<span class="sd">            Independent random variable (global peaks)</span>
+<span class="sd">        t : np.array</span>
+<span class="sd">            Time vector corresponding to x</span>
+<span class="sd">        t_st : float</span>
+<span class="sd">            Short-term period</span>
+<span class="sd">        methods : list</span>
+<span class="sd">            List of methods to be compared. Options are any combination of: 1, 2, 3, 4,and 5</span>
+<span class="sd">        colors : list</span>
+<span class="sd">            Strings defining the color used to plot each method</span>
+<span class="sd">        lines : list</span>
+<span class="sd">            Strings defining the lines used to plot each method</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        fig1 : matplotlib.pyplot figure</span>
+<span class="sd">            Figure containing the comparison of peaks distribution.</span>
+<span class="sd">        fig2 : matplotlib.pyplot figure</span>
+<span class="sd">            Figure containing the comparison of short-term extreme distribution</span>
+<span class="sd">        expected_value_of_short_term_extreme : dictionary</span>
+<span class="sd">            Expected value of the short-term extreme distribution from each method</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># get the 1-hour extreme distribution using the different methods</span>
+    <span class="n">x_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">10000</span><span class="p">)</span>
+    <span class="n">t_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="p">((</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="n">expected_value_of_short_term_extreme</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># 1 - All peaks Weibull</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">],</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extremeDistribution_Weibull</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">)</span>
+        <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+        <span class="n">expected_value_of_short_term_extreme</span><span class="p">[</span><span class="s1">&#39;all_peaks_weibull&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span>
+    <span class="c1"># 2 - Weibull tail fit</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">],</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">],</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">)</span>
+        <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+        <span class="n">expected_value_of_short_term_extreme</span><span class="p">[</span><span class="s1">&#39;weibull_tail_fit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span>
+    <span class="c1"># 3 - Peaks over threshold</span>
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">m3</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">thresh_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh</span><span class="p">])</span>
+        <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;pot_dist&#39;</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extremeDistribution_peaksOverThreshold</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">thresh</span><span class="p">)</span>
+        <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+        <span class="n">expected_value_of_short_term_extreme</span><span class="p">[</span><span class="s1">&#39;peaks_over_threshhold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span>
+    <span class="c1"># 4 - Block maxima GEV</span>
+    <span class="k">if</span> <span class="mi">4</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">m4</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">],</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">extremeDistribution_blockMaximaGEV</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">)</span>
+        <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">expected_value_of_short_term_extreme</span><span class="p">[</span><span class="s1">&#39;block_maxima_gev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span>
+    <span class="c1"># 5 - Block maxima Gumbel</span>
+    <span class="k">if</span> <span class="mi">5</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">m5</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">],</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">extremeDistribution_blockMaximaGumb</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">)</span>
+        <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">expected_value_of_short_term_extreme</span><span class="p">[</span><span class="s1">&#39;block_maxima_gumbel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]</span>
+    <span class="c1"># plot peaks distribution</span>
+    <span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weibull Tail Fit&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">]),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Peaks Over Threshhold&#39;</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$PDF(x)$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Peaks Distribution&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weibull Tail Fit&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">]),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Peaks Over Threshhold&#39;</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CDF(x)$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="c1"># plot short-term extreme distribution</span>
+    <span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weibull Tail Fit&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">]),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Peaks Over Threshhold&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">4</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Block Maxima (GEV)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">5</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Block Maxima (Gumb)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$PDF(x)$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Short-Term Extreme Distribution&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Weibull Tail Fit&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m2</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">],</span> <span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">[</span><span class="n">x_e</span><span class="o">&gt;</span><span class="n">thresh_x</span><span class="p">]),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Peaks Over Threshhold&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m3</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">4</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Block Maxima (GEV)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m4</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">5</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Block Maxima (Gumb)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m5</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CDF(x)$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="c1"># return</span>
+    <span class="nb">print</span> <span class="s1">&#39;expected_value_of_short_term_extreme:&#39;</span>
+    <span class="nb">print</span> <span class="n">expected_value_of_short_term_extreme</span>
+    <span class="k">return</span> <span class="n">fig1</span><span class="p">,</span> <span class="n">fig2</span><span class="p">,</span> <span class="n">expected_value_of_short_term_extreme</span></div>
+
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,1100 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examples &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
+        <link rel="next" title="Publications" href="publications.html"/>
+        <link rel="prev" title="Toolbox Modules" href="modules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+              
+              
+                  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#environmental-characterization">Environmental characterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#short-term-extreme-response-analysis">Short-term extreme response analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#long-term-extreme-response-analysis">Long-term extreme response analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#contour-approach">Contour approach</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats">1. Establish environmental data and sample sea stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-device-response">2. Model device response</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#short-term-extreme-statistics">3. Short term extreme statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#determine-design-load-condition-s">5. Determine design load condition(s)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#full-sea-sate-approach">Full sea-sate approach</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">1. Establish environmental data and sample sea stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">2. Model device response</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#short-term-response-distributions">4. Short-term response distributions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#construct-long-term-response-distribution">5. Construct long-term response distribution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-and-analyze-results">6. Plot and analyze results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fatigue-analysis">Fatigue analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#most-likely-extreme-response-mler">Most-likely extreme response (MLER)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+              
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WDRT</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="examples">
+<h1><a class="toc-backref" href="#id6">Examples</a><a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>This page includes a number of examples demonstrating the usage of the <cite>WDRT</cite>. In addtion to code snippets included here, these examples are outlined in the <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples</span></code> directory. Each toolbox module has at least one example/tutorial. The table of contents below gives an outline of the available tutorials.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#examples" id="id6">Examples</a><ul>
+<li><a class="reference internal" href="#environmental-characterization" id="id7">Environmental characterization</a></li>
+<li><a class="reference internal" href="#short-term-extreme-response-analysis" id="id8">Short-term extreme response analysis</a></li>
+<li><a class="reference internal" href="#long-term-extreme-response-analysis" id="id9">Long-term extreme response analysis</a><ul>
+<li><a class="reference internal" href="#contour-approach" id="id10">Contour approach</a><ul>
+<li><a class="reference internal" href="#establish-environmental-data-and-sample-sea-stats" id="id11">1. Establish environmental data and sample sea stats</a></li>
+<li><a class="reference internal" href="#model-device-response" id="id12">2. Model device response</a></li>
+<li><a class="reference internal" href="#short-term-extreme-statistics" id="id13">3. Short term extreme statistics</a></li>
+<li><a class="reference internal" href="#determine-design-load-condition-s" id="id14">5. Determine design load condition(s)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#full-sea-sate-approach" id="id15">Full sea-sate approach</a><ul>
+<li><a class="reference internal" href="#id1" id="id16">1. Establish environmental data and sample sea stats</a></li>
+<li><a class="reference internal" href="#id2" id="id17">2. Model device response</a></li>
+<li><a class="reference internal" href="#short-term-response-distributions" id="id18">4. Short-term response distributions</a></li>
+<li><a class="reference internal" href="#construct-long-term-response-distribution" id="id19">5. Construct long-term response distribution</a></li>
+<li><a class="reference internal" href="#plot-and-analyze-results" id="id20">6. Plot and analyze results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fatigue-analysis" id="id21">Fatigue analysis</a></li>
+<li><a class="reference internal" href="#most-likely-extreme-response-mler" id="id22">Most-likely extreme response (MLER)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="environmental-characterization">
+<h2><a class="toc-backref" href="#id7">Environmental characterization</a><a class="headerlink" href="#environmental-characterization" title="Permalink to this headline">¶</a></h2>
+<p>The WDRT includes a package for creating environmental contours of extreme sea states using a <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">principle components analysis (PCA)</a> methodology with additional improvements for characterizing the joint probability distribution of sea state variables of interest.
+Environmental contours describing extreme sea states can be used for numerical or physical model simulations analyzing the design-response of WECs.
+These environmental contours, characterized by combinations of significant wave height (<span class="math">\(H_s\)</span>) and either energy period (<span class="math">\(T_e\)</span>) or peak period (<span class="math">\(T_p\)</span>), provide inputs that are associated with a certain reliability interval.
+These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.</p>
+<p>For this example (<code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_envSampling.py</span></code>), we will consider <a class="reference external" href="http://www.ndbc.noaa.gov/station_page.php?station=46022">NDBC buoy 46022</a>.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="_images/example_envSampling.png"><img alt="_images/example_envSampling.png" src="_images/example_envSampling.png" style="width: 400pt;" /></a>
+<p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Create buoy object, in this case for Station #46022</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+
+<span class="c1"># Read data from ndbc.noaa.gov</span>
+<span class="c1"># buoy46022.fetchFromWeb()</span>
+
+<span class="c1"># Load data from .txt file if avilable</span>
+<span class="n">buoy46022</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">()</span>
+
+<span class="c1"># Load data from .h5 file if available</span>
+<span class="c1"># buoy46022.loadFromH5(&#39;./data/NDBC46022.h5&#39;)</span>
+
+<span class="c1"># Declare required parameters</span>
+<span class="n">depth</span> <span class="o">=</span> <span class="mf">391.4</span>  <span class="c1"># Depth at measurement point (m)</span>
+
+<span class="c1"># # Create EA object using above parameters</span>
+<span class="n">pca46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+<span class="n">Gauss46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">GaussianCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+<span class="n">Gumbel46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">GumbelCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+<span class="n">cc46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">ClaytonCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+<span class="n">rosen46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Rosenblatt</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+
+<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
+<span class="n">Time_R</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
+
+<span class="n">pca_Hs_Return</span><span class="p">,</span> <span class="n">pca_T_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
+<span class="n">Gauss_Hs_Return</span><span class="p">,</span> <span class="n">Gauss_T_Return</span> <span class="o">=</span> <span class="n">Gauss46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
+<span class="n">Gumbel_Hs_Return</span><span class="p">,</span> <span class="n">Gumbel_T_Return</span> <span class="o">=</span> <span class="n">Gumbel46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
+<span class="n">cc_Hs_Return</span><span class="p">,</span> <span class="n">cc_T_Return</span> <span class="o">=</span> <span class="n">cc46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
+<span class="n">rosen_Hs_Return</span><span class="p">,</span> <span class="n">rosen_T_Return</span> <span class="o">=</span> <span class="n">rosen46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">f</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s1">&#39;NDBC</span><span class="si">%s</span><span class="s1">, </span><span class="si">%i</span><span class="s1">-year contours&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">buoy46022</span><span class="o">.</span><span class="n">Hs</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pca_T_Return</span><span class="p">,</span> <span class="n">pca_Hs_Return</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;PCA&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Gauss_T_Return</span><span class="p">,</span> <span class="n">Gauss_Hs_Return</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gaussian&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Gumbel_T_Return</span><span class="p">,</span> <span class="n">Gumbel_Hs_Return</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gumbel&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cc_T_Return</span><span class="p">,</span> <span class="n">cc_Hs_Return</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Clayton&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rosen_T_Return</span><span class="p">,</span> <span class="n">rosen_Hs_Return</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Rosenblatt&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy period, $T_e$ [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Sig. wave height, $H_s$ [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Sample Generation Example</span>
+<span class="n">num_contour_points</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># Number of points to be sampled for each</span>
+<span class="c1"># contour interval.</span>
+<span class="n">contour_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="c1"># Probabilities defining sampling contour bounds.</span>
+<span class="n">random_seed</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Random seed for sample generation</span>
+
+<span class="c1"># Get samples for a full sea state long term analysis</span>
+<span class="n">Hs_sampleFSS</span><span class="p">,</span> <span class="n">T_sampleFSS</span><span class="p">,</span> <span class="n">Weight_sampleFSS</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getSamples</span><span class="p">(</span><span class="n">num_contour_points</span><span class="p">,</span>
+                                                     <span class="n">contour_returns</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
+<span class="c1"># Get samples for a contour approach long term analysis</span>
+<span class="n">T_sampleCA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">Hs_sampleCA</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContourPoints</span><span class="p">(</span><span class="n">T_sampleCA</span><span class="p">)</span>
+
+<span class="c1"># Modify contour by steepness curve if they intersect</span>
+<span class="n">SteepMax</span> <span class="o">=</span> <span class="mf">0.07</span>  <span class="c1"># Optional: enter estimate of breaking steepness</span>
+<span class="n">T_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">SteepH</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">T_vals</span><span class="p">)</span>
+<span class="n">SteepH_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="p">)</span>
+
+<span class="n">Steep_correction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SteepH_Return</span> <span class="o">&lt;</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
+<span class="n">Hs_Return_Steep</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">pca46022</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
+<span class="n">Hs_Return_Steep</span><span class="p">[</span><span class="n">Steep_correction</span><span class="p">]</span> <span class="o">=</span> <span class="n">SteepH_Return</span><span class="p">[</span><span class="n">Steep_correction</span><span class="p">]</span>
+
+<span class="c1"># pca46022.bootStrap(boot_size=10)</span>
+<span class="c1"># Gauss46022.bootStrap(boot_size=10)</span>
+<span class="c1"># Gumbel46022.bootStrap(boot_size=10)</span>
+<span class="c1"># cc46022.bootStrap(boot_size=10)</span>
+<span class="c1"># rosen46022.bootStrap(boot_size=10)</span>
+
+<span class="c1"># Show a plot of the data</span>
+<span class="n">pca46022</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+
+<span class="c1"># Save data in h5 file</span>
+<span class="n">pca46022</span><span class="o">.</span><span class="n">saveData</span><span class="p">(</span><span class="s1">&#39;./data/NDBC</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pca46022</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="short-term-extreme-response-analysis">
+<h2><a class="toc-backref" href="#id8">Short-term extreme response analysis</a><a class="headerlink" href="#short-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
+<p>A short term extreme distribution is the answer to “If a device is in sea-state X for Y amount of time, what will be the largest Z observed?&#8221;, where X is the environmental condition, Y the short-term period, and Z the response parameter of interest (e.g. the mooring load, bending moment).
+The short-term extreme response module provides five different methods for obtaining this distribution based on observations of the quantity of interest &#8220;Z&#8221; at the desired sea-state &#8220;X&#8221;.
+These methods are described in detail in <a class="reference internal" href="publications.html#pubs"><span class="std std-ref">Michelen and Coe 2015</span></a>.</p>
+<p>In this example the Weibull tail-fit method is used.
+The proccess of obtaiing the sort-term extreme distribution using the Weibull tail-fit method is as follows:</p>
+<blockquote>
+<div><p>1. Identify the peaks from a time-series of any length of the response &#8220;Z&#8221; of the WEC in the sea-state of interest &#8220;X&#8221;.
+Some minimum time length is required to achieve convergence.</p>
+<ol class="arabic simple" start="2">
+<li>Order the peaks in ascending order and approximate the empirical peak distribution as:</li>
+</ol>
+<div class="math">
+\[F^{\prime}(x_i) = \frac{i}{N+1}\]</div>
+<p>where <span class="math">\(x_i\)</span> is the <span class="math">\(i^{\textrm{th}}\)</span>-ordered peak.</p>
+<ol class="arabic simple" start="3">
+<li>Fit Weibull distributions to seven subsets of the points (<span class="math">\(x_i\)</span>, <span class="math">\(F^{\prime}(x_i)\)</span>) corresponding to <span class="math">\(F^{\prime}(x_i) &gt; \left(0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65 \right)\)</span>.</li>
+<li>The distribution of the global peaks is then approximated as a Weibull distribution with parameters equal to the average of the parameters of the seven fitted Weibull distributions.</li>
+<li>The short term extreme distribution (<span class="math">\(F_e(x)\)</span>) is then obtained from the peaks distribution (<span class="math">\(F_p(x)\)</span>) as</li>
+</ol>
+<div class="math">
+\[F_e(x) = F_p(x)^q\]</div>
+<p>where <span class="math">\(q\)</span> is the number of expected peaks in the short-term period.</p>
+</div></blockquote>
+<p>In this example we start with a time-series of the quantity of interest at the desired sea-state.
+The global peaks are then identified.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/ste_peaks.png"><img alt="_images/ste_peaks.png" src="_images/ste_peaks.png" style="width: 600pt;" /></a>
+</div>
+<p>The desired short-term period is 1 hour.
+The 1-hour extreme distribution is estimated using the Weibull tail fit as described above.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/ste_distributions.png"><img alt="_images/ste_distributions.png" src="_images/ste_distributions.png" style="width: 600pt;" /></a>
+</div>
+<p>The goodness of fit plots are shown as a visual check.
+They show the quality of the agreement between the global peaks and the resulting Weibull tail fit.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/ste_gof.png"><img alt="_images/ste_gof.png" src="_images/ste_gof.png" style="width: 600pt;" /></a>
+</div>
+<p>This example is shown below and can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_shortTermExtreme.py</span></code>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65</pre></div></td><td class="code"><div class="highlight"><pre><span></span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">WDRT.shortTermExtreme</span> <span class="kn">as</span> <span class="nn">ecm</span>
+<span class="kn">import</span> <span class="nn">WDRT.fatigue</span> <span class="kn">as</span> <span class="nn">fatigue</span>
+
+<span class="c1"># load response time series</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">ecm</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;data/data.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+<span class="c1"># find global peaks</span>
+<span class="n">t_peaks</span><span class="p">,</span> <span class="n">peaks</span> <span class="o">=</span> <span class="n">ecm</span><span class="o">.</span><span class="n">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+<span class="c1"># plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_peaks</span><span class="p">,</span> <span class="n">peaks</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time, $t$ [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># get the 1-hour extreme distribution using the Weibull tail fit method</span>
+<span class="n">x_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">peaks</span><span class="p">),</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="n">t_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">t_st</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="mf">60.</span> <span class="o">*</span> <span class="mf">60.</span>
+<span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ecm</span><span class="o">.</span><span class="n">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">peaks</span><span class="p">,</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">t_st</span><span class="p">)</span>
+
+<span class="c1"># plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Peak distribution&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">stextreme_dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Extreme distribution&#39;</span><span class="p">)</span>
+<span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+<span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$PDF(x)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="s1">&#39;g-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">stextreme_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+<span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+<span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CDF(x)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># goodness of fit plots</span>
+<span class="n">gof_plots</span> <span class="o">=</span> <span class="n">ecm</span><span class="o">.</span><span class="n">goodnessOfFitPlots</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">peaks</span><span class="p">,</span> <span class="n">prob_func</span><span class="o">=</span><span class="n">peaks_dist</span><span class="p">,</span> <span class="n">np_return</span><span class="o">=</span><span class="mi">1000001</span><span class="p">,</span> <span class="n">x_pdf</span><span class="o">=</span><span class="n">x_e</span><span class="p">,</span> <span class="n">bins_pdf</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="long-term-extreme-response-analysis">
+<h2><a class="toc-backref" href="#id9">Long-term extreme response analysis</a><a class="headerlink" href="#long-term-extreme-response-analysis" title="Permalink to this headline">¶</a></h2>
+<p>The long-term extreme response represents the design response for some specific deployment location and time-span.
+Two major classes of approaches are implemented in the WDRT: the contour approach and the full sea state approach.</p>
+<div class="section" id="contour-approach">
+<h3><a class="toc-backref" href="#id10">Contour approach</a><a class="headerlink" href="#contour-approach" title="Permalink to this headline">¶</a></h3>
+<p>In the contour approach, simulations are run along the desired extreme wave contour (e.g. 25-year contour).
+The condition producing the largest response is used to define the extreme response distribution for the device via a short-term extreme process.
+To obtain a single design response value for this method, one should select a percentile from that extreme response distribution based on some prior knowledge of system behavior.
+Typical percentiles used for marine structures range from 75 to 99%.</p>
+<p>The following steps demonstrate the execution of a <cite>contour approach</cite> to long-term extreme response analysis.
+These steps are also summarized in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_contourApproach.py</span></code>.</p>
+<div class="figure align-center" id="id4">
+<a class="reference internal image-reference" href="_images/example_contourApproach.png"><img alt="_images/example_contourApproach.png" src="_images/example_contourApproach.png" style="width: 400pt;" /></a>
+<p class="caption"><span class="caption-text">Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.</span></p>
+</div>
+<div class="section" id="establish-environmental-data-and-sample-sea-stats">
+<h4><a class="toc-backref" href="#id11">1. Establish environmental data and sample sea stats</a><a class="headerlink" href="#establish-environmental-data-and-sample-sea-stats" title="Permalink to this headline">¶</a></h4>
+<p>Following the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
+For this example, we will work with the data produced in the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Load data from example_envSampling.py</span>
+<span class="n">envFile</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;NDBC46022.h5&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;buoy_Data/Hs&#39;</span><span class="p">])</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;buoy_Data/Te&#39;</span><span class="p">])</span>
+<span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;ReturnContours/Hs_Return&#39;</span><span class="p">])</span>
+<span class="n">T_Return</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;ReturnContours/T_Return&#39;</span><span class="p">])</span>
+<span class="n">Hs_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;Samples_ContourApproach/Hs_SampleCA&#39;</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="model-device-response">
+<h4><a class="toc-backref" href="#id12">2. Model device response</a><a class="headerlink" href="#model-device-response" title="Permalink to this headline">¶</a></h4>
+<p>Obtain predictions for your device response at each of the selected sea states.
+This step can be accomplished via any model considered appropriate.
+Low and mid-fidelity numerical models (e.g. Cummins equation) are often used.
+However, experimental testing could be used as well.
+Whatever the approach, the process must supply sufficient time histories of the relevant responses at each of the selected sea states.
+For this example, we will simply load data that was previously produced with a simple Cummins equation model.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Load data from modeling</span>
+<span class="n">modResFile</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;longTerm_contourApproach.h5&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+<span class="n">tSim</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">mmax</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="s1">&#39;ss_</span><span class="si">%03d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;/x/&#39;</span> <span class="o">+</span> <span class="n">ss</span><span class="p">]))</span>
+    <span class="n">peaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ste</span><span class="o">.</span><span class="n">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">ii</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="short-term-extreme-statistics">
+<h4><a class="toc-backref" href="#id13">3. Short term extreme statistics</a><a class="headerlink" href="#short-term-extreme-statistics" title="Permalink to this headline">¶</a></h4>
+<p>The extreme response for each sea state can be defined as a percentile, <span class="math">\(\alpha\)</span>, in the extreme response distributions.
+The percentile chosen here should ideally be based on some experience with similar systems.
+Typical values for <span class="math">\(\alpha\)</span> used for marine structures range from 75 to 99%. This approach has less variability than simply picking the maximum QOI observed in each sea state.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Short-term extreme response at each sea state</span>
+<span class="n">tPer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># storm period</span>
+<span class="n">x_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mmax</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">edist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ev</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">r975</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">edist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ste</span><span class="o">.</span><span class="n">extremeDistribution_WeibullTailFit</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">peaks</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_t</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">tSim</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">tPer</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="determine-design-load-condition-s">
+<h4><a class="toc-backref" href="#id14">5. Determine design load condition(s)</a><a class="headerlink" href="#determine-design-load-condition-s" title="Permalink to this headline">¶</a></h4>
+<p>For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI).
+The DLC is defined as the scenario that gives the largest response.
+To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Find largest response</span>
+<span class="n">mi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">edist</span><span class="p">[</span><span class="n">mi</span><span class="p">]</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="mf">0.00001</span><span class="p">)</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">edist</span><span class="p">[</span><span class="n">mi</span><span class="p">]</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.00001</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">r95</span> <span class="o">=</span> <span class="n">edist</span><span class="p">[</span><span class="n">mi</span><span class="p">]</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="k">print</span> <span class="s1">&#39;design state (Hs, Te): (</span><span class="si">%.1f</span><span class="s1">, </span><span class="si">%.1f</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Hs_sample</span><span class="p">[</span><span class="n">mi</span><span class="p">],</span> <span class="n">T_sample</span><span class="p">[</span><span class="n">mi</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+<div class="section" id="full-sea-sate-approach">
+<h3><a class="toc-backref" href="#id15">Full sea-sate approach</a><a class="headerlink" href="#full-sea-sate-approach" title="Permalink to this headline">¶</a></h3>
+<p>In the full sea state approach, simulations are run at a sampling of sea states within an envelop defined by the environmental characterization process.
+Based on the device response and relative occurrence likelihood for each sea state, an extreme distribution is constructed.
+The full sea-state approach is more rigorous than the contour approach, but also requires more modeling to implement.
+This distribution gives a richer picture of the design response and can, for example, be used to study how the design response varies with return period.</p>
+<p>The following example is also located at <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_longTermFullSeaState.py</span></code>.</p>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id16">1. Establish environmental data and sample sea stats</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>Following the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
+For this example, we will work with the data produced in the <a class="reference internal" href="#environmental-characterization">Environmental characterization</a> example.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">envFile</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;NDBC46022.h5&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">Hs_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;Samples_FullSeaState/Hs_SampleFSS&#39;</span><span class="p">])</span>
+<span class="n">T_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;Samples_FullSeaState/T_SampleFSS&#39;</span><span class="p">])</span>
+<span class="n">Weight_sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;Samples_FullSeaState/Weight_SampleFSS&#39;</span><span class="p">])</span>
+<span class="n">Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;buoy_Data/Hs&#39;</span><span class="p">])</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;buoy_Data/Te&#39;</span><span class="p">])</span>
+<span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;ReturnContours/Hs_Return&#39;</span><span class="p">])</span>
+<span class="n">T_Return</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">envFile</span><span class="p">[</span><span class="s1">&#39;ReturnContours/T_Return&#39;</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id17">2. Model device response</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>Obtain predictions for your device response at each of the selected sea states.
+This step can be accomplished via any model considered appropriate.
+Low and mid-fidelity numerical models (e.g. Cummins equation) are often used.
+However, experimental testing could be used as well.
+Whatever the approach, the process must supply sufficient time histories of the relevant responses at each of the selected sea states.
+For this example, we will simply load data that was previously produced with a simple Cummins equation model.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">modResFile</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;longTerm_FullSeaState.h5&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+<span class="n">tSim</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">peaks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">mmax</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="s1">&#39;ss_</span><span class="si">%03d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ii</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">modResFile</span><span class="p">[</span><span class="s1">&#39;/x/&#39;</span> <span class="o">+</span> <span class="n">ss</span><span class="p">]))</span>
+    <span class="n">peaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ste</span><span class="o">.</span><span class="n">globalPeaks</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">ii</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">mmax</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">peaks</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="short-term-response-distributions">
+<h4><a class="toc-backref" href="#id18">4. Short-term response distributions</a><a class="headerlink" href="#short-term-response-distributions" title="Permalink to this headline">¶</a></h4>
+<p>As discussed in the <a class="reference internal" href="#short-term-extreme-response-analysis">Short-term extreme response analysis</a> example, the short-term extreme response corresponds to some assumed period of interest, often referred to as the storm period.
+Typically 1 to 3 hour storms are considered.
+Obtain the short-term extreme response distribution for the storm duration of interest, <span class="math">\(f_{x_{1\textrm{hr}}|H_s, T_e}(x)\)</span>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">tPer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># storm period</span>
+<span class="n">x_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mmax</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">edist</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ccdf</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">edist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ste</span><span class="o">.</span><span class="n">extremeDistribution_WeibullTailFit</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">peaks</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">x_e</span><span class="o">=</span><span class="n">x_t</span><span class="p">,</span> <span class="n">t_x</span><span class="o">=</span><span class="n">tSim</span><span class="p">,</span> <span class="n">t_st</span><span class="o">=</span><span class="n">tPer</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ccdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edist</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">ccdf</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="construct-long-term-response-distribution">
+<h4><a class="toc-backref" href="#id19">5. Construct long-term response distribution</a><a class="headerlink" href="#construct-long-term-response-distribution" title="Permalink to this headline">¶</a></h4>
+<p>From the previous 4 steps, we now have <span class="math">\(n=100\)</span> pairs of sea state and corresponding device response probabilities.
+The long-term extreme response distribution can be constructed as a complementary cumulative distribution function (CCDF), sometimes also called a survival function.
+When plotted on a log-y scale, the CCDF has the benefit of highlighting the <em>tail</em> of the more typical cumulative distribution function (CDF).</p>
+<div class="math">
+\[\begin{split}\bar{F}_{LT}(x_T)       &amp;= f(x &gt; x_T) \\
+                                        &amp;= \int{ \int{ \bar{F}_{x_{1\textrm{hr}}|H_s, T_e}(x_T) f_{H_s,T_e}(h, t) dh} dt}\end{split}\]</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">LTS</span> <span class="o">=</span> <span class="n">lte</span><span class="o">.</span><span class="n">fullLongTermSurvival</span><span class="p">(</span><span class="n">Fr</span><span class="o">=</span><span class="n">ccdf</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">Weight_sample</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="plot-and-analyze-results">
+<h4><a class="toc-backref" href="#id20">6. Plot and analyze results</a><a class="headerlink" href="#plot-and-analyze-results" title="Permalink to this headline">¶</a></h4>
+<p>The results can be plotted and used to determine the return level for a desired return period.</p>
+<div class="figure align-center" id="id5">
+<a class="reference internal image-reference" href="_images/example_longTermFullSeaState.png"><img alt="_images/example_longTermFullSeaState.png" src="_images/example_longTermFullSeaState.png" style="width: 400pt;" /></a>
+<p class="caption"><span class="caption-text">Long term complementary cumulative distribution function (CCDF).</span></p>
+</div>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s1">&#39;Sea state sampling&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Hs</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T_sample</span><span class="p">,</span> <span class="n">Hs_sample</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;samples&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T_Return</span><span class="p">,</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;100 year contour&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy period, $T_e$ [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Sig. wave height, $H_s$ [m]&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s1">&#39;Long-term response&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="n">LTS</span><span class="p">(</span><span class="n">x_t</span><span class="p">),</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Full sea state survival&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ii</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="n">ccdf</span><span class="p">[</span><span class="n">ii</span><span class="p">](</span><span class="n">x_t</span><span class="p">),</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Individual sea state survivals&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="n">ccdf</span><span class="p">[</span><span class="n">ii</span><span class="p">](</span><span class="n">x_t</span><span class="p">),</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">yLs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">yL</span> <span class="ow">in</span> <span class="n">yLs</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">yL</span> <span class="o">*</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;r--&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
+             <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">yL</span> <span class="o">*</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)),</span>
+             <span class="s1">&#39;</span><span class="si">%i</span><span class="s1">-year return&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">yL</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CCDF(x)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="mf">1e-1</span> <span class="o">/</span> <span class="p">(</span><span class="n">yLs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
+
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+<div class="section" id="fatigue-analysis">
+<h2><a class="toc-backref" href="#id21">Fatigue analysis</a><a class="headerlink" href="#fatigue-analysis" title="Permalink to this headline">¶</a></h2>
+<p>In addition to extreme loads, a WEC must also be able to structurally withstand fatigue loading for its design life.
+Fatigue loads are time varying loads which cause cumulative damage to structural components and eventually lead to structural failure.
+Usually, a component’s fatigue strength/life is reported in terms of an <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve.
+The <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve, which is typically obtained empirically, gives the number of load cycles <span class="math">\(N\)</span> to failure at constant load amplitude <span class="math">\(S\)</span>, as illustrated in the following figure.
+Mathematically, the behavior is described as, <span class="math">\(\log (N) = \log (K – m) \log (S)\)</span>.
+Where, <span class="math">\(S_{ult}\)</span>, is the ultimate strength; <span class="math">\(S_{end}\)</span>, is the endurance limit, below which, no failure occurs with constant amplitude loading; <span class="math">\(m\)</span> is the slope of the <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve; and, <span class="math">\(K\)</span> is an empirical material constant determining the level of the <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/S-N.png"><img alt="_images/S-N.png" src="_images/S-N.png" style="width: 300pt;" /></a>
+</div>
+<p>WEC loads, however, are highly variable and by no means of constant amplitude.
+The most common method used to predict the cumulative damage of variable loading is the Palmgren-Miner rule, as given below.
+The Palmgren-Miner rule is based on the assumption that the cumulative damage of each load cycle is sequence independent, and thus the total damage equivalent load, <span class="math">\(S_{N}\)</span>, is obtained with a linear summation of the distributed load ranges.
+<span class="math">\(S_{i}\)</span>, the load range for bin <span class="math">\(i\)</span>, and <span class="math">\(n_i\)</span>, the number of cycles in load range <span class="math">\(i\)</span>, are usually obtained via the rain-flow counting method.</p>
+<div class="math">
+\[S_N = \left(\sum{\frac{S^m_i n_i}{N}}\right)^{\frac{1}{m}}\]</div>
+<p>The intended used of the fatigue module in the WDRT is as an early design stage WEC fatigue load estimator.
+The required inputs to the module are:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>A force or stress history, which may be obtained either experimentally or via simulation. Pertinent loads may include, power-take-off (PTO) loads, mooring loads, bending moments, etc.</li>
+<li>The <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve slope, <span class="math">\(m\)</span>, which is likely unknown with any accuracy in the early stages of design, but as an initial estimate, the following ranges may be used: <span class="math">\(m \approx 3-4\)</span> for welded steel, <span class="math">\(m \approx 6-8\)</span> for cast iron, and <span class="math">\(m \approx 9-12\)</span> for composites.</li>
+<li>And, <span class="math">\(N\)</span>, the number of cycles expected in the WEC’s design life, which is up to the user to ascertain given a specified design life and environmental characterization.</li>
+</ol>
+</div></blockquote>
+<p>This example is shown below and can found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples/example_fatigue.py</span></code>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># This example loads pre-calculated PTO force histories for a reduced size joint</span>
+<span class="c1"># probability distribution. Then uses the WDRT fatigue function to calculate</span>
+<span class="c1"># equivalent fatigue loads for a 1 hour timeframe and a 1 year timeframe.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.fatigue</span> <span class="kn">as</span> <span class="nn">fatigue</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Reduced size joint probability distribution</span>
+<span class="c1"># Wave energy periods</span>
+<span class="n">Te</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">]]</span>
+<span class="c1"># Significant wave heights</span>
+<span class="n">Hs</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.75</span><span class="p">,</span> <span class="mf">2.75</span><span class="p">,</span> <span class="mf">2.75</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">]]</span>
+<span class="c1"># Probability</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">([[</span><span class="mf">23.45</span><span class="p">,</span> <span class="mf">24.78</span><span class="p">,</span> <span class="mf">1.64</span><span class="p">],</span> <span class="p">[</span><span class="mf">9.18</span><span class="p">,</span> <span class="mf">28.21</span><span class="p">,</span> <span class="mf">4.11</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">2.34</span><span class="p">]],</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">N1h</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">N1y</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">[</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="c1"># Average N in 1 hour (Tavg = 0.82476*Te)</span>
+        <span class="n">N1h</span> <span class="o">=</span> <span class="n">N1h</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">Te</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="o">.</span><span class="mi">82476</span><span class="p">)</span>
+        <span class="c1"># Average N in 1 year</span>
+        <span class="n">N1y</span> <span class="o">=</span> <span class="n">N1y</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">365</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">Te</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="o">.</span><span class="mi">82476</span><span class="p">)</span>
+
+<span class="c1"># Assume an S-N curve slope of 6 (representative of cast iron)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Feq_1h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+<span class="n">Feq_1y</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="c1"># Read pre-calculated PTO force histories for each sea state</span>
+        <span class="n">Fpto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;FptoH&#39;</span><span class="p">)</span> <span class="o">+</span>
+                          <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Hs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]))</span> <span class="o">+</span>
+                          <span class="s1">&#39;T&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Te</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]))</span> <span class="o">+</span> <span class="s1">&#39;.txt&#39;</span><span class="p">)</span>
+        <span class="c1"># Equivalent fatigue load for a 1 hour timeframe</span>
+        <span class="n">Feq_1h</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">fatigue</span><span class="o">.</span><span class="n">EqLoad</span><span class="p">(</span><span class="n">Fpto</span><span class="p">,</span> <span class="n">N1h</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+        <span class="n">Feq_1y</span> <span class="o">=</span> <span class="n">Feq_1y</span> <span class="o">+</span> <span class="p">(</span><span class="n">Feq_1h</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">N1h</span> <span class="o">*</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+<span class="c1"># Equivalent fatigue load for a 1 year timeframe</span>
+<span class="n">Feq_1y</span> <span class="o">=</span> <span class="p">(</span><span class="n">Feq_1y</span> <span class="o">/</span> <span class="n">N1y</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;1 hour equivalent fatigue loads:&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">Feq_1h</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;1 year equivalent fatigue load:&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">Feq_1y</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>In this example, 1 hour PTO force histories (for the <a class="reference external" href="http://wec-sim.github.io/WEC-Sim/tutorials.html#two-body-point-absorber-rm3">RM3 WEC</a>) have been numerically obtained (using <a class="reference external" href="http://wec-sim.github.io/WEC-Sim/index.html">WEC-Sim</a>) for each sea state in the hypothetical joint probability distribution shown below.
+The average number of cycles expected in 1 hour, <span class="math">\(N_{\textrm{1-hr}}\)</span>, and 1 year, <span class="math">\(N_{\textrm{1-yr}}\)</span>, timeframes are estimated from the joint probability distribution.
+The <span class="math">\(S\)</span>-<span class="math">\(N\)</span> curve slope, <span class="math">\(m\)</span>, is set to 6.
+Then, for each sea state, the force histories are read, and using the WDRT fatigue module, 1 hour damage equivalent loads are calculated, as given below.
+And finally, the annual damage equivalent load is calculated by reapplying the Palmgren-Miner rule and taking advantage of the fact that the rainflow counts were already obtained in the 1 hour damage equivalent load computations, and only need to be adjusted and summed according to the probability of occurrence at each sea state.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/Feq.png"><img alt="_images/Feq.png" src="_images/Feq.png" style="width: 400pt;" /></a>
+</div>
+</div>
+<div class="section" id="most-likely-extreme-response-mler">
+<h2><a class="toc-backref" href="#id22">Most-likely extreme response (MLER)</a><a class="headerlink" href="#most-likely-extreme-response-mler" title="Permalink to this headline">¶</a></h2>
+<p>The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves.
+The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states.
+The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.</p>
+<p>An example can be found in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py</span></code>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">libpath</span>     <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;HOME&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/WDRT/WDRT/MLER_toolbox&#39;</span>
+<span class="n">RAOdir</span>      <span class="o">=</span> <span class="n">libpath</span><span class="o">+</span><span class="s1">&#39;/example/RAO_data/&#39;</span>
+<span class="n">outputDir</span>   <span class="o">=</span> <span class="n">libpath</span><span class="o">+</span><span class="s1">&#39;/example/TestData/&#39;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">libpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">):</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">libpath</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">mler</span>
+
+<span class="c1"># Create the object</span>
+<span class="n">Test</span> <span class="o">=</span> <span class="n">mler</span><span class="o">.</span><span class="n">mler</span><span class="p">(</span><span class="n">H</span><span class="o">=</span><span class="mf">9.0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">15.1</span><span class="p">,</span> <span class="n">numFreq</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="c1"># Setup the wave information</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">Test</span><span class="o">.</span><span class="n">waves</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">plotSpectrum</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c1"># Setup the RAO information</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">readRAO</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">RAOdir</span><span class="o">+</span><span class="s1">&#39;RAO_heave_RM3float.dat&#39;</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">readRAO</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">RAOdir</span><span class="o">+</span><span class="s1">&#39;RAO_pitch_RM3float.dat&#39;</span><span class="p">)</span>
+
+<span class="c1"># Check the input RAOs</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">plotRAO</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">plotRAO</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Now that everything is set up, generate the MLER wave for heave.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERcoeffsGen</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>   <span class="c1"># generate the heave-conditioned wave profile, 1 meter heave response desired</span>
+<span class="c1">#Test.MLERcoeffsGen(5,1.0)   # generate the pitch-conditioned wave profile, 1 meter heave response desired</span>
+
+<span class="c1"># At this point we can export the coefficients.  The coefficients will</span>
+<span class="c1"># match a desired response height that was given as the second argument to</span>
+<span class="c1"># MLERcoeffsGen.  But, if a specific height of the incoming wave is wanted,</span>
+<span class="c1"># we can renormalize the wave amplitude now. (AP)</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERwaveAmpNormalize</span><span class="p">(</span><span class="n">Test</span><span class="o">.</span><span class="n">waves</span><span class="o">.</span><span class="n">H</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">1.9</span><span class="p">)</span> <span class="c1"># the desired peak height (peak to MSL)</span>
+
+<span class="c1"># Now export the heave coefficients.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportCoeffs</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_Coeffs.txt&#39;</span><span class="p">);</span>
+
+<span class="c1"># Export the wave amplitude time series at x=x0 and the heave response.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportWaveAmpTime</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_heave_WaveAmpTime.txt&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Export the spectral info for WEC-Sim.</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportWECSim</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Test_MLER_heaveOpt_WECSimInput.txt&#39;</span><span class="p">)</span>
+
+<span class="c1"># make a movie of the sequence for heave</span>
+<span class="c1">#Test.MLERanimate(3,export=&#39;Movie_Heave&#39;)        # export without plotting</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERanimate</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>                             <span class="c1"># plot animation</span>
+<span class="n">Test</span><span class="o">.</span><span class="n">MLERexportMovie</span><span class="p">(</span><span class="n">outputDir</span><span class="o">+</span><span class="s1">&#39;Movie_Heave&#39;</span><span class="p">)</span>   <span class="c1"># export generated animation (after plotting)</span>
+
+</pre></div>
+</td></tr></table></div>
+<p>In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016).
+The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the <a class="reference external" href="https://wec-sim.github.io/WEC-Sim/">Wave Energy Converter Simulator, or WEC- Sim</a>.</p>
+<p>The figure below explains how the MLER waves were generated and used.
+For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum.
+A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment).
+For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the &#8220;heave conditioned&#8221; and &#8220;pitch conditioned&#8221; curves.
+This is expected because the maximum heave and pitch are most likely to occur at different times.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/MLER.png"><img alt="_images/MLER.png" src="_images/MLER.png" style="width: 500pt;" /></a>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="publications.html" class="btn btn-neutral float-right" title="Publications" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="Toolbox Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

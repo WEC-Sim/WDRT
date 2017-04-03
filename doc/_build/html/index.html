@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>WDRT Documentation and Users Guide &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="WDRT 1.0 documentation" href="#"/>
+        <link rel="next" title="Installation" href="installation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+              
+              
+                  <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+              
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">WDRT</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li><cite>WDRT</cite> Documentation and Users Guide</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="wdrt-documentation-and-users-guide">
+<span id="wdrt-doc"></span><h1><cite>WDRT</cite> Documentation and Users Guide<a class="headerlink" href="#wdrt-documentation-and-users-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>WEC Design Response Toolbox (WDRT)</cite> was developed by <a class="reference external" href="http://energy.sandia.gov/energy/renewable-energy/water-power/">Sandia National Laboratories</a> and the <a class="reference external" href="http://www.nrel.gov/water/">National Renewable Energy Laboratory (NREL)</a> to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs).</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p>The <cite>WDRT</cite> contains a number of code modules to assist in the major processes of WEC survival design analysis:</p>
+<ul class="simple">
+<li><strong>environmental characterization</strong> - metocean environmental analysis and statistics</li>
+<li><strong>shortTermExtreme</strong>  - analysis of short-term (sea-state specific) extreme responses</li>
+<li><strong>longTermExtreme</strong> - analysis of long-term (design life) extreme responses</li>
+<li><strong>fatigue</strong> - fatigue analysis</li>
+<li><strong>most-likely extreme response (MLER)</strong> - focused-wave construction for efficient high-fidelity modeling</li>
+</ul>
+</div>
+<div class="section" id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Ryan Coe, Sandia National Laboratories</li>
+<li>Carlos Michelen, Sandia National Laboratories</li>
+<li>Aubrey Eckert-Gallup, Sandia National Laboratories</li>
+<li>Nevin Martin, Sandia National Laboratories</li>
+<li>Tyler Esterly, Sandia National Laboratories</li>
+<li>Jennifer van Rij, National Renewable Energy Laboratory</li>
+<li>Yi-Hsiang Yu, National Renewable Energy Laboratory</li>
+<li>Eliot Quon, National Renewable Energy Laboratory</li>
+<li>Lance Manuel, University of Texas at Austin</li>
+<li>Phong Nguyen, University of Texas at Austin</li>
+</ul>
+</div>
+</div>
+<div class="section" id="contents">
+<h1>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-process">Installation Process</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.fatigue">WDRT.fatigue module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.shortTermExtreme">WDRT.shortTermExtreme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.ESSC">WDRT.ESSC module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#wdrt-mler-module">WDRT.MLER module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#environmental-characterization">Environmental characterization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#short-term-extreme-response-analysis">Short-term extreme response analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#long-term-extreme-response-analysis">Long-term extreme response analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#fatigue-analysis">Fatigue analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#most-likely-extreme-response-mler">Most-likely extreme response (MLER)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="publications.html#citation">Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publications.html#related-publications">Related publications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

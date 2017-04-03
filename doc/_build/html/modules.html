@@ -1,0 +1,1592 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Toolbox Modules &mdash; WDRT 1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
+        <link rel="next" title="Examples" href="examples.html"/>
+        <link rel="prev" title="Installation" href="installation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> WDRT
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+              
+              
+                  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Toolbox Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-WDRT.fatigue">WDRT.fatigue module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-WDRT.shortTermExtreme">WDRT.shortTermExtreme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-WDRT.ESSC">WDRT.ESSC module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wdrt-mler-module">WDRT.MLER module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+              
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WDRT</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Toolbox Modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="toolbox-modules">
+<h1>Toolbox Modules<a class="headerlink" href="#toolbox-modules" title="Permalink to this headline">¶</a></h1>
+<p>The following sections contain the documentation for <cite>WDRT</cite>.
+Note that this documentation is also contained in the python source code.
+As such, documentation for any <cite>WDRT</cite> function or classs can also be accessed in iPython via by calling</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="o">&lt;</span><span class="n">wdrt</span> <span class="k">class</span> <span class="nc">or</span> <span class="n">module</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="module-WDRT.fatigue">
+<span id="wdrt-fatigue-module"></span><h2>WDRT.fatigue module<a class="headerlink" href="#module-WDRT.fatigue" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="WDRT.fatigue.EqLoad">
+<code class="descclassname">WDRT.fatigue.</code><code class="descname">EqLoad</code><span class="sig-paren">(</span><em>F</em>, <em>N</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/fatigue.html#EqLoad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.fatigue.EqLoad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates an equivalent fatigue load based on Miner&#8217;s Rule,
+using the rainflow counting method presented in,
+Downing &amp; Socie, 1982, &#8220;Simple rainflow counting algorithms&#8221;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>F</strong> (<em></em><em>(</em><em>np.array</em><em>)</em><em></em>) &#8211; Force or stress history</li>
+<li><strong>N</strong> (<em></em><em>(</em><em>float</em><em>)</em><em></em>) &#8211; Number of lifetime cycles</li>
+<li><strong>m</strong> (<em></em><em>(</em><em>float</em><em>)</em><em></em>) &#8211; S-N curve slope</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Feq</strong> &#8211; Equivalent force or stress</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-WDRT.shortTermExtreme">
+<span id="wdrt-shorttermextreme-module"></span><h2>WDRT.shortTermExtreme module<a class="headerlink" href="#module-WDRT.shortTermExtreme" title="Permalink to this headline">¶</a></h2>
+<p>WDRT shortTermExtreme module</p>
+<p>This module contains tools for analysis of short-term (sea-state specific)
+extremes, as well as some usefull statistical methods.</p>
+<dl class="class">
+<dt id="WDRT.shortTermExtreme.ecmDist">
+<em class="property">class </em><code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">ecmDist</code><span class="sig-paren">(</span><em>x</em>, <em>pdf=None</em>, <em>cdf=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for extreme response distributions.</p>
+<p>Class provides basic functionality for statistical distributions as needed
+for extreme value analysis. Can be initialized via either PDF or CDF.</p>
+<p>Note: For pdf, cdf, and ppf toggle ecmDist.{function}.bounds_error to give
+an error or a NaN if input is outside of bounds(x).</p>
+<dl class="attribute">
+<dt id="WDRT.shortTermExtreme.ecmDist.pdf">
+<code class="descname">pdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Probability density function</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.shortTermExtreme.ecmDist.cdf">
+<code class="descname">cdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Cumulative distribution function</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.shortTermExtreme.ecmDist.ppf">
+<code class="descname">ppf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.ppf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Percent point function (inverse cdf)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.shortTermExtreme.ecmDist.getExpVal">
+<code class="descname">getExpVal</code><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist.getExpVal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.getExpVal" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>method</em> &#8211; Expected value of distribution</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.shortTermExtreme.ecmDist.gerRthValue">
+<code class="descname">gerRthValue</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.gerRthValue" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>method</em> &#8211; Rth percentile value of distribution</p>
+</dd></dl>
+
+<p>Class initialization function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Response variable</li>
+<li><strong>pdf</strong> (<em>np.array</em>) &#8211; Probability density function for x</li>
+<li><strong>cdf</strong> (<em>np.array</em>) &#8211; Cumulative distribution function (a.k.a. distribution function)
+for x</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To create an ecmDist object, you can use either the PDF:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist1</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="n">my_PDF</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or the CDF:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist2</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">my_CDF</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt>
+<code class="descname">getExpVal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist.getExpVal"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Expected value from ecmDist.</p>
+<p>Finds expected value (mean) from distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ev</strong> &#8211; Expected value (mean)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>In order to find the expected value from the distribution</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vExp</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.shortTermExtreme.ecmDist.getRthVal">
+<code class="descname">getRthVal</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist.getRthVal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.getRthVal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rth percentile value from ecmDist.</p>
+<p>Finds value of cumulative distribution function for a given percentile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r</strong> (<em>float</em>) &#8211; Target percentile (0 &lt; r &lt; 1)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>xr</strong> &#8211; Response for rth percentile</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>In order to find the 95th percentile value from the distribution:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v95</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.blockMaxima">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">blockMaxima</code><span class="sig-paren">(</span><em>x</em>, <em>t</em>, <em>t_st</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#blockMaxima"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.blockMaxima" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the block maxima of a time-series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>t</strong> (<em>np.array</em>) &#8211; Time vector corresponding to x</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>block_maxima</strong> &#8211; Block maxima (i.e. largest peak in each block)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.cdf2pdf">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">cdf2pdf</code><span class="sig-paren">(</span><em>x</em>, <em>cdf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#cdf2pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.cdf2pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a probability density function from the cumulative
+distribution function via numerical differentiation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Response variable</li>
+<li><strong>cdf</strong> (<em>np.array</em>) &#8211; Cumulative distribution function values at x</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdf</strong> &#8211; Probability density function values at x</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.compare_methods">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">compare_methods</code><span class="sig-paren">(</span><em>x, t, t_st, methods=[1, 2, 3, 4, 5], colors=['g', 'b', 'r', 'k', 'k'], lines=['-', '-', '-', '-', '--']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#compare_methods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.compare_methods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares the results obtained using different methods to approximate the
+short-term extreme distribution. The methods are:
+1 - All peaks Weibull,
+2 - Weibull tail fit,
+3 - Peaks over threshold,
+4 - Block maxima GEV,
+5 - Block maxima Gumbel,</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>t</strong> (<em>np.array</em>) &#8211; Time vector corresponding to x</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+<li><strong>methods</strong> (<em>list</em>) &#8211; List of methods to be compared. Options are any combination of: 1, 2, 3, 4,and 5</li>
+<li><strong>colors</strong> (<em>list</em>) &#8211; Strings defining the color used to plot each method</li>
+<li><strong>lines</strong> (<em>list</em>) &#8211; Strings defining the lines used to plot each method</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig1</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of peaks distribution.</li>
+<li><strong>fig2</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of short-term extreme distribution</li>
+<li><strong>expected_value_of_short_term_extreme</strong> (<em>dictionary</em>) &#8211; Expected value of the short-term extreme distribution from each method</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.empiricalCdf">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">empiricalCdf</code><span class="sig-paren">(</span><em>x</em>, <em>m=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#empiricalCdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.empiricalCdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an empirical cumulative distribution function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Response variable</li>
+<li><strong>m</strong> (<em>float</em>) &#8211; Number of points below min(x).
+Use if x consists of only values above a certain minimum and CDF
+for entire population wanted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x_cdf</strong> (<em>np.array</em>) &#8211; x locations</li>
+<li><strong>cdf</strong> (<em>np.array</em>) &#8211; CDF values at x_cdf</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.empiricalPdf">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">empiricalPdf</code><span class="sig-paren">(</span><em>x</em>, <em>bins</em>, <em>m=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#empiricalPdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.empiricalPdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an empirical probability density function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Response variable</li>
+<li><strong>bins</strong> (<em>int</em>) &#8211; Number of bins</li>
+<li><strong>m</strong> (<em>float</em>) &#8211; Number of points below min(x).
+Use if x consists of only values above a certain minimum and PDF
+for entire population wanted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211; Bin (x) locations</li>
+<li><strong>pdf</strong> (<em>np.array</em>) &#8211; PDF values at x_pdf</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.extremeDistribution_Weibull">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">extremeDistribution_Weibull</code><span class="sig-paren">(</span><em>x</em>, <em>x_e</em>, <em>t_x</em>, <em>t_st</em>, <em>locFlag=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#extremeDistribution_Weibull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.extremeDistribution_Weibull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates the short-term extreme distribution using the all peaks
+Weibull method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>x_e</strong> (<em>np.array</em>) &#8211; Array of x values at which to evaluate the short-term extreme CDF</li>
+<li><strong>t_x</strong> (<em>float</em>) &#8211; Time length of the x array</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+<li><strong>locFlag</strong> (<em>boolean</em>) &#8211; locFlag = 0: Location parameter of Weibull distribution is forced to zero
+locFlag = 1: Location parameter of Weibull distribution is calculated in fit</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
+[shape_a, shape_c, loc, scale].</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">extremeDistribution_WeibullTailFit</code><span class="sig-paren">(</span><em>x</em>, <em>x_e</em>, <em>t_x</em>, <em>t_st</em>, <em>avg=0</em>, <em>p0=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#extremeDistribution_WeibullTailFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates the short-term extreme distribution using the Weibull tail
+fit method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>x_e</strong> (<em>np.array</em>) &#8211; Array of x values at which to evaluate the short-term extreme CDF</li>
+<li><strong>t_x</strong> (<em>float</em>) &#8211; Time length of the x array</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+<li><strong>avg</strong> (<em>float</em>) &#8211; The average of the time response, if this was substracted before
+identifying global peaks. Else it is assumed that the average is
+zero.</li>
+<li><strong>p0</strong> (<em>list length 2:</em><em> [</em><em>float</em><em>, </em><em>float</em><em>]</em><em></em>) &#8211; Initial guess for the Weibull parameters [shape, scale]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>subset_shape_params</strong> (<em>np.array length 7</em>) &#8211; Shape parameter for each of the seven Weibull fits for the
+subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
+<li><strong>subset_scale_params</strong> (<em>np.array length 7</em>) &#8211; Scale parameter for each of the seven Weibull fits for the
+subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
+[shape_a, shape_c, loc, scale].</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.extremeDistribution_blockMaximaGEV">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">extremeDistribution_blockMaximaGEV</code><span class="sig-paren">(</span><em>x</em>, <em>t</em>, <em>t_st</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#extremeDistribution_blockMaximaGEV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGEV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates the short-term extreme distribution using the block maxima
+method and the Generalized Extreme Value distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>t</strong> (<em>np.array</em>) &#8211; Time vector corresponding to x</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of the short term extreme distribution (Generalized
+Extreme Value) [shape_c, loc, scale].</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.extremeDistribution_blockMaximaGumb">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">extremeDistribution_blockMaximaGumb</code><span class="sig-paren">(</span><em>x</em>, <em>t</em>, <em>t_st</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#extremeDistribution_blockMaximaGumb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.extremeDistribution_blockMaximaGumb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates the short-term extreme distribution using the block maxima
+method and the Gumbel (right) distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>t</strong> (<em>np.array</em>) &#8211; Time vector corresponding to x</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 2</em>) &#8211; Parameters of the short term extreme distribution (Gumbel_r)
+[loc, scale].</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.extremeDistribution_peaksOverThreshold">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">extremeDistribution_peaksOverThreshold</code><span class="sig-paren">(</span><em>x</em>, <em>x_e</em>, <em>t_x</em>, <em>t_st</em>, <em>u</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#extremeDistribution_peaksOverThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.extremeDistribution_peaksOverThreshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximates the short-term extreme distribution using the peaks over
+threshold method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Independent random variable (global peaks)</li>
+<li><strong>x_e</strong> (<em>np.array</em>) &#8211; Array of x values at which to evaluate the short-term extreme CDF</li>
+<li><strong>t_x</strong> (<em>float</em>) &#8211; Time length of the x array</li>
+<li><strong>t_st</strong> (<em>float</em>) &#8211; Short-term period</li>
+<li><strong>u</strong> (<em>float</em>) &#8211; Threshold below which peaks (x) are ignored</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the peaks.</li>
+<li><strong>peaksOverThreshold_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probaility distribution of the peaks over threshold.</li>
+<li><strong>pot_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of peak over threshold&#8217;s distribution (Generalized
+Pareto)[shape_c, loc, scale].</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.globalPeaks">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">globalPeaks</code><span class="sig-paren">(</span><em>t</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#globalPeaks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.globalPeaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the global peaks (maxima between consecutive zero up-crossings)
+of a zero-centered response time-series</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>t</strong> (<em>np.array</em>) &#8211; Time vector</li>
+<li><strong>data</strong> (<em>np.array</em>) &#8211; Response time-series</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>t_peaks</strong> (<em>np.array</em>) &#8211; Time vector for peaks</li>
+<li><strong>peaks</strong> (<em>np.array</em>) &#8211; Peaks of the response time-series</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.goodnessOfFitPlots">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">goodnessOfFitPlots</code><span class="sig-paren">(</span><em>data</em>, <em>prob_func</em>, <em>x_pdf</em>, <em>bins_pdf=20</em>, <em>np_return=100001</em>, <em>m_prob=0.0</em>, <em>response_name='Response'</em>, <em>response_name_2='Peaks'</em>, <em>response_units='Response Units'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#goodnessOfFitPlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.goodnessOfFitPlots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates plots showing the goodness of fit of a probability model to the
+actual data. The four subplots are: the probability plot, the quantile plot,
+the return level plot, and probability density function (PDF) plot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>np.array</em>) &#8211; Data which the probability model represents</li>
+<li><strong>prob_func</strong> (<em>{scipy.stats rv_frozen}</em><em> or </em><em>{ecmDist object}</em>) &#8211; Probability function that models the data.</li>
+<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211; Array of x values at which to evaluate the PDF.</li>
+<li><strong>bins_pdf</strong> (<em>int</em>) &#8211; Number of bins to use for the PDF plot.</li>
+<li><strong>np_return</strong> (<em>int</em>) &#8211; Number of points to use in the return level plot.</li>
+<li><strong>m_prob</strong> (<em>float</em>) &#8211; Number of points below min(data).
+Use if data consists of only values above a certain minimum and
+goodness of fit plots for entire population wanted.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fgof</strong> &#8211; Figure containing the four goodness of fit subplots.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.pyplot figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.loadtxt">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">loadtxt</code><span class="sig-paren">(</span><em>filename</em>, <em>delimiter='ws'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#loadtxt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.loadtxt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads data from a ASCII file.
+First line is header with same delimiter as data, followed by data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) &#8211; Filename</li>
+<li><strong>delimiter</strong> (<em>str</em>) &#8211; Data delimiter. Default &#8216;ws&#8217; for whitespace, use &#8216;,&#8217; for CSV files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;</p>
+<dl class="docutils">
+<dt>Data as a dictionary:</dt>
+<dd><dl class="first last docutils">
+<dt>keys: str</dt>
+<dd><p class="first last">Header name for each column.</p>
+</dd>
+<dt>values: np.array</dt>
+<dd><p class="first last">Column data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dictionary</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="WDRT.shortTermExtreme.pdf2cdf">
+<code class="descclassname">WDRT.shortTermExtreme.</code><code class="descname">pdf2cdf</code><span class="sig-paren">(</span><em>x</em>, <em>pdf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#pdf2cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.pdf2cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a cumulative distribution function from the probability
+density function via numerical integration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.array</em>) &#8211; Response variable</li>
+<li><strong>pdf</strong> (<em>np.array</em>) &#8211; Probability density function values at x</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> &#8211; Cumulative distribution function values at x</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-WDRT.longTermExtreme">
+<span id="wdrt-longtermextreme-module"></span><h2>WDRT.longTermExtreme module<a class="headerlink" href="#module-WDRT.longTermExtreme" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="WDRT.longTermExtreme.fullLongTermSurvival">
+<em class="property">class </em><code class="descclassname">WDRT.longTermExtreme.</code><code class="descname">fullLongTermSurvival</code><span class="sig-paren">(</span><em>Fr</em>, <em>fs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/longTermExtreme.html#fullLongTermSurvival"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.longTermExtreme.fullLongTermSurvival" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for full sea state long-term approach</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Fr</strong> (<em>list</em>) &#8211; List where each element is a CCDF for a given sea state.</li>
+<li><strong>fs</strong> (<em>list</em>) &#8211; Weighting for each sea state.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-WDRT.ESSC">
+<span id="wdrt-essc-module"></span><h2>WDRT.ESSC module<a class="headerlink" href="#module-WDRT.ESSC" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="WDRT.ESSC.Buoy">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">Buoy</code><span class="sig-paren">(</span><em>buoyNum</em>, <em>savePath='./Data/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.swdList">
+<code class="descname">swdList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.swdList" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; List that contains numpy arrays of the spectral wave density data,
+separated by year.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.freqList">
+<code class="descname">freqList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.freqList" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; List that contains numpy arrays that contain the frequency values
+for each year</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.dateList">
+<code class="descname">dateList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.dateList" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; List that contains numpy arrays of the date values for each line of
+spectral data, separated by year</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.Hs">
+<code class="descname">Hs</code><a class="headerlink" href="#WDRT.ESSC.Buoy.Hs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Significant wave height.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.T">
+<code class="descname">T</code><a class="headerlink" href="#WDRT.ESSC.Buoy.T" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Energy period.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="WDRT.ESSC.Buoy.dateNum">
+<code class="descname">dateNum</code><a class="headerlink" href="#WDRT.ESSC.Buoy.dateNum" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; List of datetime objects.</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buoyNum</strong> (<em>string</em>) &#8211; device number for desired buoy</li>
+<li><strong>savePath</strong> (<em>string</em>) &#8211; relative path where the data read from ndbc.noaa.gov will be stored</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.Buoy.fetchFromWeb">
+<code class="descname">fetchFromWeb</code><span class="sig-paren">(</span><em>saveType='txt'</em>, <em>savePath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.fetchFromWeb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.fetchFromWeb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches ndbc.noaa.gov for the historical spectral wave density
+data of a given device and writes the annual files from the website
+to a single .txt file, and stores the values in the swdList, freqList,
+and dateList member variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>saveType</strong> (<em>string</em>) &#8211; If set to to &#8220;h5&#8221;, the data will be saved in a compressed .h5
+file
+If set to &#8220;txt&#8221;, the data will be stored in a raw .txt file
+Otherwise, a file will not be created</li>
+<li><strong>savePath</strong> (<em>string</em>) &#8211; Relative path to place directory with data files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="mi">46022</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.Buoy.loadFromH5">
+<code class="descname">loadFromH5</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.loadFromH5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.loadFromH5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads NDBCdata previously saved in a .h5 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<em>string</em>) &#8211; Name of the .h5 file to load data from.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To load data from previously downloaded files</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="mi">46022</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span><span class="o">.</span><span class="n">loadFromH5</span><span class="p">(</span><span class="s2">&quot;./Data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.Buoy.loadFromText">
+<code class="descname">loadFromText</code><span class="sig-paren">(</span><em>dirPath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.loadFromText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.loadFromText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads NDBC data previously downloaded to a series of text files in the
+specified directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirPath</strong> (<em>string</em>) &#8211; Relative path to directory containing NDBC text files (created by
+NBDCdata.fetchFromWeb). If left blank, the method will search
+all directories for the data using the current directory as
+the root.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To load data from previously downloaded files</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">buoy</span><span class="p">(</span><span class="mi">46022</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">(</span><span class="s1">&#39;./Data/NDBC460022&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.Buoy.saveData">
+<code class="descname">saveData</code><span class="sig-paren">(</span><em>fileName=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.saveData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.saveData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves NDBCdata to hdf5 file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>savePath</strong> (<em>string</em>) &#8211; Relative path for desired file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.ClaytonCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">ClaytonCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>n_size=40.0</em>, <em>bin_1_limit=1.0</em>, <em>bin_step=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#ClaytonCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.ClaytonCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> (<em>int</em>) &#8211; Depth at measurement point (m)</li>
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>n_size</strong> (<em>float</em>) &#8211; minimum bin size used for Copula contour methods</li>
+<li><strong>bin_1_limit</strong> (<em>float</em>) &#8211; maximum value of Hs for the first bin</li>
+<li><strong>bin_step</strong> (<em>float</em>) &#8211; overlap interval for each bin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.ClaytonCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#ClaytonCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.ClaytonCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Clayton Copula Contour function
+This function calculates environmental contours of extreme sea states using
+a Clayton copula and the inverse first-order reliability
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To obtain the contours for a NDBC buoy::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC
+# Pull spectral data from NDBC website
+buoy = ESSC.buoy(&#8216;46022&#8217;)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)</p>
+<p># Create Environtmal Analysis object using above parameters
+Clayton46022 = ESSC.ClaytonCopula(depth, buoy)</p>
+<p># used for inverse FORM calculation
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = np.array([100])  # Return periods (yrs) of interest</p>
+<p>nb_steps = 1000.  # Enter discretization of the circle in the normal space</p>
+<p class="last"># Contour generation example
+Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r, nb_steps)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.ClaytonCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#ClaytonCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.ClaytonCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.EA">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">EA</code><a class="reference internal" href="_modules/WDRT/ESSC.html#EA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="WDRT.ESSC.EA.bootStrap">
+<code class="descname">bootStrap</code><span class="sig-paren">(</span><em>boot_size=1000</em>, <em>plotResults=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.bootStrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.bootStrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get 95% confidence bounds about a contour using the bootstrap
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>boot_size</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Number of bootstrap samples that will be used to calculate 95%
+confidence interval. Should be large enough to calculate stable
+statistics. If left blank will be set to 1000.</li>
+<li><strong>plotResults</strong> (<em>boolean</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Option for showing plot of bootstrap confidence bounds. If left
+blank will be set to True and plot will be shown.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>contourmean_Hs</strong> (<em>nparray</em>) &#8211; Hs values for mean contour calculated as the average over all
+bootstrap contours.</li>
+<li><strong>contourmean_T</strong> (<em>nparray</em>) &#8211; T values for mean contour calculated as the average over all
+bootstrap contours.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.getContourPoints">
+<code class="descname">getContourPoints</code><span class="sig-paren">(</span><em>T_Sample</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.getContourPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.getContourPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get points along a specified environmental contour.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>T_Sample</strong> (<em>nparray</em>) &#8211; points for sampling along return contour</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>Hs_SampleCA</strong> &#8211; points sampled along return contour</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">nparray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.getContours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.plotData">
+<code class="descname">plotData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.plotData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.plotData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a plot of the 100-year return contour, full sea state samples
+and contour samples</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.saveData">
+<code class="descname">saveData</code><span class="sig-paren">(</span><em>fileName=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.saveData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.saveData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves all available data obtained via the EA module to
+a .h5 file</p>
+<dl class="docutils">
+<dt>fileName</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">string</span><dd>relevent path and filename where the .h5 file will be created and
+saved</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.EA.steepness">
+<code class="descname">steepness</code><span class="sig-paren">(</span><em>depth</em>, <em>SteepMax</em>, <em>T_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#EA.steepness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.EA.steepness" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates a steepness curve to be plotted on an H vs. T
+diagram.  First, the function calculates the wavelength based on the
+depth and T. The T vector can be the input data vector, or will be
+created below to cover the span of possible T values.
+The function solves the dispersion relation for water waves
+using the Newton-Raphson method. All outputs are solved for exactly
+using: (w^2*h/g=kh*tanh(khG)
+Approximations that could be used in place of this code for deep
+and shallow water, as appropriate:
+deep water:h/lambda &gt;= 1/2, tanh(kh)~1, lambda = (g.*T.^2)./(2*.pi)
+shallow water:h/lambda &lt;= 1/20, tanh(kh)~kh, lambda = T.*(g.*h)^0.5</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>depth</strong> (<em>float</em>) &#8211; Depth at site</li>
+<li><strong>SteepMax</strong> (<em>float</em>) &#8211; Wave breaking steepness estimate (e.g., 0.07).</li>
+<li><strong>T_vals</strong> (<em>np.array</em>) &#8211; Array of T values [sec] at which to calculate the breaking height.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>SteepH</strong> (<em>np.array</em>) &#8211; H values [m] that correspond to the T_mesh values creating the
+steepness curve.</li>
+<li><strong>T_steep</strong> (<em>np.array</em>) &#8211; T values [sec] over which the steepness curve is defined.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To find limit the steepness of waves on a contour by breaking::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC</p>
+<p># Pull spectral data from NDBC website
+buoy = ESSC.buoy(46022)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)
+size_bin = 250.  # Enter chosen bin size</p>
+<p># Create Environtmal Analysis object using above parameters
+ea = ESSC.ea(depth, size_bin, buoy)</p>
+<p class="last">T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
+SteepMax = 0.07  # Optional: enter estimate of breaking steepness
+SteepH = ea.steepness(SteepMax,T_vals)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.GaussianCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">GaussianCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>n_size=40.0</em>, <em>bin_1_limit=1.0</em>, <em>bin_step=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GaussianCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GaussianCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> (<em>int</em>) &#8211; Depth at measurement point (m)</li>
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>n_size</strong> (<em>float</em>) &#8211; minimum bin size used for Copula contour methods</li>
+<li><strong>bin_1_limit</strong> (<em>float</em>) &#8211; maximum value of Hs for the first bin</li>
+<li><strong>bin_step</strong> (<em>float</em>) &#8211; overlap interval for each bin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.GaussianCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GaussianCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GaussianCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Gaussian Copula Contour function
+This function calculates environmental contours of extreme sea states using
+a Gaussian copula and the inverse first-order reliability
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To obtain the contours for a NDBC buoy::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC
+# Pull spectral data from NDBC website
+buoy = ESSC.buoy(&#8216;46022&#8217;)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)</p>
+<p># Create Environtmal Analysis object using above parameters
+Gauss46022 = ESSC.GaussianCopula(depth, buoy)</p>
+<p># used for inverse FORM calculation
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = np.array([100])  # Return periods (yrs) of interest</p>
+<p>nb_steps = 1000.  # Enter discretization of the circle in the normal space</p>
+<p class="last"># Contour generation example
+Hs_Return, T_Return = Gauss46022.getContours(Time_SS, Time_r, nb_steps)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.GaussianCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GaussianCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GaussianCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.GumbelCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">GumbelCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>n_size=40.0</em>, <em>bin_1_limit=1.0</em>, <em>bin_step=0.25</em>, <em>Ndata=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GumbelCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GumbelCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> (<em>int</em>) &#8211; Depth at measurement point (m)</li>
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>n_size</strong> (<em>float</em>) &#8211; minimum bin size used for Copula contour methods</li>
+<li><strong>bin_1_limit</strong> (<em>float</em>) &#8211; maximum value of Hs for the first bin</li>
+<li><strong>bin_step</strong> (<em>float</em>) &#8211; overlap interval for each bin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.GumbelCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GumbelCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GumbelCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Gumbel Copula Contour function
+This function calculates environmental contours of extreme sea states using
+a Gumbel copula and the inverse first-order reliability
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To obtain the contours for a NDBC buoy::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC
+# Pull spectral data from NDBC website
+buoy = ESSC.buoy(&#8216;46022&#8217;)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)
+size_bin = 250.  # Enter chosen bin size</p>
+<p># Create Environtmal Analysis object using above parameters
+Gumbel46022 = ESSC.GumbelCopula(depth, size_bin, buoy)</p>
+<p># used for inverse FORM calculation
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = np.array([100])  # Return periods (yrs) of interest</p>
+<p>nb_steps = 1000.  # Enter discretization of the circle in the normal space</p>
+<p class="last"># Contour generation example
+Hs_Return, T_Return = Gumbel46022.getContours(Time_SS, Time_r, nb_steps)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.GumbelCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GumbelCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GumbelCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.PCA">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">PCA</code><span class="sig-paren">(</span><em>buoy</em>, <em>size_bin=250.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#PCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.PCA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>size_bin</strong> (<em>float</em>) &#8211; chosen bin size</li>
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.PCA.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#PCA.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.PCA.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State PCA Contour function
+This function calculates environmental contours of extreme sea states using
+principal component analysis and the inverse first-order reliability
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To obtain the contours for a NDBC buoy::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC
+# Pull spectral data from NDBC website
+buoy = ESSC.buoy(&#8216;46022&#8217;)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)
+size_bin = 250.  # Enter chosen bin size</p>
+<p># Create Environtmal Analysis object using above parameters
+pca46022 = ESSC.PCA(depth, buoy, size_bin)</p>
+<p># used for inverse FORM calculation
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = np.array([100])  # Return periods (yrs) of interest</p>
+<p>nb_steps = 1000.  # Enter discretization of the circle in the normal space</p>
+<p class="last"># Contour generation example
+Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r, nb_steps)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.PCA.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><em>num_contour_points</em>, <em>contour_returns</em>, <em>random_seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#PCA.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.PCA.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Contour Sampling function
+This function calculates samples of Hs and T using the EA function to
+sample between contours of user-defined return periods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_contour_points</strong> (<em>int</em>) &#8211; Number of sample points to be calculated per contour interval.</li>
+<li><strong>contour_returns</strong> (<em>np.array</em>) &#8211; Vector of return periods that define the contour intervals in
+which samples will be taken. Values must be greater than zero and
+must be in increasing order.</li>
+<li><strong>random_seed</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Random seed for sample generation, required for sample
+repeatability. If left blank, a seed will automatically be
+generated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Samples</strong> (<em>np.array</em>) &#8211; Vector of Hs values for each sample point.</li>
+<li><strong>Te_Samples</strong> (<em>np.array</em>) &#8211; Vector of Te values for each sample point.</li>
+<li><strong>Weight_points</strong> (<em>np.array</em>) &#8211; Vector of probabilistic weights for each sampling point
+to be used in risk calculations.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To get weighted samples from a set of contours:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<span class="c1"># Load data from existing text files</span>
+<span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="mi">46022</span><span class="p">)</span>
+<span class="n">buoy</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">()</span>
+
+<span class="n">depth</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">675</span><span class="p">)</span> <span class="c1"># Depth at measurement point (m)</span>
+<span class="n">size_bin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span> <span class="c1"># Enter chosen bin size</span>
+<span class="n">nb_steps</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Enter discretization of the circle in the</span>
+
+<span class="c1"># normal space. Used for inverse FORM calculation.</span>
+<span class="n">Time_SS</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Sea state duration (hrs)</span>
+<span class="n">Time_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">])</span> <span class="c1"># Return periods (yrs) of interest</span>
+<span class="n">num_contour_points</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># Number of points to be sampled for each</span>
+
+<span class="c1"># contour interval.</span>
+<span class="n">contour_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
+
+<span class="c1"># Probabilities defining sampling contour bounds.</span>
+<span class="n">random_seed</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Random seed for sample generation</span>
+<span class="n">Hs_Sample</span><span class="p">,</span><span class="n">T_Sample</span><span class="p">,</span><span class="n">Weight_points</span> <span class="o">=</span> <span class="n">EA</span><span class="o">.</span><span class="n">getSamples</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">,</span>
+<span class="n">Time_SS</span><span class="p">,</span><span class="n">Time_r</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.Rosenblatt">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">Rosenblatt</code><span class="sig-paren">(</span><em>buoy</em>, <em>n_size=40.0</em>, <em>bin_1_limit=1.0</em>, <em>bin_step=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Rosenblatt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Rosenblatt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> (<em>int</em>) &#8211; Depth at measurement point (m)</li>
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>n_size</strong> (<em>float</em>) &#8211; minimum bin size used for Copula contour methods</li>
+<li><strong>bin_1_limit</strong> (<em>float</em>) &#8211; maximum value of Hs for the first bin</li>
+<li><strong>bin_step</strong> (<em>float</em>) &#8211; overlap interval for each bin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.Rosenblatt.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Rosenblatt.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Rosenblatt.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Rosenblatt Copula Contour function
+This function calculates environmental contours of extreme sea states using
+a Rosenblatt transformation and the inverse first-order reliability
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>To obtain the contours for a NDBC buoy::</dt>
+<dd><p class="first">import numpy as np
+import WDRT.ESSC as ESSC
+# Pull spectral data from NDBC website
+buoy = ESSC.buoy(&#8216;46022&#8217;)
+buoy.fetchFromWeb()</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)</p>
+<p># Create Environtmal Analysis object using above parameters
+Rosen46022 = ESSC.Rosenblatt(depth, buoy)</p>
+<p># used for inverse FORM calculation
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = np.array([100])  # Return periods (yrs) of interest</p>
+<p>nb_steps = 1000.  # Enter discretization of the circle in the normal space</p>
+<p class="last"># Contour generation example
+Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r, nb_steps)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.Rosenblatt.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Rosenblatt.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Rosenblatt.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wdrt-mler-module">
+<h2>WDRT.MLER module<a class="headerlink" href="#wdrt-mler-module" title="Permalink to this headline">¶</a></h2>
+<p>To improve the model efficiency and reduce required computational time or wave tank testing time, the shipping and offshore industry often perform their mid- and high-fidelity simulations and experimental wave tank tests using an equivalent design wave profile generated from (linear) low-fidelity model solutions. The MLER module was developed based on the most likely extreme response method, which uses the linear RAO of the device and the spectrum for the sea state of interest to produce a focused wave profile that gives the largest response.
+This approach does not require an input time series for the device.
+Because it uses linear theory, the underlying assumption is that the higher-order effects are small in comparison to the linear effects.</p>
+<p>The source code includes a Python egg in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/WDRT/MLER_toolbox/dist</span></code> for use with <code class="docutils literal"><span class="pre">easy_install</span></code>.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
