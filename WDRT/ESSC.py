@@ -1459,6 +1459,7 @@ class GumbelCopula(EA):
        y: np.array
                    Copula density function.
         '''
+        #Ignore divide by 0 warnings and resulting NaN warnings
         np.seterr(all='ignore')        
         v = -np.log(u)
         v = np.sort(v, axis=0)
@@ -1868,7 +1869,8 @@ def _getStats(swdArr, freqArr):
             Te : list
                 Energy period.
         '''
-        np.seterr(divide='ignore')
+        #Ignore divide by 0 warnings and resulting NaN warnings
+        np.seterr(all='ignore')
 
         Hm0 = []
         T = []
@@ -1878,6 +1880,6 @@ def _getStats(swdArr, freqArr):
             m0 = np.trapz(line, freqArr)
             Hm0.append(4.004 * m0 ** 0.5)
             T.append(m_1 / m0)
-        np.seterr(divide='warn')
+        np.seterr(all='warn')
 
         return Hm0, T
