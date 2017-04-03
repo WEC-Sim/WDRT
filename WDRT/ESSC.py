@@ -1459,12 +1459,15 @@ class GumbelCopula(EA):
        y: np.array
                    Copula density function.
         '''
+        np.seterr(all='ignore')        
         v = -np.log(u)
         v = np.sort(v, axis=0)
         vmin = v[0, :]
         vmax = v[1, :]
         nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
         y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
+        np.seterr(all='warn')
+
         return(y)
 
 
@@ -1512,6 +1515,7 @@ class Buoy:
 
         self.buoyNum = buoyNum
         self.savePath = savePath
+
 
         if not os.path.exists(savePath):
           os.makedirs(savePath)
@@ -1864,6 +1868,8 @@ def _getStats(swdArr, freqArr):
             Te : list
                 Energy period.
         '''
+        np.seterr(divide='ignore')
+
         Hm0 = []
         T = []
 
@@ -1871,6 +1877,7 @@ def _getStats(swdArr, freqArr):
             m_1 = np.trapz(line * freqArr ** (-1), freqArr)
             m0 = np.trapz(line, freqArr)
             Hm0.append(4.004 * m0 ** 0.5)
-            np.seterr(all='ignore')
             T.append(m_1 / m0)
+        np.seterr(divide='warn')
+
         return Hm0, T
