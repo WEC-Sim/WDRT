@@ -263,15 +263,15 @@ class EA:
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            if self.method == "PCA":
+            if self.method == "Principle component analysis":
                 essccopy = PCA(buoycopy, self.size_bin)
-            elif self.method == "GaussianCopula":
+            elif self.method == "Gaussian Copula":
                 essccopy = GaussianCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "Rosenblatt":
                 essccopy = Rosenblatt(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
-            elif self.method == "ClaytonCopula":
+            elif self.method == "Clayton Copula":
                 essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
-            elif self.method == "GumbelCopula":
+            elif self.method == "Gumbel Copula":
                 essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
