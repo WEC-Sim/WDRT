@@ -28,6 +28,7 @@ from datetime import datetime, date
 import os
 import glob
 import copy
+import time
 
 
 class EA:
@@ -257,23 +258,16 @@ class EA:
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
         T_Return_Boot = np.zeros([self.nb_steps,boot_size])
-        buoycopy = copy.deepcopy(self.buoy);
+        #buoycopy = copy.deepcopy(self.buoy);
+        buoy_Hs = self.buoy.Hs
+        buoy_T = self.buoy.T
+
 
         for i in range(boot_size):
             boot_inds = np.random.randint(0, high=n, size=n)
-            buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
-            buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
-            if self.method == "Principle component analysis":
-                essccopy = PCA(buoycopy, self.size_bin)
-            elif self.method == "Gaussian Copula":
-                essccopy = GaussianCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
-            elif self.method == "Rosenblatt":
-                essccopy = Rosenblatt(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
-            elif self.method == "Clayton Copula":
-                essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
-            elif self.method == "Gumbel Copula":
-                essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
-            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
+            self.buoy.Hs = buoy_Hs[boot_inds]
+            self.buoy.T= buoy_T[boot_inds]
+            Hs_Return_Boot[:,i],T_Return_Boot[:,i] = self.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
         contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
@@ -282,6 +276,9 @@ class EA:
         contour97_5_T = np.percentile(T_Return_Boot,97.5,axis=1)
         contour2_5_T = np.percentile(T_Return_Boot,2.5,axis=1)
         contourmean_T = np.mean(T_Return_Boot, axis=1)
+
+        self.buoy.Hs = buoy_Hs
+        self.buoy.T = buoy_T
 
         self.contourMean_Hs = contourmean_Hs
         self.contourMean_T = contourmean_T
