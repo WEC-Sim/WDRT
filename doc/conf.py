@@ -29,8 +29,12 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'matplotlib.sphinxext.plot_directive',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinxcontrib.googleanalytics'
 ]
+
+googleanalytics_id = 'UA-97337554-1'
+
 
 source_suffix = '.rst'
 
