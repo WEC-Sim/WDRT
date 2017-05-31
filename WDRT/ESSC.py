@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import numpy as np
 import scipy.stats as stats
 import scipy.optimize as optim
@@ -104,13 +105,14 @@ class EA:
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
-        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        # plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        # plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
         plt.ylabel('Sig. wave height, $H_s$ [m]')
         plt.show()
+    
 
     def getContourPoints(self, T_Sample):
         '''Get points along a specified environmental contour.
@@ -1539,6 +1541,10 @@ class Buoy:
             Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
+
+        Returns
+        ---------
+        numYears - The number of years worth of data
         Example
         _________
         >>> import WDRT.ESSC as ESSC
@@ -1550,6 +1556,7 @@ class Buoy:
         numDates = 0
         dateVals = []
         spectralVals = []
+        numYears= 0
         if savePath == None:
             savePath = self.savePath
 
@@ -1560,7 +1567,7 @@ class Buoy:
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
 
         if len(headers) == 0:
-            raise Exception("Spectral wave density data for given buoy not found")
+            raise Exception("Spectral wave density data for buoy #%s not found" % self.buoyNum)
 
 
         if len(headers) == 2:
@@ -1583,6 +1590,7 @@ class Buoy:
             f = h5py.File(saveDir, 'w')
 
         for link in links:
+            numYears += 1
             dataLink = "http://ndbc.noaa.gov" + link
             year = int(re.findall("[0-9]+", link)[1])
             if(saveType is 'txt'):
@@ -1601,6 +1609,7 @@ class Buoy:
                 else:
                     dataSetName = str(("SWD-%s-%s" %
                                    (self.buoyNum, str(year) + 'b')))
+                    numYears -= 1
 
 
             fileName = dataLink.replace('download_data', 'view_text_file')
@@ -1609,14 +1618,14 @@ class Buoy:
 
 
 
-            # dates after 2004 contain a time-value for minutes
-            if (year > 2004):
+            #First Line of every file contains the frequency data
+            frequency = data.readline()
+            if frequency.split()[4] == 'mm':
                 numDates = 5
+
             else:
                 numDates = 4
 
-            #First Line of every file contains the frequency data
-            frequency = data.readline()
             if (saveType is "txt"):
                 swdFile.write(frequency)
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
@@ -1627,6 +1636,14 @@ class Buoy:
                     swdFile.write(line)
                 currentLine = line.split()
                 numCols = len(currentLine)
+                if numCols - numDates != len(frequency):
+                    print "Corrupted NDBC File - Skipping"
+                    swdFile.close()
+                    os.remove(swdFile.name)
+                    spectralVals = []
+                    dateVals = []
+                    numYears -= 1
+                    break
 
                 if float(currentLine[numDates+1]) < 999:
                     numLines += 1
@@ -1635,30 +1652,35 @@ class Buoy:
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
 
-            dateValues = np.array(dateVals, dtype=np.int)
-            spectralValues = np.array(spectralVals, dtype=np.float)
+            if len(spectralVals) != 0:
+                dateValues = np.array(dateVals, dtype=np.int)
+                spectralValues = np.array(spectralVals, dtype=np.float)
 
-            dateValues = np.reshape(dateValues, (numLines, numDates))
-            spectralValues = np.reshape(spectralValues, (numLines,
-                                                         (numCols - numDates)))
+                dateValues = np.reshape(dateValues, (numLines, numDates))
+                spectralValues = np.reshape(spectralValues, (numLines,
+                                                             (numCols - numDates)))
 
-            if(saveType is "h5"):
-                f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
-                f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
-                f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
 
-            del dateVals[:]
-            del spectralVals[:]
+
 
             numLines = 0
             numCols = 0
-            self.swdList.append(spectralValues)
-            self.freqList.append(frequency)
-            self.dateList.append(dateValues)
 
-            if(saveType is "txt"):
-                swdFile.close()
+            if len(spectralVals) != 0:
+                if(saveType is "h5"):
+                    f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
+                    f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
+                    f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
+                del dateVals[:]
+                del spectralVals[:]
+                self.swdList.append(spectralValues)
+                self.freqList.append(frequency)
+                self.dateList.append(dateValues)
+
+                if(saveType is "txt"):
+                    swdFile.close()
         self._prepData()
+        return numYears
 
     def loadFromText(self, dirPath=None):
         '''Loads NDBC data previously downloaded to a series of text files in the
@@ -1671,6 +1693,9 @@ class Buoy:
                 NBDCdata.fetchFromWeb). If left blank, the method will search
                 all directories for the data using the current directory as
                 the root.
+        Returns
+        ---------
+        numYears - The number of years worth of data
 
 
         Example
@@ -1684,6 +1709,7 @@ class Buoy:
         dateVals = []
         spectralVals = []
         numLines = 0
+        numYears = 0
 
         if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
@@ -1692,7 +1718,7 @@ class Buoy:
                         dirPath = os.path.join(dirpath,dirs)
                         break
         if dirPath is None:
-            raise IOError("Could not find directory containing NDBC data")
+            raise IOError("Could not find directory containing data for NDBC%s" % self.buoyNum)
 
         fileList = glob.glob(os.path.join(dirPath,'SWD*.txt'))
 
@@ -1700,6 +1726,7 @@ class Buoy:
             raise IOError("No NDBC data files found in " + dirPath)
 
         for fileName in fileList:
+            numYears += 1
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
             frequency = f.readline().split()
@@ -1736,6 +1763,7 @@ class Buoy:
             self.freqList.append(frequency)
             self.dateList.append(dateValues)
         self._prepData()
+        return numYears
 
     def loadFromH5(self, fileName):
         """
@@ -1870,6 +1898,7 @@ def _getStats(swdArr, freqArr):
                 Energy period.
         '''
         #Ignore divide by 0 warnings and resulting NaN warnings
+
         np.seterr(all='ignore')
 
         Hm0 = []
