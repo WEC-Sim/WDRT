@@ -219,12 +219,7 @@ These packages can easily be installed using using <a class="reference external"
 <div class="highlight-default"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
 </pre></div>
 </div>
-<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>). This can be done quite easily by launching <a class="reference external" href="https://ipython.org/">iPython</a> (bundled with the above distributions) in the command line and running the following commands:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;the/path/to/modules&quot;</span><span class="p">)</span>
-<span class="nb">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span>
-</pre></div>
-</div>
+<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
 <p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
 python example_envSamplying.py
