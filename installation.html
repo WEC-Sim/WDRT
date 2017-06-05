@@ -24,6 +24,8 @@
 
   
   
+  
+  
 
   
 
@@ -95,13 +97,16 @@
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
+            
               
-              
-                  <ul class="current">
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-process">Installation Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-process-via-github">Installation Process via GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
@@ -111,7 +116,6 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
-              
             
           
         </div>
@@ -186,7 +190,7 @@ The toolbox can either be downloaded via <code class="docutils literal"><span cl
 </div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://www.python.org/downloads/">Python 2.7.x</a> and the following Python packages are required to run <cite>WDRT</cite>.
+<p><a class="reference external" href="https://www.python.org/downloads/">Python 2.7.x</a> and the following Python packages are required to run <cite>WDRT</cite>. <cite>WDRT</cite> currently will not run on Python 3.5.x.
 These packages can easily be installed using using <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a>  or your preferred package installation method:</p>
 <blockquote>
 <div><ul class="simple">
@@ -208,14 +212,19 @@ These packages can easily be installed using using <a class="reference external"
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="installation-process">
-<h2>Installation Process<a class="headerlink" href="#installation-process" title="Permalink to this headline">¶</a></h2>
-<p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code></p>
+<div class="section" id="installation-process-via-github">
+<h2>Installation Process via GitHub<a class="headerlink" href="#installation-process-via-github" title="Permalink to this headline">¶</a></h2>
+<p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code>, which can be downloaded <a class="reference external" href="https://git-scm.com/downloads">here</a>.</p>
 <p><strong>Step 1:</strong> Clone or download a copy of <cite>WDRT</cite>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
 </pre></div>
 </div>
-<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
+<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>). This can be done quite easily by launching <a class="reference external" href="https://ipython.org/">iPython</a> (bundled with the above distributions) in the command line and running the following commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;the/path/to/modules&quot;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span>
+</pre></div>
+</div>
 <p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
 python example_envSamplying.py
@@ -224,6 +233,10 @@ python example_shortTermExtreme.py
 python example_fatigue.py
 </pre></div>
 </div>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<p><cite>IN PROGRESS</cite></p>
 </div>
 </div>
 
