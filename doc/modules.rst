@@ -2,7 +2,7 @@ Toolbox Modules
 ===============
 The following sections contain the documentation for `WDRT`.
 Note that this documentation is also contained in the python source code.
-As such, documentation for any `WDRT` function or classs can also be accessed in iPython via by calling
+As such, documentation for any `WDRT` function or class can also be accessed in iPython via by calling
 
 >>> help(<wdrt class or module>)
 

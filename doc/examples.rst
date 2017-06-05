@@ -31,7 +31,7 @@ The short-term extreme response module provides five different methods for obtai
 These methods are described in detail in :ref:`Michelen and Coe 2015 <pubs>`.
 
 In this example the Weibull tail-fit method is used.
-The proccess of obtaiing the sort-term extreme distribution using the Weibull tail-fit method is as follows:
+The process of obtaining the sort-term extreme distribution using the Weibull tail-fit method is as follows:
 
 	1. Identify the peaks from a time-series of any length of the response "Z" of the WEC in the sea-state of interest "X". 
 	Some minimum time length is required to achieve convergence.
@@ -139,7 +139,7 @@ Typical values for :math:`\alpha` used for marine structures range from 75 to 99
    	:lines: 37-45
    	:linenos:
 
-5. Determine design load condition(s) 
+4. Determine design load condition(s) 
 '''''''''''''''''''''''''''''''''''''
 For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI).
 The DLC is defined as the scenario that gives the largest response.
@@ -154,14 +154,14 @@ Full sea-sate approach
 ``````````````````````
 In the full sea state approach, simulations are run at a sampling of sea states within an envelop defined by the environmental characterization process.
 Based on the device response and relative occurrence likelihood for each sea state, an extreme distribution is constructed.
-The full sea-state approach is more rigorous than the contour approach, but also requires more modeling to implement.
+The full sea-state approach is more rigorous than the contour approach, but also requires more modelling to implement.
 This distribution gives a richer picture of the design response and can, for example, be used to study how the design response varies with return period.
 
 The following example is also located at ``$WDRT_SOURCE/examples/example_longTermFullSeaState.py``.
 
-1. Establish environmental data and sample sea stats
-''''''''''''''''''''''''''''''''''''''''''''''''''''
-Following the `Environmental characterization`_ example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
+1. Establish environmental data and sample sea states
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+Following the `Environmental characterization`_ example, the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modelling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
 .. literalinclude:: ../examples/example_longTermFullSeaState.py
@@ -183,7 +183,7 @@ For this example, we will simply load data that was previously produced with a s
    	:lines: 20-31
    	:linenos:
 
-4. Short-term response distributions
+3. Short-term response distributions
 ''''''''''''''''''''''''''''''''''''
 As discussed in the `Short-term extreme response analysis`_ example, the short-term extreme response corresponds to some assumed period of interest, often referred to as the storm period.
 Typically 1 to 3 hour storms are considered.
@@ -194,7 +194,7 @@ Obtain the short-term extreme response distribution for the storm duration of in
    	:lines: 34-41
    	:linenos:
 
-5. Construct long-term response distribution
+4. Construct long-term response distribution
 ''''''''''''''''''''''''''''''''''''''''''''
 From the previous 4 steps, we now have :math:`n=100` pairs of sea state and corresponding device response probabilities.
 The long-term extreme response distribution can be constructed as a complementary cumulative distribution function (CCDF), sometimes also called a survival function.
@@ -210,7 +210,7 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the *tai
    	:lines: 44
    	:linenos:
 
-6. Plot and analyze results
+5. Plot and analyze results
 '''''''''''''''''''''''''''
 The results can be plotted and used to determine the return level for a desired return period.
 
