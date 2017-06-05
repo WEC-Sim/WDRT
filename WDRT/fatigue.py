@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+'''
+This module contains tools used to calculate the fatigue load.
+'''
+
 import numpy as np
 from pylab import find
 

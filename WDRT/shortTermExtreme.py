@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''WDRT shortTermExtreme module
+'''
 
 This module contains tools for analysis of short-term (sea-state specific)
 extremes, as well as some usefull statistical methods.
@@ -504,8 +504,8 @@ def extremeDistribution_peaksOverThreshold(x, x_e, t_x, t_st, u):
         peaksOverThreshold_dist: scipy.stats rv_frozen
             Probaility distribution of the peaks over threshold.
         pot_params: np.array length 3
-            Parameters of peak over threshold's distribution (Generalized
-            Pareto)[shape_c, loc, scale].
+            Parameters of peak over threshold's distribution using Generalized
+            Pareto[shape_c, loc, scale].
     '''
     # peaks over threshold
     pot = np.sort(x)

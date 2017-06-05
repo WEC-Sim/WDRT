@@ -13,17 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
-import scipy.interpolate as interp
-import scipy.optimize as optim
-
-
-'''WDRT longTermExtreme module
+'''
 
 This module contains tools for analysis of long-term extremes.
 
 '''
 
+import numpy as np
+import scipy.interpolate as interp
+import scipy.optimize as optim
 
 class fullLongTermSurvival():
     '''Class for full sea state long-term approach
