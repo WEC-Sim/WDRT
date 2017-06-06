@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 buoy46022 = ESSC.Buoy('46022')
 
 # Read data from ndbc.noaa.gov
-# buoy46022.fetchFromWeb()
+buoy46022.fetchFromWeb()
 
 # Load data from .txt file if avilable
-buoy46022.loadFromText()
+# buoy46022.loadFromText()
 
 # Load data from .h5 file if available
 # buoy46022.loadFromH5('./data/NDBC46022.h5')

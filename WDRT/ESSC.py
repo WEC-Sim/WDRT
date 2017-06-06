@@ -35,14 +35,21 @@ import copy
 
 
 class EA:
-
+    '''The Environmental Assessment (EA) class points to functions for 
+    various contour methods (including getContours and getSamples) and allows 
+    the user to plot results (plotData), sample along the contour 
+    (getContourPoints), calculate the wave breaking steepness curve (steepness)
+    and/or use the bootstrap method to calculate 95% confidence bounds about  
+    the contours (bootStrap).'''
     def __init__():
         return
     def getContours():
         '''Points to the getContours function in whatever contouring method is used'''
         return
     def getSamples():
-        '''Points to the getSamples function in whatever contouring method is used'''
+        '''Points to the getSamples function in whatever contouring method is
+        used, currently only implemented for PCA contours. Implementation for 
+        additional contour methods planned for future release.'''
         return
 
     def saveData(self, fileName=None):
@@ -364,7 +371,9 @@ class EA:
 
 
 class PCA(EA):
-
+    '''Create a PCA EA class for a buoy object. Contours generated under this
+    class will use principal component analysis (PCA) with improved 
+    distribution fitting (Eckert et. al 2015) and the I-FORM.'''
     def __init__(self, buoy, size_bin=250.):
         '''
         Parameters
@@ -923,7 +932,8 @@ class PCA(EA):
 
 
 class GaussianCopula(EA):
-
+    '''Create a GaussianCopula EA class for a buoy object. Contours generated 
+    under this class will use a Gaussian copula.'''
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
@@ -1052,6 +1062,8 @@ class GaussianCopula(EA):
 
 
 class Rosenblatt(EA):
+    '''Create a Rosenblatt EA class for a buoy object. Contours generated 
+    under this class will use a Rosenblatt transformation and the I-FORM.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
@@ -1180,6 +1192,8 @@ class Rosenblatt(EA):
 
 
 class ClaytonCopula(EA):
+    '''Create a ClaytonCopula EA class for a buoy object. Contours generated 
+    under this class will use a Clayton copula.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
@@ -1309,6 +1323,8 @@ class ClaytonCopula(EA):
 
 
 class GumbelCopula(EA):
+    '''Create a GumbelCopula EA class for a buoy object. Contours generated 
+    under this class will use a Gumbel copula.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
@@ -1492,6 +1508,9 @@ class GumbelCopula(EA):
 
 class Buoy:
     '''
+    This class creates a buoy object to store buoy data for use in the 
+    environmental assessment functions available in the ESSC module.
+    
     Attributes
     __________
     swdList : list
