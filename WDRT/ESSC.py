@@ -220,7 +220,7 @@ class EA:
         lambdaT = []
 
         for i in range(len(T_vals)):
-            # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
+            # Initialize kh using Eckart 1952 (mentioned in Holthuijsen pg. 124)
             kh = (omega[i]**2) * depth / \
                 (g * (np.tanh((omega[i]**2) * depth / g)**0.5))
             # Find solution using the Newton-Raphson Method
