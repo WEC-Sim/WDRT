@@ -1560,7 +1560,7 @@ class Buoy:
         Example
         _________
         >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy(46022)
+        >>> buoy = ESSC.Buoy('46022')
         >>> buoy.fetchFromWeb()
         '''
         numLines = 0
