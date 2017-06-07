@@ -1563,7 +1563,6 @@ class Buoy:
         >>> buoy = ESSC.Buoy('46022')
         >>> buoy.fetchFromWeb()
         '''
-        print "using WDRT.ESSC"
         numLines = 0
         numCols = 0
         numDates = 0
@@ -1672,10 +1671,6 @@ class Buoy:
                 dateValues = np.reshape(dateValues, (numLines, numDates))
                 spectralValues = np.reshape(spectralValues, (numLines,
                                                              (numCols - numDates)))
-
-
-
-
             numLines = 0
             numCols = 0
 
