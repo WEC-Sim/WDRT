@@ -203,7 +203,7 @@ class EA:
             import WDRT.ESSC as ESSC
 
             # Pull spectral data from NDBC website
-            buoy = ESSC.buoy('46022')
+            buoy = ESSC.Buoy('46022')
             buoy.fetchFromWeb()
 
             # Declare required parameters
@@ -371,11 +371,12 @@ class EA:
 
 
 class PCA(EA):
-    '''Create a PCA EA class for a buoy object. Contours generated under this
-    class will use principal component analysis (PCA) with improved 
-    distribution fitting (Eckert et. al 2015) and the I-FORM.'''
     def __init__(self, buoy, size_bin=250.):
         '''
+        Create a PCA EA class for a buoy object. Contours generated under this
+        class will use principal component analysis (PCA) with improved 
+        distribution fitting (Eckert et. al 2015) and the I-FORM.
+        
         Parameters
         ___________
             size_bin : float
@@ -467,7 +468,7 @@ class PCA(EA):
         time_r : np.array
             Desired return period (years) for calculation of environmental
             contour, can be a scalar or a vector.
-        nb_steps : float
+        nb_steps : int
             Discretization of the circle in the normal space used for
             inverse FORM calculation.
 
@@ -486,27 +487,22 @@ class PCA(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
             buoy = ESSC.Buoy('46022')
             buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
-            # Create Environtmal Analysis object using above parameters
+            
+            # Create PCA Environtmal Analysis object using above parameters
             pca46022 = ESSC.PCA(buoy)
-
-            # used for inverse FORM calculation
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
             # Contour generation example
-            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r)
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
         '''
 
         self.time_ss = time_ss
@@ -1579,7 +1575,7 @@ class Buoy:
         Example
         _________
         >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy(46022)
+        >>> buoy = ESSC.Buoy('46022')
         >>> buoy.fetchFromWeb()
         '''
         numLines = 0
