@@ -14,7 +14,8 @@
 # limitations under the License.
 
 '''
-This module contains the tools necessary to do contour analysis on buoy data.
+The Extreme Sea State Contour (ESSC) module contains the tools necessary to 
+calculate environmental contours of extreme sea states for buoy data. 
 '''
 
 import numpy as np
@@ -125,7 +126,8 @@ class EA:
         plt.show()
 
     def getContourPoints(self, T_Sample):
-        '''Get points along a specified environmental contour.
+        '''Get Hs points along a specified environmental contour using 
+        user-defined T values.
 
         Parameters
         ----------
@@ -136,6 +138,33 @@ class EA:
         -------
             Hs_SampleCA : nparray
                 points sampled along return contour
+        
+        Example
+        -------
+            To calculate Hs values along the contour at specific 
+            user-defined T values:
+            
+                import WDRT.ESSC as ESSC
+                import numpy as np
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                pca46022 = ESSC.PCA(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+                
+                # Generate contour
+                Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
+                
+                # Use getContourPoints to find specific points along the contour
+                T_sampleCA = np.arange(12, 26, 2)
+                Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
         '''
         amin = np.argmin(self.T_ReturnContours)
         amax = np.argmax(self.T_ReturnContours)
