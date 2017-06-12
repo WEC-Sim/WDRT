@@ -1793,9 +1793,17 @@ class Buoy:
             fileName : string
                 relevent path and filename where the .h5 file will be created and
                 saved. If no filename, the h5 file will be named NDBC(buoyNum).h5
+                
+        Example
+        -------
+        To save data to h5 file after fetchFromWeb or loadFromText:
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveData()
         '''
         if (fileName is None):
-            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+            fileName = 'NDBC' + str(self.buoyNum) + '.h5'
         else:
             _, file_extension = os.path.splitext(fileName)
             if not file_extension:
