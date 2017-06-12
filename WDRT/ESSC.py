@@ -1847,8 +1847,9 @@ class Buoy:
         Parameters
         ----------
             fileName : string
-                relevent path and filename where the .h5 file will be created and
-                saved. If no filename, the h5 file will be named NDBC(buoyNum).h5
+                relevent path and filename where the .h5 file will be created
+                and saved. If no filename, the h5 file will be named 
+                NDBC(buoyNum).h5 in location where code is running.
                 
         Example
         -------
