@@ -489,11 +489,11 @@ class PCA(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
             
-            # Create PCA Environtmal Analysis object using above parameters
-            pca46022 = ESSC.PCA(buoy)
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
             
             # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
