@@ -1767,9 +1767,11 @@ class Buoy:
         -------
         To load data from previously downloaded files:
 
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.loadFromH5("./Data")
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveData()
+            buoy46022.loadFromH5('NDBC46022.h5')
         """
         _, file_extension = os.path.splitext(fileName)
         if not file_extension:
@@ -1797,6 +1799,7 @@ class Buoy:
         Example
         -------
         To save data to h5 file after fetchFromWeb or loadFromText:
+            
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022')
             buoy46022.fetchFromWeb()
