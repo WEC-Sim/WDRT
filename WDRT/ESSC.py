@@ -117,8 +117,8 @@ class EA:
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
-        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        #plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        #plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
@@ -710,6 +710,22 @@ class PCA(EA):
         self.Weight_SampleFSS = Weight_points
 
         return Hs_Sample, T_Sample, Weight_points
+    
+    def plotData(self):
+        """
+        Display a plot of the 100-year return contour, full sea state samples
+        and contour samples
+        """
+        plt.figure()
+        plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
+        plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        plt.legend(loc='lower right', fontsize='small')
+        plt.grid(True)
+        plt.xlabel('Energy period, $T_e$ [s]')
+        plt.ylabel('Sig. wave height, $H_s$ [m]')
+        plt.show() 
 
     def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs, random_seed):
         """
