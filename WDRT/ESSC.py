@@ -1139,7 +1139,7 @@ class Rosenblatt(EA):
             nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
             
             # Rosenblatt contour generation example
-            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r)
+            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1264,7 +1264,7 @@ class ClaytonCopula(EA):
             nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
             
             # Clayton copula contour generation example
-            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r)
+            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1376,27 +1376,22 @@ class GumbelCopula(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
             # Create Environtmal Analysis object using above parameters
-            Gumbel46022 = ESSC.GumbelCopula(buoy)
-
-            # used for inverse FORM calculation
+            Gumbel46022 = ESSC.GumbelCopula(buoy46022)
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
-            # Contour generation example
-            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS, Time_r)
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Gumbel copula contour generation example
+            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS,Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
