@@ -568,28 +568,31 @@ class PCA(EA):
         -------
         To get weighted samples from a set of contours::
 
-            import numpy as np
-            import WDRT.ESSC as ESSC
-            # Load data from existing text files
-            buoy = ESSC.Buoy('46022')
-            buoy.loadFromText()
-
-            depth = 391.4 # Depth at measurement point (m)
-            size_bin = float(250) # Enter chosen bin size
-            nb_steps = float(1000) # Enter discretization of the circle in the
-
-            # normal space. Used for inverse FORM calculation.
-            Time_SS = 1. # Sea state duration (hrs)
-            Time_r = np.array([100]) # Return periods (yrs) of interest
-            num_contour_points = 10 # Number of points to be sampled for each
-
-            # contour interval.
-            contour_returns = np.array([0.001,0.01,0.05,0.1,0.5,1,5,10,50,100])
-
-            # Probabilities defining sampling contour bounds.
-            random_seed = 2 # Random seed for sample generation
-            Hs_Sample,T_Sample,Weight_points = EA.getSamples(nb_steps,
-            Time_SS,Time_r)
+                import numpy as np
+                import WDRT.ESSC as ESSC
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                pca46022 = ESSC.PCA(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                num_contour_points = 10 # Number of points to be sampled for each contour interval
+                contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])
+                
+                # Calculate contour to save required variables to PCA EA object
+                pca46022.getContours(Time_SS, Time_r,nb_steps)
+                
+                # Probabilities defining sampling contour bounds.
+                random_seed = 2  # Random seed for sample generation
+                
+                # Get samples for a full sea state long term analysis
+                Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,
+                                                             contour_returns, random_seed)
         '''
 
         # Calculate line where Hs = 0 to avoid sampling Hs in negative space
