@@ -1555,11 +1555,12 @@ class Buoy:
             Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
+        
         Example
-        _________
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.fetchFromWeb()
+        -------
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
         '''
         numLines = 0
         numCols = 0
@@ -1691,11 +1692,12 @@ class Buoy:
 
         Example
         -------
-        To load data from previously downloaded files::
+        To load data from previously downloaded files 
+        created using fetchFromWeb():
 
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.loadFromText('./Data/NDBC460022')
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.loadFromText()
         '''
         dateVals = []
         spectralVals = []
