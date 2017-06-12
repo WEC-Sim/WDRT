@@ -248,7 +248,8 @@ class EA:
 
     def bootStrap(self, boot_size=1000, plotResults=True):
         '''Get 95% confidence bounds about a contour using the bootstrap
-        method.
+        method. Warning - this function is time consuming. Computation 
+        time depends on selected boot_size.
 
         Parameters
         ----------
@@ -268,6 +269,30 @@ class EA:
             contourmean_T : nparray
                 T values for mean contour calculated as the average over all
                 bootstrap contours.
+        
+        Example
+        -------
+        To generate 95% boostrap contours for a given contour method:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Contour generation
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
+            
+            # Calculate boostrap confidence interval
+            contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)
         '''
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
