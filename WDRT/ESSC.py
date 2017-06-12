@@ -1556,7 +1556,7 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath=None):
+    def fetchFromWeb(self, saveType="txt", savePath=None, proxy=None):
 
         '''Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -1572,6 +1572,8 @@ class Buoy:
             Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
+        proxy: dict
+            Proxy server and port, i.e., {http":"http://proxyserver:port"}
         
         Example
         -------
@@ -1588,7 +1590,11 @@ class Buoy:
             savePath = self.savePath
 
         url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
-        ndbcURL = requests.get(url,proxies = {"http":"http://wwwproxy.sandia.gov:80"})
+        if proxy == None:
+            ndbcURL = requests.get(url)
+        else:
+            ndbcURL = requests.get(url, proxies = proxy)
+            
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
