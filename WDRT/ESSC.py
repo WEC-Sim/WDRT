@@ -197,26 +197,25 @@ class EA:
         Example
         -------
 
-        To find limit the steepness of waves on a contour by breaking::
+        To find limit the steepness of waves on a contour by breaking:
             
             import numpy as np
             import WDRT.ESSC as ESSC
-
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
-            # Create Environtmal Analysis object using above parameters
-            ea = ESSC.ea(depth, size_bin, buoy)
-
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
+            
             T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
             SteepMax = 0.07  # Optional: enter estimate of breaking steepness
-            SteepH = ea.steepness(SteepMax,T_vals)
+            
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            
+            SteepH = pca46022.steepness(depth,SteepMax,T_vals)
         '''
 
         # Calculate the wavelength at a given depth at each value of T
