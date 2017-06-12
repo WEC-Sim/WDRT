@@ -960,9 +960,7 @@ class GaussianCopula(EA):
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : float
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1086,9 +1084,7 @@ class Rosenblatt(EA):
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1211,9 +1207,7 @@ class ClaytonCopula(EA):
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1337,9 +1331,7 @@ class GumbelCopula(EA):
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1813,7 +1805,9 @@ class Buoy:
 
     def saveData(self, fileName=None):
         '''
-        Saves NDBC data to h5 file.
+        Saves NDBC buoy data to h5 file after fetchFromWeb() or loadFromText(). 
+        This data can later be used to create a buoy object using the 
+        loadFromH5() function.
 
         Parameters
         ----------
