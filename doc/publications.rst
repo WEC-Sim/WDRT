@@ -4,9 +4,12 @@ This page summarizes papers and reports related to the `WDRT`.
 
 Citation
 --------
-If you desire to cite `WDRT` in a publication, please use
+If you desire to cite `WDRT` in a publication, please use:
 
-R.G. Coe, C. Michelen, A. Eckert-Gallup, Y. Yu and J. van Rij, “WDRT: A toolbox for design-response analysis of wave energy converters,” Proceedings of the 4th Marine Energy Technology Symposium (METS), Washington, DC, 2016.
+.. code-block:: none
+
+	R.G. Coe, C. Michelen, A. Eckert-Gallup, Y. Yu and J. van Rij, “WDRT: A toolbox for design-response analysis of wave energy converters,” Proceedings of the 4th Marine Energy Technology Symposium (METS), Washington, DC, 2016.
+..
 
 BibTex key
 ----------
