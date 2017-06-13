@@ -7,16 +7,13 @@ import matplotlib.pyplot as plt
 buoy46022 = ESSC.Buoy('46022')
 
 # Read data from ndbc.noaa.gov
-# buoy46022.fetchFromWeb()
+buoy46022.fetchFromWeb()
 
 # Load data from .txt file if avilable
-buoy46022.loadFromText()
+# buoy46022.loadFromText()
 
 # Load data from .h5 file if available
 # buoy46022.loadFromH5('./data/NDBC46022.h5')
-
-# Declare required parameters
-depth = 391.4  # Depth at measurement point (m)
 
 # # Create EA object using above parameters
 pca46022 = ESSC.PCA(buoy46022)
@@ -34,6 +31,7 @@ Gumbel_Hs_Return, Gumbel_T_Return = Gumbel46022.getContours(Time_SS, Time_R)
 cc_Hs_Return, cc_T_Return = cc46022.getContours(Time_SS, Time_R)
 rosen_Hs_Return, rosen_T_Return = rosen46022.getContours(Time_SS, Time_R)
 
+# Plot all contour results for comparison 
 f = plt.figure()
 f.canvas.set_window_title('NDBC%s, %i-year contours' % (buoy46022.buoyNum, Time_R))
 plt.plot(buoy46022.T, buoy46022.Hs, 'bo', alpha=0.1, label='Data')
@@ -63,6 +61,8 @@ T_sampleCA = np.arange(12, 26, 2)
 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 
 # Modify contour by steepness curve if they intersect
+# Declare required parameters
+depth = 391.4  # Depth at measurement point (m)
 SteepMax = 0.07  # Optional: enter estimate of breaking steepness
 T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
 
@@ -73,6 +73,7 @@ Steep_correction = np.where(SteepH_Return < pca46022.Hs_ReturnContours)
 Hs_Return_Steep = copy.deepcopy(pca46022.Hs_ReturnContours)
 Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]
 
+# Calculate bootstrap confidence intervals, commented out due to long run time
 # pca46022.bootStrap(boot_size=10)
 # Gauss46022.bootStrap(boot_size=10)
 # Gumbel46022.bootStrap(boot_size=10)

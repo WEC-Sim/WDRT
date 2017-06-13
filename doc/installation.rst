@@ -52,4 +52,16 @@ The following installation procedure allows for easier updating of the code with
 
 Troubleshooting
 ---------------
-`IN PROGRESS`
+**Problem:** I can't run any of the examples.
+
+**Solution:** Move the file you want to run into the main WDRT folder.
+
+**Problem:** I can't connect to the NDBC database to download the data I need.
+
+**Solution:** Check your proxy/firewall settings. If you can download data from elsewhere through your proxy/firewall, check the status of the NDBC website with `Down for Everyone <http://downforeveryoneorjustme.com/>`_.
+
+**Problem:** I want to use the MLER toolbox, but it's in an .egg file. 
+
+**Solution:** Make sure you have the easy install package, `which can be downloaded here <https://pypi.python.org/pypi/setuptools>`_. Then, run the following command in the command line::
+
+	Python -m easy_install C:\path\to\mler.egg
