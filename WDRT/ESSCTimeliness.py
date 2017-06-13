@@ -620,7 +620,7 @@ class PCA(EA):
 
         # Vary U1,U2 along circle sqrt(U1^2+U2^2) = beta
         U1_lines = np.dot(np.cos(theta_lines[:, None]), beta_lines[None, :])
-        U2_lines = np.dot(np.sin(theta_lines[:, None]), beta_lines[None, :])
+        #U2_lines = np.dot(np.sin(theta_lines[:, None]), beta_lines[None, :])
 
         # Removing values on the H_s = 0 line that are far from the circles in the
         # normal space that will be evaluated to speed up calculations
