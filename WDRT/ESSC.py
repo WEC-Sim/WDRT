@@ -1601,8 +1601,7 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath=None, proxy=None):
-
+    def fetchFromWeb(self, saveType="txt", savePath = None):
         '''Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
         to a single .txt file, and stores the values in the swdList, freqList,
@@ -1617,14 +1616,11 @@ class Buoy:
             Otherwise, a file will not be created
         savePath : string
             Relative path to place directory with data files.
-        proxy: dict
-            Proxy server and port, i.e., {http":"http://proxyserver:port"}
-        
         Example
-        -------
-            import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
-            buoy46022.fetchFromWeb()
+        _________
+        >>> import WDRT.ESSC as ESSC
+        >>> buoy = ESSC.Buoy('46022')
+        >>> buoy.fetchFromWeb()
         '''
         numLines = 0
         numCols = 0
@@ -1635,17 +1631,13 @@ class Buoy:
             savePath = self.savePath
 
         url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
-        if proxy == None:
-            ndbcURL = requests.get(url)
-        else:
-            ndbcURL = requests.get(url, proxies = proxy)
-            
+        ndbcURL = requests.get(url,proxies = {"http":"http://wwwproxy.sandia.gov:80"})
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
 
         if len(headers) == 0:
-            raise Exception("Spectral wave density data for given buoy not found")
+            raise Exception("Spectral wave density data for buoy #%s not found" % self.buoyNum)
 
 
         if len(headers) == 2:
@@ -1694,14 +1686,14 @@ class Buoy:
 
 
 
-            # dates after 2004 contain a time-value for minutes
-            if (year > 2004):
+            #First Line of every file contains the frequency data
+            frequency = data.readline()
+            if frequency.split()[4] == 'mm':
                 numDates = 5
+
             else:
                 numDates = 4
 
-            #First Line of every file contains the frequency data
-            frequency = data.readline()
             if (saveType is "txt"):
                 swdFile.write(frequency)
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
@@ -1712,6 +1704,13 @@ class Buoy:
                     swdFile.write(line)
                 currentLine = line.split()
                 numCols = len(currentLine)
+                if numCols - numDates != len(frequency):
+                    print "NDBC File is corrupted - Skipping and deleting data"
+                    swdFile.close()
+                    os.remove(swdFile.name)
+                    spectralVals = []
+                    dateVals = []
+                    break
 
                 if float(currentLine[numDates+1]) < 999:
                     numLines += 1
@@ -1720,29 +1719,29 @@ class Buoy:
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
 
-            dateValues = np.array(dateVals, dtype=np.int)
-            spectralValues = np.array(spectralVals, dtype=np.float)
+            if len(spectralVals) != 0:
+                dateValues = np.array(dateVals, dtype=np.int)
+                spectralValues = np.array(spectralVals, dtype=np.float)
 
-            dateValues = np.reshape(dateValues, (numLines, numDates))
-            spectralValues = np.reshape(spectralValues, (numLines,
-                                                         (numCols - numDates)))
-
-            if(saveType is "h5"):
-                f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
-                f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
-                f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
-
-            del dateVals[:]
-            del spectralVals[:]
-
+                dateValues = np.reshape(dateValues, (numLines, numDates))
+                spectralValues = np.reshape(spectralValues, (numLines,
+                                                             (numCols - numDates)))
             numLines = 0
             numCols = 0
-            self.swdList.append(spectralValues)
-            self.freqList.append(frequency)
-            self.dateList.append(dateValues)
 
-            if(saveType is "txt"):
-                swdFile.close()
+            if len(spectralVals) != 0:
+                if(saveType is "h5"):
+                    f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
+                    f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
+                    f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
+                del dateVals[:]
+                del spectralVals[:]
+                self.swdList.append(spectralValues)
+                self.freqList.append(frequency)
+                self.dateList.append(dateValues)
+
+                if(saveType is "txt"):
+                    swdFile.close()
         self._prepData()
 
     def loadFromText(self, dirPath=None):
