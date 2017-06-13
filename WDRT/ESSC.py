@@ -14,7 +14,8 @@
 # limitations under the License.
 
 '''
-This module contains the tools necessary to do contour analysis on buoy data.
+The Extreme Sea State Contour (ESSC) module contains the tools necessary to 
+calculate environmental contours of extreme sea states for buoy data. 
 '''
 
 import numpy as np
@@ -35,14 +36,21 @@ import copy
 
 
 class EA:
-
+    '''The Environmental Assessment (EA) class points to functions for 
+    various contour methods (including getContours and getSamples) and allows 
+    the user to plot results (plotData), sample along the contour 
+    (getContourPoints), calculate the wave breaking steepness curve (steepness)
+    and/or use the bootstrap method to calculate 95% confidence bounds about  
+    the contours (bootStrap).'''
     def __init__():
         return
     def getContours():
         '''Points to the getContours function in whatever contouring method is used'''
         return
     def getSamples():
-        '''Points to the getSamples function in whatever contouring method is used'''
+        '''Points to the getSamples function in whatever contouring method is
+        used, currently only implemented for PCA contours. Implementation for 
+        additional contour methods planned for future release.'''
         return
 
     def saveData(self, fileName=None):
@@ -109,8 +117,8 @@ class EA:
         plt.figure()
         plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
         plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
-        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
-        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        #plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        #plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
         plt.legend(loc='lower right', fontsize='small')
         plt.grid(True)
         plt.xlabel('Energy period, $T_e$ [s]')
@@ -118,7 +126,8 @@ class EA:
         plt.show()
 
     def getContourPoints(self, T_Sample):
-        '''Get points along a specified environmental contour.
+        '''Get Hs points along a specified environmental contour using 
+        user-defined T values.
 
         Parameters
         ----------
@@ -129,6 +138,33 @@ class EA:
         -------
             Hs_SampleCA : nparray
                 points sampled along return contour
+        
+        Example
+        -------
+            To calculate Hs values along the contour at specific 
+            user-defined T values:
+            
+                import WDRT.ESSC as ESSC
+                import numpy as np
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                pca46022 = ESSC.PCA(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+                
+                # Generate contour
+                Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
+                
+                # Use getContourPoints to find specific points along the contour
+                T_sampleCA = np.arange(12, 26, 2)
+                Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
         '''
         amin = np.argmin(self.T_ReturnContours)
         amax = np.argmax(self.T_ReturnContours)
@@ -190,26 +226,25 @@ class EA:
         Example
         -------
 
-        To find limit the steepness of waves on a contour by breaking::
+        To find limit the steepness of waves on a contour by breaking:
             
             import numpy as np
             import WDRT.ESSC as ESSC
-
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
-            # Create Environtmal Analysis object using above parameters
-            ea = ESSC.ea(depth, size_bin, buoy)
-
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
+            
             T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
             SteepMax = 0.07  # Optional: enter estimate of breaking steepness
-            SteepH = ea.steepness(SteepMax,T_vals)
+            
+            # Declare required parameters
+            depth = 391.4  # Depth at measurement point (m)
+            
+            SteepH = pca46022.steepness(depth,SteepMax,T_vals)
         '''
 
         # Calculate the wavelength at a given depth at each value of T
@@ -220,7 +255,7 @@ class EA:
         lambdaT = []
 
         for i in range(len(T_vals)):
-            # Initialize kh using Eckert 1952 (mentioned in Holthuijsen pg. 124)
+            # Initialize kh using Eckart 1952 (mentioned in Holthuijsen pg. 124)
             kh = (omega[i]**2) * depth / \
                 (g * (np.tanh((omega[i]**2) * depth / g)**0.5))
             # Find solution using the Newton-Raphson Method
@@ -242,7 +277,8 @@ class EA:
 
     def bootStrap(self, boot_size=1000, plotResults=True):
         '''Get 95% confidence bounds about a contour using the bootstrap
-        method.
+        method. Warning - this function is time consuming. Computation 
+        time depends on selected boot_size.
 
         Parameters
         ----------
@@ -262,6 +298,30 @@ class EA:
             contourmean_T : nparray
                 T values for mean contour calculated as the average over all
                 bootstrap contours.
+        
+        Example
+        -------
+        To generate 95% boostrap contours for a given contour method:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Contour generation
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
+            
+            # Calculate boostrap confidence interval
+            contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)
         '''
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
@@ -364,9 +424,12 @@ class EA:
 
 
 class PCA(EA):
-
     def __init__(self, buoy, size_bin=250.):
         '''
+        Create a PCA EA class for a buoy object. Contours generated under this
+        class will use principal component analysis (PCA) with improved 
+        distribution fitting (Eckert et. al 2015) and the I-FORM.
+        
         Parameters
         ___________
             size_bin : float
@@ -458,7 +521,7 @@ class PCA(EA):
         time_r : np.array
             Desired return period (years) for calculation of environmental
             contour, can be a scalar or a vector.
-        nb_steps : float
+        nb_steps : int
             Discretization of the circle in the normal space used for
             inverse FORM calculation.
 
@@ -477,27 +540,22 @@ class PCA(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            pca46022 = ESSC.PCA(buoy46022)
+            
             # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
-            # Create Environtmal Analysis object using above parameters
-            pca46022 = ESSC.PCA(buoy)
-
-            # used for inverse FORM calculation
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
             # Contour generation example
-            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r)
+            Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)
         '''
 
         self.time_ss = time_ss
@@ -564,28 +622,31 @@ class PCA(EA):
         -------
         To get weighted samples from a set of contours::
 
-            import numpy as np
-            import WDRT.ESSC as ESSC
-            # Load data from existing text files
-            buoy = ESSC.Buoy('46022')
-            buoy.loadFromText()
-
-            depth = 391.4 # Depth at measurement point (m)
-            size_bin = float(250) # Enter chosen bin size
-            nb_steps = float(1000) # Enter discretization of the circle in the
-
-            # normal space. Used for inverse FORM calculation.
-            Time_SS = 1. # Sea state duration (hrs)
-            Time_r = np.array([100]) # Return periods (yrs) of interest
-            num_contour_points = 10 # Number of points to be sampled for each
-
-            # contour interval.
-            contour_returns = np.array([0.001,0.01,0.05,0.1,0.5,1,5,10,50,100])
-
-            # Probabilities defining sampling contour bounds.
-            random_seed = 2 # Random seed for sample generation
-            Hs_Sample,T_Sample,Weight_points = EA.getSamples(nb_steps,
-            Time_SS,Time_r)
+                import numpy as np
+                import WDRT.ESSC as ESSC
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                pca46022 = ESSC.PCA(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                num_contour_points = 10 # Number of points to be sampled for each contour interval
+                contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])
+                
+                # Calculate contour to save required variables to PCA EA object
+                pca46022.getContours(Time_SS, Time_r,nb_steps)
+                
+                # Probabilities defining sampling contour bounds.
+                random_seed = 2  # Random seed for sample generation
+                
+                # Get samples for a full sea state long term analysis
+                Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,
+                                                             contour_returns, random_seed)
         '''
 
         # Calculate line where Hs = 0 to avoid sampling Hs in negative space
@@ -649,6 +710,22 @@ class PCA(EA):
         self.Weight_SampleFSS = Weight_points
 
         return Hs_Sample, T_Sample, Weight_points
+    
+    def plotData(self):
+        """
+        Display a plot of the 100-year return contour, full sea state samples
+        and contour samples
+        """
+        plt.figure()
+        plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
+        plt.plot(self.T_ReturnContours, self.Hs_ReturnContours, 'k-', label='100 year contour')
+        plt.plot(self.T_SampleFSS, self.Hs_SampleFSS, 'ro', label='full sea state samples')
+        plt.plot(self.T_SampleCA, self.Hs_SampleCA, 'y^', label='contour approach samples')
+        plt.legend(loc='lower right', fontsize='small')
+        plt.grid(True)
+        plt.xlabel('Energy period, $T_e$ [s]')
+        plt.ylabel('Sig. wave height, $H_s$ [m]')
+        plt.show() 
 
     def __generateData(self, beta_lines, Rho_zeroline, Theta_zeroline, num_contour_points, contour_probs, random_seed):
         """
@@ -923,13 +1000,12 @@ class PCA(EA):
 
 
 class GaussianCopula(EA):
-
+    '''Create a GaussianCopula EA class for a buoy object. Contours generated 
+    under this class will use a Gaussian copula.'''
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : float
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -990,26 +1066,22 @@ class GaussianCopula(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
             # Create Environtmal Analysis object using above parameters
-            Gauss46022 = ESSC.GaussianCopula(buoy)
-
-            # used for inverse FORM calculation
+            Gauss46022 = ESSC.GaussianCopula(buoy46022)
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
-            # Contour generation example
-            Hs_Return, T_Return = Gauss46022.getContours(Time_SS, Time_r)
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Gaussian copula contour generation example
+            Hs_Return, T_Return = Gauss46022.getContours(Time_SS, Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1052,12 +1124,12 @@ class GaussianCopula(EA):
 
 
 class Rosenblatt(EA):
+    '''Create a Rosenblatt EA class for a buoy object. Contours generated 
+    under this class will use a Rosenblatt transformation and the I-FORM.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1118,27 +1190,22 @@ class Rosenblatt(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
             # Create Environtmal Analysis object using above parameters
-            Rosen46022 = ESSC.Rosenblatt(buoy)
-
-            # used for inverse FORM calculation
+            Rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
-            # Contour generation example
-            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r)
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Rosenblatt contour generation example
+            Hs_Return, T_Return = Rosen46022.getContours(Time_SS, Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1180,12 +1247,12 @@ class Rosenblatt(EA):
 
 
 class ClaytonCopula(EA):
+    '''Create a ClaytonCopula EA class for a buoy object. Contours generated 
+    under this class will use a Clayton copula.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1246,27 +1313,22 @@ class ClaytonCopula(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
             # Create Environtmal Analysis object using above parameters
-            Clayton46022 = ESSC.ClaytonCopula(buoy)
-
-            # used for inverse FORM calculation
+            Clayton46022 = ESSC.ClaytonCopula(buoy46022)
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
-            # Contour generation example
-            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r)
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Clayton copula contour generation example
+            Hs_Return, T_Return = Clayton46022.getContours(Time_SS, Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1309,12 +1371,12 @@ class ClaytonCopula(EA):
 
 
 class GumbelCopula(EA):
+    '''Create a GumbelCopula EA class for a buoy object. Contours generated 
+    under this class will use a Gumbel copula.'''    
     def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25,Ndata = 1000):
         '''
         Parameters
-        ___________
-            depth : int
-                Depth at measurement point (m)
+        ----------
             buoy : NDBCData
                 ESSC.Buoy Object
             n_size: float
@@ -1376,27 +1438,22 @@ class GumbelCopula(EA):
         -------
         To obtain the contours for a NDBC buoy::
             
-            import numpy as np
             import WDRT.ESSC as ESSC
+            
             # Pull spectral data from NDBC website
-            buoy = ESSC.Buoy('46022')
-            buoy.fetchFromWeb()
-
-            # Declare required parameters
-            depth = 391.4  # Depth at measurement point (m)
-            size_bin = 250.  # Enter chosen bin size
-
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
             # Create Environtmal Analysis object using above parameters
-            Gumbel46022 = ESSC.GumbelCopula(buoy)
-
-            # used for inverse FORM calculation
+            Gumbel46022 = ESSC.GumbelCopula(buoy46022)
+            
+            # Declare required parameters
             Time_SS = 1.  # Sea state duration (hrs)
             Time_r = 100  # Return periods (yrs) of interest
-
-            nb_steps = 1000.  # Enter discretization of the circle in the normal space
-
-            # Contour generation example
-            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS, Time_r)
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Gumbel copula contour generation example
+            Hs_Return, T_Return = Gumbel46022.getContours(Time_SS,Time_r,nb_steps)
         '''
         self.time_ss = time_ss
         self.time_r = time_r
@@ -1492,6 +1549,9 @@ class GumbelCopula(EA):
 
 class Buoy:
     '''
+    This class creates a buoy object to store buoy data for use in the 
+    environmental assessment functions available in the ESSC module.
+    
     Attributes
     __________
     swdList : list
@@ -1541,7 +1601,7 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath=None):
+     def fetchFromWeb(self, saveType="txt", savePath=None):
 
         '''Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -1568,7 +1628,6 @@ class Buoy:
         numDates = 0
         dateVals = []
         spectralVals = []
-        numYears= 0
         if savePath == None:
             savePath = self.savePath
 
@@ -1602,7 +1661,6 @@ class Buoy:
             f = h5py.File(saveDir, 'w')
 
         for link in links:
-            numYears += 1
             dataLink = "http://ndbc.noaa.gov" + link
             year = int(re.findall("[0-9]+", link)[1])
             if(saveType is 'txt'):
@@ -1621,7 +1679,6 @@ class Buoy:
                 else:
                     dataSetName = str(("SWD-%s-%s" %
                                    (self.buoyNum, str(year) + 'b')))
-                    numYears -= 1
 
 
             fileName = dataLink.replace('download_data', 'view_text_file')
@@ -1654,7 +1711,6 @@ class Buoy:
                     os.remove(swdFile.name)
                     spectralVals = []
                     dateVals = []
-                    numYears -= 1
                     break
 
                 if float(currentLine[numDates+1]) < 999:
@@ -1688,7 +1744,6 @@ class Buoy:
                 if(saveType is "txt"):
                     swdFile.close()
         self._prepData()
-        return numYears
 
     def loadFromText(self, dirPath=None):
         '''Loads NDBC data previously downloaded to a series of text files in the
@@ -1705,16 +1760,16 @@ class Buoy:
 
         Example
         -------
-        To load data from previously downloaded files::
+        To load data from previously downloaded files 
+        created using fetchFromWeb():
 
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.loadFromText('./Data/NDBC460022')
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.loadFromText()
         '''
         dateVals = []
         spectralVals = []
         numLines = 0
-        numYears = 0
 
         if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
@@ -1723,7 +1778,7 @@ class Buoy:
                         dirPath = os.path.join(dirpath,dirs)
                         break
         if dirPath is None:
-            raise IOError("Could not find directory containing data for NDBC%s" % self.buoyNum)
+            raise IOError("Could not find directory containing NDBC data")
 
         fileList = glob.glob(os.path.join(dirPath,'SWD*.txt'))
 
@@ -1731,7 +1786,6 @@ class Buoy:
             raise IOError("No NDBC data files found in " + dirPath)
 
         for fileName in fileList:
-            numYears += 1
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
             frequency = f.readline().split()
@@ -1768,7 +1822,6 @@ class Buoy:
             self.freqList.append(frequency)
             self.dateList.append(dateValues)
         self._prepData()
-        return numYears
 
     def loadFromH5(self, fileName):
         """
@@ -1782,9 +1835,11 @@ class Buoy:
         -------
         To load data from previously downloaded files:
 
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.loadFromH5("./Data")
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveData()
+            buoy46022.loadFromH5('NDBC46022.h5')
         """
         _, file_extension = os.path.splitext(fileName)
         if not file_extension:
@@ -1801,16 +1856,28 @@ class Buoy:
 
     def saveData(self, fileName=None):
         '''
-        Saves NDBC data to h5 file.
+        Saves NDBC buoy data to h5 file after fetchFromWeb() or loadFromText(). 
+        This data can later be used to create a buoy object using the 
+        loadFromH5() function.
 
         Parameters
         ----------
             fileName : string
-                relevent path and filename where the .h5 file will be created and
-                saved. If no filename, the h5 file will be named NDBC(buoyNum).h5
+                relevent path and filename where the .h5 file will be created
+                and saved. If no filename, the h5 file will be named 
+                NDBC(buoyNum).h5 in location where code is running.
+                
+        Example
+        -------
+        To save data to h5 file after fetchFromWeb or loadFromText:
+            
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveData()
         '''
         if (fileName is None):
-            fileName = 'NDBC' + str(self.buoy.buoyNum) + '.h5'
+            fileName = 'NDBC' + str(self.buoyNum) + '.h5'
         else:
             _, file_extension = os.path.splitext(fileName)
             if not file_extension:
