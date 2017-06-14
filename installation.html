@@ -24,8 +24,6 @@
 
   
   
-  
-  
 
   
 
@@ -43,9 +41,6 @@
   
 
   
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
         <link rel="next" title="Toolbox Modules" href="modules.html"/>
         <link rel="prev" title="WDRT Documentation and Users Guide" href="index.html"/> 
@@ -57,7 +52,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -98,14 +92,16 @@
           
             
             
-              
-            
-            
-              <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-python">Downloading Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-options">Install options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-wdrt-for-python-beginners">Installing WDRT for Python beginners</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-wdrt-for-experienced-python-users">Installing WDRT for experienced Python users</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-process-via-github">Installation Process via GitHub</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
@@ -126,10 +122,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">WDRT</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">WDRT</a>
       </nav>
 
 
@@ -142,36 +136,19 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Installation</li>
-    
-    
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Installation</li>
       <li class="wy-breadcrumbs-aside">
         
-            
-            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="_sources/installation.txt" rel="nofollow"> View page source</a>
           
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -188,9 +165,71 @@ The toolbox can either be downloaded via <code class="docutils literal"><span cl
 <p class="last">You may place the downloaded <cite>WDRT</cite> in any location you like; for the remainder of these instructions, the folder that contains the <cite>WDRT</cite> source code will be referred to as <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>.</p>
 </div>
 </div>
+<div class="section" id="downloading-python">
+<h2>Downloading Python<a class="headerlink" href="#downloading-python" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re new to Python, we suggest one of the following Python distributions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://continuum.io/downloads">Anaconda</a> (Linux, Mac, Windows)</li>
+<li><a class="reference external" href="https://code.google.com/p/pythonxy/">PythonXY</a> (Windows)</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>WDRT</cite> is currently designed to run with <strong>Python 2.7.x</strong>. <cite>WDRT</cite> currently will not fully run on Python 3.5.x.</p>
+</div>
+</div>
+<div class="section" id="install-options">
+<h2>Install options<a class="headerlink" href="#install-options" title="Permalink to this headline">¶</a></h2>
+<p>This page outlines two options for installing the <cite>WDRT</cite>. The first option (<a class="reference internal" href="#installing-wdrt-for-python-beginners">Installing WDRT for Python beginners</a>) assumes that you are new to Python and gets you up an running as quickly as possible. The second option (<a class="reference internal" href="#installing-wdrt-for-experienced-python-users">Installing WDRT for experienced Python users</a>) uses a method that allows you to more readily keep you local copy of the <cite>WDRT</cite> update to date with the latest version online.</p>
+<div class="section" id="installing-wdrt-for-python-beginners">
+<h3>Installing WDRT for Python beginners<a class="headerlink" href="#installing-wdrt-for-python-beginners" title="Permalink to this headline">¶</a></h3>
+<p><strong>Step 1</strong> It can be a pain to install Python, NumPy, SciPy, Matplotlib, h5py and other dependencies that are needed to run <cite>WDRT</cite>. If you&#8217;re new to Python, the easiest approach is to start by installing the 2.7.x version of either of the following Python distributions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://continuum.io/downloads">Anaconda</a> (Linux, Mac, Windows)</li>
+<li><a class="reference external" href="https://code.google.com/p/pythonxy/">PythonXY</a> (Windows)</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using Anaconda, PythonXY or another non-Python.org distribution, you may need to install one of the packages identified in the <a class="reference internal" href="#dependencies">Dependencies</a> section. If you need to do so, you should install any needed modules via your distribution&#8217;s package manager.</p>
+</div>
+<p><strong>Step 2</strong> Download <cite>WDRT</cite> from the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a></p>
+<p><strong>Step 3</strong> Open a command window (Windows) or terminal window (OSX and Linux) and navigate to <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>. Once inside the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory execute the following command to install <cite>WDRT</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install --user
+</pre></div>
+</div>
+<p><strong>Step 4:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
+python example_envSamplying.py
+python example_contourApproach.py
+python example_shortTermExtreme.py
+python example_fatigue.py
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-wdrt-for-experienced-python-users">
+<h3>Installing WDRT for experienced Python users<a class="headerlink" href="#installing-wdrt-for-experienced-python-users" title="Permalink to this headline">¶</a></h3>
+<p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code>, which can be downloaded <a class="reference external" href="https://git-scm.com/downloads">here</a>.</p>
+<p><strong>Step 1:</strong> Clone or download a copy of <cite>WDRT</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
+</pre></div>
+</div>
+<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
+<p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
+python example_envSamplying.py
+python example_contourApproach.py
+python example_shortTermExtreme.py
+python example_fatigue.py
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://www.python.org/downloads/">Python 2.7.x</a> and the following Python packages are required to run <cite>WDRT</cite>. <cite>WDRT</cite> currently will not run on Python 3.5.x.
+<p><a class="reference external" href="https://www.python.org/downloads/">Python 2.7.x</a> and the following Python packages are required to run <cite>WDRT</cite>. <cite>WDRT</cite> currently will not fully run on Python 3.5.x.
 These packages can easily be installed using using <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a>  or your preferred package installation method:</p>
 <blockquote>
 <div><ul class="simple">
@@ -203,52 +242,32 @@ These packages can easily be installed using using <a class="reference external"
 <li><a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/">BeautifulSoup4</a></li>
 </ul>
 </div></blockquote>
-<p>Alternatively, if you&#8217;re new to Python, these packages can be obtained using one of following Python distributions:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference external" href="http://python-xy.github.io">Python(x,y)</a></li>
-<li><a class="reference external" href="https://www.continuum.io/downloads">Anaconda</a></li>
-<li><a class="reference external" href="https://www.enthought.com/products/canopy/">Canopy</a></li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="installation-process-via-github">
-<h2>Installation Process via GitHub<a class="headerlink" href="#installation-process-via-github" title="Permalink to this headline">¶</a></h2>
-<p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code>, which can be downloaded <a class="reference external" href="https://git-scm.com/downloads">here</a>.</p>
-<p><strong>Step 1:</strong> Clone or download a copy of <cite>WDRT</cite>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
-</pre></div>
-</div>
-<p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
-<p><strong>Step 3:</strong> Verify the installation&#8217;s functionality by running the examples located in <code class="docutils literal"><span class="pre">$WDRT_SOURCE/examples</span></code></p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>cd examples
-python example_envSamplying.py
-python example_contourApproach.py
-python example_shortTermExtreme.py
-python example_fatigue.py
-</pre></div>
-</div>
 </div>
 <div class="section" id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
-<p><cite>IN PROGRESS</cite></p>
+<p><strong>Problem:</strong> I can&#8217;t run any of the examples.</p>
+<p><strong>Solutions:</strong> Check you PYTHONPATH or move the file you want to run into the main WDRT folder.</p>
+<p><strong>Problem:</strong> I can&#8217;t connect to the NDBC database to download the data I need.</p>
+<p><strong>Solution:</strong> Check your proxy/firewall settings. If you can download data from elsewhere through your proxy/firewall, check the status of the NDBC website with <a class="reference external" href="http://downforeveryoneorjustme.com/">Down for Everyone</a>.</p>
+<p><strong>Problem:</strong> I want to use the MLER toolbox, but it&#8217;s in an .egg file.</p>
+<p><strong>Solution:</strong> Make sure you have the easy install package, <a class="reference external" href="https://pypi.python.org/pypi/setuptools">which can be downloaded here</a>. Then, run the following command in the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>Python -m easy_install C:\path\to\mler.egg
+</pre></div>
+</div>
 </div>
 </div>
 
 
-           </div>
-           <div class="articleComments">
-            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="Toolbox Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="Toolbox Modules" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="WDRT Documentation and Users Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="WDRT Documentation and Users Guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -282,8 +301,7 @@ python example_fatigue.py
             VERSION:'1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

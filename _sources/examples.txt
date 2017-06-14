@@ -13,7 +13,7 @@ Environmental contours describing extreme sea states can be used for numerical o
 These environmental contours, characterized by combinations of significant wave height (:math:`H_s`) and either energy period (:math:`T_e`) or peak period (:math:`T_p`), provide inputs that are associated with a certain reliability interval.
 These reliability levels are needed to drive both contour and full sea state style long-term extreme response analyses.
 
-For this example (``$WDRT_SOURCE/examples/example_shortTermExtreme.py``), we will consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
+For this example (``$WDRT_SOURCE/examples/example_envSampling.py``), we will consider `NDBC buoy 46022 <http://www.ndbc.noaa.gov/station_page.php?station=46022>`_.
 
 .. figure::  _static/example_envSampling.png
    :align: center
@@ -28,10 +28,10 @@ Short-term extreme response analysis
 ------------------------------------
 A short term extreme distribution is the answer to “If a device is in sea-state X for Y amount of time, what will be the largest Z observed?", where X is the environmental condition, Y the short-term period, and Z the response parameter of interest (e.g. the mooring load, bending moment).
 The short-term extreme response module provides five different methods for obtaining this distribution based on observations of the quantity of interest "Z" at the desired sea-state "X".
-These methods are described in detail in :ref:`Michelen and Coe 2015 <pubs>`
+These methods are described in detail in :ref:`Michelen and Coe 2015 <pubs>`.
 
 In this example the Weibull tail-fit method is used.
-The proccess of obtaiing the sort-term extreme distribution using the Weibull tail-fit method is as follows:
+The process of obtaining the sort-term extreme distribution using the Weibull tail-fit method is as follows:
 
 	1. Identify the peaks from a time-series of any length of the response "Z" of the WEC in the sea-state of interest "X". 
 	Some minimum time length is required to achieve convergence.
@@ -42,7 +42,7 @@ The proccess of obtaiing the sort-term extreme distribution using the Weibull ta
 
 		F^{\prime}(x_i) = \frac{i}{N+1}
 
-	where :math:`x_i` is the :math:`i^{\textrm{th}}`-ordered peak
+	where :math:`x_i` is the :math:`i^{\textrm{th}}`-ordered peak.
 
 	3. Fit Weibull distributions to seven subsets of the points (:math:`x_i`, :math:`F^{\prime}(x_i)`) corresponding to :math:`F^{\prime}(x_i) > \left(0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65 \right)`.
 
@@ -86,7 +86,7 @@ This example is shown below and can found in ``$WDRT_SOURCE/examples/example_sho
 Long-term extreme response analysis
 -----------------------------------
 The long-term extreme response represents the design response for some specific deployment location and time-span.
-Two major classes of approaches are implemented in the WDRT: the contour approach and the full sea state approach.
+Two major classes of approaches are implemented in the WDRT: a `Contour approach`_ and a `Full sea-sate approach`_.
 
 Contour approach
 ````````````````
@@ -104,8 +104,8 @@ These steps are also summarized in ``$WDRT_SOURCE/examples/example_contourApproa
 
    Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.
 
-1. Establish environmental data and sample sea states
-'''''''''''''''''''''''''''''''''''''''''''''''''''''
+1. Establish environmental data and sample sea stats
+''''''''''''''''''''''''''''''''''''''''''''''''''''
 Following the `Environmental characterization`_ example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
@@ -130,16 +130,21 @@ For this example, we will simply load data that was previously produced with a s
 
 3. Short term extreme statistics 
 ''''''''''''''''''''''''''''''''
-The extreme response for each sea state can be defined as a percentile, :math:`\alpha`, in the extreme response distributions. The percentile chosen here should ideally be based on some experience with similar systems. Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
+The extreme response for each sea state can be defined as a percentile, :math:`\alpha`, in the extreme response distributions.
+The percentile chosen here should ideally be based on some experience with similar systems.
+Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
+Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
 .. literalinclude:: ../examples/example_contourApproach.py
 	:language: python
    	:lines: 37-45
    	:linenos:
 
-5. Determine design load condition(s) 
+4. Determine design load condition(s) 
 '''''''''''''''''''''''''''''''''''''
-For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI). The DLC is defined as the scenario that gives the largest response. To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.
+For the quantity of interest (QOI), find the sea state that represents the design load condition; this will be the design load condition (DLC) for that (QOI).
+The DLC is defined as the scenario that gives the largest response.
+To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.
 
 .. literalinclude:: ../examples/example_contourApproach.py
 	:language: python
@@ -150,14 +155,14 @@ Full sea-sate approach
 ``````````````````````
 In the full sea state approach, simulations are run at a sampling of sea states within an envelop defined by the environmental characterization process.
 Based on the device response and relative occurrence likelihood for each sea state, an extreme distribution is constructed.
-The full sea-state approach is more rigorous than the contour approach, but also requires more modeling to implement.
+The full sea-state approach is more rigorous than the contour approach, but also requires more modelling to implement.
 This distribution gives a richer picture of the design response and can, for example, be used to study how the design response varies with return period.
 
 The following example is also located at ``$WDRT_SOURCE/examples/example_longTermFullSeaState.py``.
 
-1. Establish environmental data and sample sea stats
-''''''''''''''''''''''''''''''''''''''''''''''''''''
-Following the `Environmental characterization`_ example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
+1. Establish environmental data and sample sea states
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+Following the `Environmental characterization`_ example, the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modelling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
 .. literalinclude:: ../examples/example_longTermFullSeaState.py
@@ -179,18 +184,19 @@ For this example, we will simply load data that was previously produced with a s
    	:lines: 20-31
    	:linenos:
 
-4. Short-term response distributions
+3. Short-term response distributions
 ''''''''''''''''''''''''''''''''''''
 As discussed in the `Short-term extreme response analysis`_ example, the short-term extreme response corresponds to some assumed period of interest, often referred to as the storm period.
 Typically 1 to 3 hour storms are considered.
-Obtain the short-term extreme response distribution for the storm duration of interest, :math:`f_{x_{1\textrm{hr}}|H_s, T_e}(x)`.
+The following lines are used to obtain the short-term extreme responses distribution for the storm duration of interest, :math:`f_{x_{1\textrm{hr}}|H_s, T_e}(x)`.
+Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
 .. literalinclude:: ../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 34-41
    	:linenos:
 
-5. Construct long-term response distribution
+4. Construct long-term response distribution
 ''''''''''''''''''''''''''''''''''''''''''''
 From the previous 4 steps, we now have :math:`n=100` pairs of sea state and corresponding device response probabilities.
 The long-term extreme response distribution can be constructed as a complementary cumulative distribution function (CCDF), sometimes also called a survival function.
@@ -206,7 +212,7 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the *tai
    	:lines: 44
    	:linenos:
 
-6. Plot and analyze results
+5. Plot and analyze results
 '''''''''''''''''''''''''''
 The results can be plotted and used to determine the return level for a desired return period.
 
@@ -252,43 +258,11 @@ The required inputs to the module are:
 
 	3. And, :math:`N`, the number of cycles expected in the WEC’s design life, which is up to the user to ascertain given a specified design life and environmental characterization.
 
-This example is shown below and can found in ``$WDRT_SOURCE/examples/example_fatigue.py``::
+This example is shown below and can found in ``$WDRT_SOURCE/examples/example_fatigue.py``.
 
-	# This example loads pre-calculated PTO force histories for a reduced size joint
-	# probability distribution. Then uses the WDRT fatigue function to calculate
-	# equivalent fatigue loads for a 1 hour timeframe and a 1 year timeframe.
-
-	import numpy as np
-	import WDRT.fatigue as fatigue
-
-	# Reduced size joint probability distribution
-	Te = [[6.0,10.0,14.0],[6.0,10.0,14.0],[6.0,10.0,14.0]]  # Wave energy periods
-	Hs = [[1.25,1.25,1.25],[2.75,2.75,2.75],[4.25,4.25,4.25]]   # Significant wave heights
-	P = np.multiply([[23.45,24.78,1.64],[9.18,28.21,4.11],[0.05,5.00,2.34]],0.01)   # Probability
-
-	N1h = 0
-	N1y = 0
-	[h,t] = np.shape(P)
-	for i in range(h):
-	    for j in range(t):
-	        N1h = N1h+1*60*60*P[i][j]/(Te[i][j]*.82476)   # Average N in 1 hour (Tavg = 0.82476*Te)
-	        N1y = N1y+1*365*24*60*60*P[i][j]/(Te[i][j]*.82476)   # Average N in 1 year
-	        
-	m = float(6)    # Assume an S-N curve slope of 6 (representative of cast iron)
-	Feq_1h = np.zeros((h,t))
-	Feq_1y = 0
-	for i in range(h):
-	    for j in range(t):
-	        # Read pre-calculated PTO force histories for each sea state
-	        Fpto = np.loadtxt('examples\data\FptoH'+str(int(Hs[i][j]))+'T'+str(int(Te[i][j]))+'.txt')	
-	        Feq_1h[i][j] = fatigue.EqLoad(Fpto, N1h, m) # Equivalent fatigue load for a 1 hour timeframe
-	        Feq_1y = Feq_1y+(Feq_1h[i][j]**m)*N1h*P[i][j]
-	Feq_1y = (Feq_1y/N1y)**(1/m)	# Equivalent fatigue load for a 1 year timeframe
-
-	print('1 hour equivalent fatigue loads:')
-	print(Feq_1h)
-	print('1 year equivalent fatigue load:')
-	print(Feq_1y)
+.. literalinclude:: ../examples/example_fatigue.py
+	:language: python
+   	:linenos:
 
 In this example, 1 hour PTO force histories (for the `RM3 WEC <http://wec-sim.github.io/WEC-Sim/tutorials.html#two-body-point-absorber-rm3>`_) have been numerically obtained (using `WEC-Sim <http://wec-sim.github.io/WEC-Sim/index.html>`_) for each sea state in the hypothetical joint probability distribution shown below.
 The average number of cycles expected in 1 hour, :math:`N_{\textrm{1-hr}}`, and 1 year, :math:`N_{\textrm{1-yr}}`, timeframes are estimated from the joint probability distribution.
@@ -300,22 +274,27 @@ And finally, the annual damage equivalent load is calculated by reapplying the P
    :align: center
    :width: 400pt
 
-
-
 Most-likely extreme response (MLER)
 -----------------------------------
 
-The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves. The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states. The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
+The extreme load is often a matter of chance created by the instantaneous position of the device and a series of random waves.
+The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states.
+The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
-An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``.
+An example can be found in ``$WDRT_SOURCE/examples/example_MLER_testrun.py``.
 
-.. literalinclude:: ../WDRT/MLER_toolbox/example/testrun.py
+.. literalinclude:: ../examples/example_MLER_testrun.py
 	:language: python
    	:linenos:
 
-In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016). The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the `Wave Energy Converter Simulator, or WEC- Sim <https://wec-sim.github.io/WEC-Sim/>`_. 
+In this example, the MLER method was applied to model a floating ellipsoid (Quon et al. OMAE 2016).
+The waves were generated from the extreme wave statistics data and the linear RAOs were obtained from a simple radiation-and-diffraction-method-based numerical model known as the `Wave Energy Converter Simulator, or WEC- Sim <https://wec-sim.github.io/WEC-Sim/>`_. 
 
-The figure below explains how the MLER waves were generated and used. For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum. A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment). For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the "heave conditioned" and "pitch conditioned" curves. This is expected because the maximum heave and pitch are most likely to occur at different times.
+The figure below explains how the MLER waves were generated and used.
+For this particular example, the target sea state has a significant wave height of 9 m and energy period of 15.1 sec and was represented using Brettschneider spectrum.
+A specific wave profile is required for different responses of interest (e.g., motion, mooring load, shear stress and bending moment).
+For example, the MLER wave profile targeting maximum pitch motion is different from the profile for heave, as seen below in the "heave conditioned" and "pitch conditioned" curves.
+This is expected because the maximum heave and pitch are most likely to occur at different times.
 
 .. figure::  _static/MLER.png
    :align: center
