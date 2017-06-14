@@ -400,7 +400,7 @@ class PCA(EA):
 
         shift = abs(min(Comp1_Comp2[:, 1])) + 0.1  # Calculate shift
         # Apply shift to Component 2 to make all values positive
-        Comp1_Comp2[:, 1] += shift
+        Comp1_Comp2[:, 1] = Comp1_Comp2[:, 1] + shift
 
         Comp1_Comp2_sort = Comp1_Comp2[Comp1_Comp2[:, 0].argsort(), :]
 
