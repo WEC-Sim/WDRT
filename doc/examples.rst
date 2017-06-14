@@ -279,9 +279,9 @@ The extreme load is often a matter of chance created by the instantaneous positi
 The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states.
 The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
-An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``.
+An example can be found in ``$WDRT_SOURCE/examples/example_MLER_testrun.py``.
 
-.. literalinclude:: ../WDRT/MLER_toolbox/example/testrun.py
+.. literalinclude:: ../examples/example_MLER_testrun.py
 	:language: python
    	:linenos:
 
