@@ -1,16 +1,15 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
-import WDRT.shortTermExtreme as ecm
-import WDRT.fatigue as fatigue
+import WDRT.shortTermExtreme as ste
+
 
 # load response time series
-data = ecm.loadtxt('data/data.csv', delimiter=',')
+data = ste.loadtxt('data/data.csv', delimiter=',')
 t = data['t']
 response = data['data']
 
 # find global peaks
-t_peaks, peaks = ecm.globalPeaks(t, response)
+t_peaks, peaks = ste.globalPeaks(t, response)
 
 # plot
 plt.figure()
@@ -27,7 +26,7 @@ plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 x_e = np.linspace(0, 2 * np.max(peaks), 10000)
 t_x = (t[-1] - t[0])
 t_st = 1. * 60. * 60.
-stextreme_dist, peaks_dist, _, _, _ = ecm.extremeDistribution_WeibullTailFit(x=peaks, x_e=x_e, t_x=t_x, t_st=t_st)
+stextreme_dist, peaks_dist, _, _, _ = ste.extremeDistribution_WeibullTailFit(x=peaks, x_e=x_e, t_x=t_x, t_st=t_st)
 
 # plot
 plt.figure()
@@ -60,6 +59,6 @@ plt.grid(True)
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
 
 # goodness of fit plots
-gof_plots = ecm.goodnessOfFitPlots(data=peaks, prob_func=peaks_dist, np_return=1000001, x_pdf=x_e, bins_pdf=20)
+gof_plots = ste.goodnessOfFitPlots(data=peaks, prob_func=peaks_dist, np_return=1000001, x_pdf=x_e, bins_pdf=20)
 
 plt.show()
