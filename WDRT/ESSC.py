@@ -1931,7 +1931,6 @@ class Buoy:
         self.T = T
         self.dateNum = dateNum
         self.dateList = dateList
-        print self.dateList
         return Hs, T, dateNum, dateList
 
 def _getDateNums(dateArr):
