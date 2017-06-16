@@ -142,7 +142,7 @@ class EA:
         Example
         -------
             To calculate Hs values along the contour at specific 
-            user-defined T values:
+            user-defined T values::
             
                 import WDRT.ESSC as ESSC
                 import numpy as np
@@ -226,7 +226,7 @@ class EA:
         Example
         -------
 
-        To find limit the steepness of waves on a contour by breaking:
+        To find limit the steepness of waves on a contour by breaking::
             
             import numpy as np
             import WDRT.ESSC as ESSC
@@ -301,7 +301,7 @@ class EA:
         
         Example
         -------
-        To generate 95% boostrap contours for a given contour method:
+        To generate 95% boostrap contours for a given contour method::
             
             import WDRT.ESSC as ESSC
             
@@ -1760,7 +1760,7 @@ class Buoy:
         Example
         -------
         To load data from previously downloaded files 
-        created using fetchFromWeb():
+        created using fetchFromWeb()::
 
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022')
@@ -1832,7 +1832,7 @@ class Buoy:
                 Name of the .h5 file to load data from.
         Example
         -------
-        To load data from previously downloaded files:
+        To load data from previously downloaded files::
 
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022')
@@ -1868,7 +1868,7 @@ class Buoy:
                 
         Example
         -------
-        To save data to h5 file after fetchFromWeb or loadFromText:
+        To save data to h5 file after fetchFromWeb or loadFromText::
             
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022')
