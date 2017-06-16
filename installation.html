@@ -24,6 +24,8 @@
 
   
   
+  
+  
 
   
 
@@ -41,6 +43,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
         <link rel="next" title="Toolbox Modules" href="modules.html"/>
         <link rel="prev" title="WDRT Documentation and Users Guide" href="index.html"/> 
@@ -52,6 +57,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -92,8 +98,11 @@
           
             
             
-                <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-python">Downloading Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-options">Install options</a><ul>
@@ -122,8 +131,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">WDRT</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">WDRT</a>
+        
       </nav>
 
 
@@ -136,19 +147,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Installation</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/installation.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -197,7 +225,7 @@ The toolbox can either be downloaded via <code class="docutils literal"><span cl
 </div>
 <p><strong>Step 2</strong> Download <cite>WDRT</cite> from the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a></p>
 <p><strong>Step 3</strong> Open a command window (Windows) or terminal window (OSX and Linux) and navigate to <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>. Once inside the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory execute the following command to install <cite>WDRT</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>python setup.py install --user
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
 </pre></div>
 </div>
 <p><strong>Step 4:</strong> Verify the installation&#8217;s functionality by running the examples located in``$WDRT_SOURCE/examples``</p>
@@ -213,7 +241,7 @@ python example_fatigue.py
 <h3>Installing WDRT for experienced Python users<a class="headerlink" href="#installing-wdrt-for-experienced-python-users" title="Permalink to this headline">¶</a></h3>
 <p>The following installation procedure allows for easier updating of the code with <code class="docutils literal"><span class="pre">git</span></code>, which can be downloaded <a class="reference external" href="https://git-scm.com/downloads">here</a>.</p>
 <p><strong>Step 1:</strong> Clone or download a copy of <cite>WDRT</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
+<div class="highlight-default"><div class="highlight"><pre><span></span>git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
 </pre></div>
 </div>
 <p><strong>Step 2:</strong> Add the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory to your <a class="reference external" href="https://docs.python.org/2/using/cmdline.html#environment-variables">PYTHONPATH</a> environment variable (<a class="reference external" href="https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables">Windows</a>, <a class="reference external" href="https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration">Mac OSX</a>, <a class="reference external" href="https://wiki.archlinux.org/index.php/Environment_variables">Linux</a>).</p>
@@ -251,7 +279,7 @@ These packages can easily be installed using using <a class="reference external"
 <p><strong>Solution:</strong> Check your proxy/firewall settings. If you can download data from elsewhere through your proxy/firewall, check the status of the NDBC website with <a class="reference external" href="http://downforeveryoneorjustme.com/">Down for Everyone</a>.</p>
 <p><strong>Problem:</strong> I want to use the MLER toolbox, but it&#8217;s in an .egg file.</p>
 <p><strong>Solution:</strong> Make sure you have the easy install package, <a class="reference external" href="https://pypi.python.org/pypi/setuptools">which can be downloaded here</a>. Then, run the following command in the command line:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>Python -m easy_install C:\path\to\mler.egg
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Python</span> <span class="o">-</span><span class="n">m</span> <span class="n">easy_install</span> <span class="n">C</span><span class="p">:</span>\<span class="n">path</span>\<span class="n">to</span>\<span class="n">mler</span><span class="o">.</span><span class="n">egg</span>
 </pre></div>
 </div>
 </div>
@@ -259,15 +287,18 @@ These packages can easily be installed using using <a class="reference external"
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="Toolbox Modules" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="Toolbox Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="WDRT Documentation and Users Guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="WDRT Documentation and Users Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -301,7 +332,8 @@ These packages can easily be installed using using <a class="reference external"
             VERSION:'1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
