@@ -37,6 +37,7 @@ Installing WDRT for Python beginners
 	If you are using Anaconda, PythonXY or another non-Python.org distribution, you may need to install one of the packages identified in the `Dependencies`_ section. If you need to do so, you should install any needed modules via your distribution's package manager.
 
 **Step 2** Download `WDRT` from the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_
+
 .. Note:: 
 
 	There may be several branches open on the repository at any given time for the purpose of developing new features. ONLY the Master branch is meant to be used outside of our development team. There is no guarantee that the toolbox will work as expected, or at all, if you are working with a non-master branch.
