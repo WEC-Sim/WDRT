@@ -1901,6 +1901,170 @@ class NonParaClaytonCopula(EA):
     def _saveParams(self, groupObj):
         groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
+
+class NonParaGumbelCopula(EA):
+    '''Create a NonParaGumbelCopula EA class for a buoy object. Contours
+    generated under this class will use a Gumbel copula with non-parametric
+    marginal distribution fits.'''
+    def __init__(self, buoy, Ndata = 1000, max_T=None, max_Hs=None):
+        '''
+        Parameters
+        ----------
+            buoy : NDBCData
+                ESSC.Buoy Object
+            NData: int
+                discretization resolution used in KDE construction
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
+        self.method = "Non-parametric Gumbel Copula"
+        self.buoy = buoy
+        self.Ndata = Ndata
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
+        
+        self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State non-parameteric Gumbel Copula Contour
+        function. This function calculates environmental contours of extreme
+        sea states using a Gumbel copula with non-parametric marginal
+        distribution fits and the inverse first-order reliability method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environtmal Analysis object using above parameters
+            NonParaGumbel46022 = ESSC.NonParaGumbelCopula(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Non-Parametric Gumbel copula contour generation example
+            Hs_Return, T_Return = NonParaGumbel46022.getContours(Time_SS, Time_r,nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+        
+        comp_1 = np.zeros((nb_steps,1))
+        comp_2_Gumb = np.zeros((nb_steps,1))
+        
+        # Inverse FORM
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        
+        # Normal Space
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+        
+        # Copula parameters
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0]# Calculate Kendall's tau    
+        theta_gum = 1./(1.-tau);
+        
+        # Component 1 (Hs)
+        z1_Hs = stats.norm.cdf(U1)
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_1,0)):
+                if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
+                    comp_1[k,0] = min(self.nonpara_dist_1[:,0]) 
+                    break
+                elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
+                    comp_1[k,0] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    break
+                else:
+                    comp_1[k,0]= max(self.nonpara_dist_1[:,0])
+        
+        # Component 2 (T)
+        
+        fi_u1=stats.norm.cdf(U1);
+        fi_u2=stats.norm.cdf(U2);
+        
+        for k in range(0,nb_steps):
+            z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
+            Z = np.array((np.transpose(z1),self.nonpara_dist_2[:,1]))
+            Y = self._EA__gumbelCopula(Z, theta_gum)
+            Y =np.nan_to_num(Y) # Need to look into this
+            p_x2_x1 = Y*self.nonpara_pdf_2[:,1]
+            dum = np.cumsum(p_x2_x1)
+            cdf = dum/(dum[self.Ndata-1])
+            table = np.array((self.nonpara_pdf_2[:,0], cdf))
+            table = table.T
+            for j in range(self.Ndata):
+                if fi_u2[k] <= table[0,1]:
+                    comp_2_Gumb[k] = min(table[:,0])
+                    break
+                elif fi_u2[k] <= table[j,1]:
+                    comp_2_Gumb[k] = (table[j,0]+table[j-1,0])/2
+                    break
+                else: 
+                    comp_2_Gumb[k] = max(table[:,0])
+
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Gumb
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        '''Currently not implemented in this version.'''
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
+        groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
         
 class Buoy:
     '''
