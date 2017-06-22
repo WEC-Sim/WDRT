@@ -469,6 +469,32 @@ class EA:
         nonpara_pdf_2 = np.transpose(np.array([pts_t, f_t]))
         
         return nonpara_dist_1, nonpara_dist_2, nonpara_pdf_2
+        
+    def __gumbelCopula(self, u, alpha):
+        ''' Calculates the Gumbel copula density
+        Parameters
+        ----------
+        u: np.array
+                    Vector of equally spaced points between 0 and twice the
+                    maximum value of T.
+        alpha: float
+                    Copula parameter. Must be greater than or equal to 1.
+        Returns
+        -------
+        y: np.array
+                   Copula density function.
+        '''
+        #Ignore divide by 0 warnings and resulting NaN warnings
+        np.seterr(all='ignore')        
+        v = -np.log(u)
+        v = np.sort(v, axis=0)
+        vmin = v[0, :]
+        vmax = v[1, :]
+        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
+        y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
+        np.seterr(all='warn')
+
+        return(y)        
 
 class PCA(EA):
     def __init__(self, buoy, size_bin=250.):
@@ -1531,7 +1557,7 @@ class GumbelCopula(EA):
         for k in range(0,int(nb_steps)):
             z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
             Z = np.array((z1,z2))
-            Y = self.__gumbelCopula(Z, theta_gum) # Copula density function
+            Y = self._EA__gumbelCopula(Z, theta_gum) # Copula density function
             Y =np.nan_to_num(Y)
             p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0]))) # pdf 2|1, f(comp_2|comp_1)=c(z1,z2)*f(comp_2)
             dum = np.cumsum(p_x2_x1)
@@ -1570,32 +1596,6 @@ class GumbelCopula(EA):
         groupObj.create_dataset('para_dist_2', data=self.para_dist_2)
         groupObj.create_dataset('mean_cond', data=self.mean_cond)
         groupObj.create_dataset('std_cond', data=self.std_cond)
-
-    def __gumbelCopula(self, u, alpha):
-        ''' Calculates the Gumbel copula density
-        Parameters
-        ----------
-        u: np.array
-                    Vector of equally spaced points between 0 and twice the
-                    maximum value of T.
-        alpha: float
-                    Copula parameter. Must be greater than or equal to 1.
-        Returns
-        -------
-        y: np.array
-                   Copula density function.
-        '''
-        #Ignore divide by 0 warnings and resulting NaN warnings
-        np.seterr(all='ignore')        
-        v = -np.log(u)
-        v = np.sort(v, axis=0)
-        vmin = v[0, :]
-        vmax = v[1, :]
-        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
-        y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
-        np.seterr(all='warn')
-
-        return(y)
 
 class NonParaGaussianCopula(EA):
     '''Create a NonParaGaussianCopula EA class for a buoy object. Contours
