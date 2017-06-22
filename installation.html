@@ -24,8 +24,6 @@
 
   
   
-  
-  
 
   
 
@@ -97,11 +95,9 @@
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
-            
               
-            
-            
-              <ul class="current">
+              
+                  <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-wdrt">Downloading <cite>WDRT</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#downloading-python">Downloading Python</a></li>
@@ -121,6 +117,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
+              
             
           
         </div>
@@ -224,6 +221,10 @@ The toolbox can either be downloaded via <code class="docutils literal"><span cl
 <p class="last">If you are using Anaconda, PythonXY or another non-Python.org distribution, you may need to install one of the packages identified in the <a class="reference internal" href="#dependencies">Dependencies</a> section. If you need to do so, you should install any needed modules via your distribution&#8217;s package manager.</p>
 </div>
 <p><strong>Step 2</strong> Download <cite>WDRT</cite> from the <a class="reference external" href="https://github.com/WEC-Sim/WDRT/">WDRT GitHub repository</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There may be several branches open on the repository at any given time for the purpose of developing new features. ONLY the Master branch is meant to be used outside of our development team. There is no guarantee that the toolbox will work as expected, or at all, if you are working with a non-master branch.</p>
+</div>
 <p><strong>Step 3</strong> Open a command window (Windows) or terminal window (OSX and Linux) and navigate to <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code>. Once inside the <code class="docutils literal"><span class="pre">$WDRT_SOURCE</span></code> directory execute the following command to install <cite>WDRT</cite>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
 </pre></div>
