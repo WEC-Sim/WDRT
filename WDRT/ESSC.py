@@ -334,6 +334,7 @@ class EA:
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
+            essccopy=None            
             if self.method == "Principle component analysis":
                 essccopy = PCA(buoycopy, self.size_bin)
             elif self.method == "Gaussian Copula":
@@ -344,6 +345,12 @@ class EA:
                 essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "Gumbel Copula":
                 essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
+            elif self.method == "Non-parametric Gaussian Copula":
+                essccopy = NonParaGaussianCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
+            elif self.method == "Non-parametric Clayton Copula":
+                essccopy = NonParaClaytonCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
+            elif self.method == "Non-parametric Gumbel Copula":
+                essccopy = NonParaGumbelCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -784,7 +791,7 @@ class PCA(EA):
 
         return Hs_Sample, T_Sample, Weight_points
     
-    def plotData(self):
+    def plotSampleData(self):
         """
         Display a plot of the 100-year return contour, full sea state samples
         and contour samples
@@ -1636,6 +1643,8 @@ class NonParaGaussianCopula(EA):
         if max_Hs == None:
             max_Hs = max(self.buoy.Hs)*2.
         
+        self.max_T = max_T
+        self.max_Hs = max_Hs
         self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
@@ -1691,8 +1700,8 @@ class NonParaGaussianCopula(EA):
         self.time_r = time_r
         self.nb_steps = nb_steps
         
-        comp_1 = np.zeros((nb_steps,1))
-        comp_2_Gau = np.zeros((nb_steps,1))
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Gau = np.zeros(nb_steps)
         
         # Inverse FORM
         p_f = 1 / (365 * (24 / time_ss) * time_r)
@@ -1712,13 +1721,13 @@ class NonParaGaussianCopula(EA):
         for k in range(0,nb_steps):
             for j in range(0,np.size(self.nonpara_dist_1,0)):
                 if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
-                    comp_1[k,0] = min(self.nonpara_dist_1[:,0]) 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
                     break
                 elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
-                    comp_1[k,0] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
                     break
                 else:
-                    comp_1[k,0]= max(self.nonpara_dist_1[:,0])
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
         
         # Component 2 (T)
         
@@ -1726,13 +1735,13 @@ class NonParaGaussianCopula(EA):
         for k in range(0,nb_steps):
             for j in range(0,np.size(self.nonpara_dist_2,0)):
                 if z2_Gau[k] <= self.nonpara_dist_2[0,1]: 
-                    comp_2_Gau[k,0] = min(self.nonpara_dist_2[:,0]) 
+                    comp_2_Gau[k] = min(self.nonpara_dist_2[:,0]) 
                     break
                 elif z2_Gau[k] <= self.nonpara_dist_2[j,1]: 
-                    comp_2_Gau[k,0] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
+                    comp_2_Gau[k] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
                     break
                 else:
-                    comp_2_Gau[k,0]= max(self.nonpara_dist_2[:,0])
+                    comp_2_Gau[k]= max(self.nonpara_dist_2[:,0])
 
         Hs_Return = comp_1
         T_Return = comp_2_Gau
@@ -1788,6 +1797,8 @@ class NonParaClaytonCopula(EA):
         if max_Hs == None:
             max_Hs = max(self.buoy.Hs)*2.
         
+        self.max_T = max_T
+        self.max_Hs = max_Hs
         self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
@@ -1843,8 +1854,8 @@ class NonParaClaytonCopula(EA):
         self.time_r = time_r
         self.nb_steps = nb_steps
         
-        comp_1 = np.zeros((nb_steps,1))
-        comp_2_Clay = np.zeros((nb_steps,1))
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Clay = np.zeros(nb_steps)
         
         # Inverse FORM
         p_f = 1 / (365 * (24 / time_ss) * time_r)
@@ -1864,13 +1875,13 @@ class NonParaClaytonCopula(EA):
         for k in range(0,nb_steps):
             for j in range(0,np.size(self.nonpara_dist_1,0)):
                 if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
-                    comp_1[k,0] = min(self.nonpara_dist_1[:,0]) 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
                     break
                 elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
-                    comp_1[k,0] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
                     break
                 else:
-                    comp_1[k,0]= max(self.nonpara_dist_1[:,0])
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
         
         # Component 2 (T)
         
@@ -1881,11 +1892,10 @@ class NonParaClaytonCopula(EA):
                     comp_2_Clay[k,0] = min(self.nonpara_dist_2[:,0]) 
                     break
                 elif z2_Clay[k] <= self.nonpara_dist_2[j,1]: 
-                    comp_2_Clay[k,0] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
+                    comp_2_Clay[k] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
                     break
                 else:
-                    comp_2_Clay[k,0]= max(self.nonpara_dist_2[:,0])
-
+                    comp_2_Clay[k]= max(self.nonpara_dist_2[:,0])
 
         Hs_Return = comp_1
         T_Return = comp_2_Clay
@@ -1941,6 +1951,8 @@ class NonParaGumbelCopula(EA):
         if max_Hs == None:
             max_Hs = max(self.buoy.Hs)*2.
         
+        self.max_T = max_T
+        self.max_Hs = max_Hs
         self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
@@ -1996,8 +2008,8 @@ class NonParaGumbelCopula(EA):
         self.time_r = time_r
         self.nb_steps = nb_steps
         
-        comp_1 = np.zeros((nb_steps,1))
-        comp_2_Gumb = np.zeros((nb_steps,1))
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Gumb = np.zeros(nb_steps)
         
         # Inverse FORM
         p_f = 1 / (365 * (24 / time_ss) * time_r)
@@ -2017,13 +2029,13 @@ class NonParaGumbelCopula(EA):
         for k in range(0,nb_steps):
             for j in range(0,np.size(self.nonpara_dist_1,0)):
                 if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
-                    comp_1[k,0] = min(self.nonpara_dist_1[:,0]) 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
                     break
                 elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
-                    comp_1[k,0] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
                     break
                 else:
-                    comp_1[k,0]= max(self.nonpara_dist_1[:,0])
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
         
         # Component 2 (T)
         
