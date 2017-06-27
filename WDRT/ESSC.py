@@ -151,7 +151,7 @@ class EA:
                 import numpy as np
                 
                 # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022')
+                buoy46022 = ESSC.Buoy('46022','NDBC')
                 buoy46022.fetchFromWeb()
                 
                 # Create PCA EA object for buoy
@@ -235,7 +235,7 @@ class EA:
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -309,7 +309,7 @@ class EA:
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -624,7 +624,7 @@ class PCA(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -707,7 +707,7 @@ class PCA(EA):
                 import WDRT.ESSC as ESSC
                 
                 # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022')
+                buoy46022 = ESSC.Buoy('46022','NDBC')
                 buoy46022.fetchFromWeb()
                 
                 # Create PCA EA object for buoy
@@ -1150,7 +1150,7 @@ class GaussianCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1274,7 +1274,7 @@ class Rosenblatt(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1397,7 +1397,7 @@ class ClaytonCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1526,7 +1526,7 @@ class GumbelCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1683,7 +1683,7 @@ class NonParaGaussianCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1837,7 +1837,7 @@ class NonParaClaytonCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1991,7 +1991,7 @@ class NonParaGumbelCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -2139,6 +2139,32 @@ class Buoy:
 
     def fetchFromWeb(self, saveType="txt", savePath = "./Data/"):
         '''
+        Calls either __fetchCDIP() or __fetchNDBC() depending on the given
+        buoy's type and fetches the necessary data from its respective website.
+
+        Parameters
+        ----------
+        saveType: string
+            If set to to "h5", the data will be saved in a compressed .h5
+            file
+            If set to "txt", the data will be stored in a raw .txt file
+            Otherwise, a file will not be created
+            NOTE: Only applies 
+        savePath : string
+            Relative path to place directory with data files.
+        Example
+        _________
+        >>> import WDRT.ESSC as ESSC
+        >>> buoy = ESSC.Buoy('46022','NDBC')
+        >>> buoy.fetchFromWeb()
+        '''
+        if self.buoyType == "NDBC":
+            self.__fetchNDBC(saveType = saveType, savePath = savePath)
+        elif self.buoyType == "CDIP":
+            self.__fetchCDIP(savePath = savePath)
+
+    def __fetchNDBC(self,saveType, savePath):
+        '''
         Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
         to a single .txt file, and stores the values in the swdList, freqList,
@@ -2151,20 +2177,10 @@ class Buoy:
             file
             If set to "txt", the data will be stored in a raw .txt file
             Otherwise, a file will not be created
+            NOTE: Only applies 
         savePath : string
             Relative path to place directory with data files.
-        Example
-        _________
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.fetchFromWeb()
         '''
-        if self.buoyType == "NDBC":
-            self.__fetchNDBC(saveType = saveType, savePath = savePath)
-        elif self.buoyType == "CDIP":
-            self.__fetchCDIP(savePath = savePath)
-
-    def __fetchNDBC(self,saveType, savePath):
         numLines = 0
         numCols = 0
         numDates = 0
@@ -2307,7 +2323,7 @@ class Buoy:
         created using fetchFromWeb():
 
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.loadFromText()
         '''
         dateVals = []
@@ -2385,7 +2401,7 @@ class Buoy:
         To load data from previously downloaded files:
 
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             buoy46022.saveData()
             buoy46022.loadFromH5('NDBC46022.h5')
@@ -2421,7 +2437,7 @@ class Buoy:
         To save data to h5 file after fetchFromWeb or loadFromText:
             
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             buoy46022.saveData()
         '''
