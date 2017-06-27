@@ -35,6 +35,7 @@ import glob
 import copy
 import statsmodels.api as sm
 from statsmodels import robust
+import urllib
 
 
 class EA:
@@ -2104,13 +2105,15 @@ class Buoy:
 
 
 
-    def __init__(self, buoyNum, savePath = './Data/'):
+    def __init__(self, buoyNum, buoyType, savePath = './Data/'):
 
         '''
         Parameters
         ___________
             buoyNum : string
                 device number for desired buoy
+            buoyType : string
+                type of buoy device, available options are 'NDBC' or 'CDIP'
             savePath : string
                 relative path where the data read from ndbc.noaa.gov will be stored
 
@@ -2124,6 +2127,7 @@ class Buoy:
         self.dateNum = []
 
         self.buoyNum = buoyNum
+        self.buoyType = buoyType.upper()
         self.savePath = savePath
 
 
@@ -2132,8 +2136,10 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath = None):
-        '''Searches ndbc.noaa.gov for the historical spectral wave density
+
+    def fetchFromWeb(self, saveType="txt", savePath = "./Data/"):
+        '''
+        Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
         to a single .txt file, and stores the values in the swdList, freqList,
         and dateList member variables.
@@ -2153,6 +2159,12 @@ class Buoy:
         >>> buoy = ESSC.Buoy('46022')
         >>> buoy.fetchFromWeb()
         '''
+        if self.buoyType == "NDBC":
+            self.__fetchNDBC(saveType = saveType, savePath = savePath)
+        elif self.buoyType == "CDIP":
+            self.__fetchCDIP(savePath = savePath)
+
+    def __fetchNDBC(self,saveType, savePath):
         numLines = 0
         numCols = 0
         numDates = 0
@@ -2275,7 +2287,8 @@ class Buoy:
                     swdFile.close()
         self._prepData()
 
-    def loadFromText(self, dirPath=None):
+
+    def loadFromText(self, dirPath):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -2353,6 +2366,12 @@ class Buoy:
             self.dateList.append(dateValues)
         self._prepData()
 
+    def loadFile(self, dirPath = None):
+        if self.buoyType == "NDBC":
+            self.loadFromText(dirPath)
+        if self.buoyType == "CDIP":
+            self.loadCDIP(dirPath)
+
     def loadFromH5(self, fileName):
         """
         Loads NDBC data previously saved in a .h5 file
@@ -2428,6 +2447,64 @@ class Buoy:
             f_dateNum.attrs['description'] = 'datenum'
         else:
             RuntimeError('Buoy object contains no data')
+
+    def __loadCDIP(self, filePath = None):
+        """
+        Loads the Hs and T values of the given site from the .nc file downloaded from 
+        http://cdip.ucsd.edu/
+        Parameters
+        ----------
+            filePath : string
+                File path to the respective .nc file containing the Hs and T values
+        """
+        if filePath == None:
+            filePath = "data/" + self.buoyNum + "-CDIP.nc"
+        self.__processCDIPData(filePath)
+
+    def __averageValues(self):
+        """
+        Averages the Hs and T values of the given buoy to get hour time-steps rather than
+        half hour time-steps
+        """
+        self.Hs = np.mean(self.Hs.reshape(-1,2), axis = 1)
+        self.T = np.mean(self.T.reshape(-1,2), axis = 1)
+
+
+    #TODO Delete existing .nc file and create new one with just the Hs and T values
+    def __processCDIPData(self,filePath):
+        """
+        Loads the Hs and T values from the .nc file downloaded from http://cdip.ucsd.edu/
+        Parameters
+        ----------
+            filePath : string
+                File path to the respective .nc file containing the Hs and T values
+        """
+        import netCDF4
+        data = netCDF4.Dataset(filePath)
+        self.Hs = data["waveHs"][:]
+        self.T = data["waveTa"][:]
+        data.close()
+
+        #Some CDIP buoys record data every half hour rather than every hour
+        if len(self.Hs)%2 == 0:
+            self.__averageValues()
+
+    def __fetchCDIP(self, savePath = "data/"):
+        """
+        Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
+        http://cdip.ucsd.edu/
+
+        Parameters
+        ----------
+        savePath : string
+            Relative path to place directory with data files.
+        """
+        url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
+               str(self.buoyNum) +"p1_historic.nc"
+        filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
+        print "Downloading data from: " + url
+        urllib.urlretrieve (url, filePath)
+        self.__processCDIPData(filePath)
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any
