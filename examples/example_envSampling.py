@@ -4,7 +4,7 @@ import copy
 import matplotlib.pyplot as plt
 
 # Create buoy object, in this case for Station #46022
-buoy46022 = ESSC.Buoy('46022')
+buoy46022 = ESSC.Buoy('46022','NDBC')
 
 # Read data from ndbc.noaa.gov
 buoy46022.fetchFromWeb()
