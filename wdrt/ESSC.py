@@ -33,6 +33,9 @@ from datetime import datetime, date
 import os
 import glob
 import copy
+import statsmodels.api as sm
+from statsmodels import robust
+import urllib
 
 
 class EA:
@@ -142,13 +145,13 @@ class EA:
         Example
         -------
             To calculate Hs values along the contour at specific 
-            user-defined T values::
+            user-defined T values:
             
                 import WDRT.ESSC as ESSC
                 import numpy as np
                 
                 # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022')
+                buoy46022 = ESSC.Buoy('46022','NDBC')
                 buoy46022.fetchFromWeb()
                 
                 # Create PCA EA object for buoy
@@ -226,13 +229,13 @@ class EA:
         Example
         -------
 
-        To find limit the steepness of waves on a contour by breaking::
+        To find limit the steepness of waves on a contour by breaking:
             
             import numpy as np
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -301,12 +304,12 @@ class EA:
         
         Example
         -------
-        To generate 95% boostrap contours for a given contour method::
+        To generate 95% boostrap contours for a given contour method:
             
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -332,6 +335,7 @@ class EA:
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
             buoycopy.T = copy.deepcopy(self.buoy.T[boot_inds])
+            essccopy=None            
             if self.method == "Principle component analysis":
                 essccopy = PCA(buoycopy, self.size_bin)
             elif self.method == "Gaussian Copula":
@@ -342,6 +346,12 @@ class EA:
                 essccopy = ClaytonCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step)
             elif self.method == "Gumbel Copula":
                 essccopy = GumbelCopula(buoycopy, self.n_size, self.bin_1_limit, self.bin_step, self.Ndata)
+            elif self.method == "Non-parametric Gaussian Copula":
+                essccopy = NonParaGaussianCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
+            elif self.method == "Non-parametric Clayton Copula":
+                essccopy = NonParaClaytonCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
+            elif self.method == "Non-parametric Gumbel Copula":
+                essccopy = NonParaGumbelCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
@@ -421,7 +431,78 @@ class EA:
         std_cond = np.linalg.lstsq(phi_std,para_dist_cond[:,1])[0]
 
         return para_dist_1, para_dist_2, mean_cond, std_cond
+        
+    def __getNonParaCopulaParams(self,Ndata, max_T, max_Hs):
+        sorted_idx = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
+        Hs = self.buoy.Hs[sorted_idx]
+        T = self.buoy.T[sorted_idx]
+        
+        # Calcualte KDE bounds (this may be added as an input later)
+        min_limit_1 = 0
+        max_limit_1 = max_Hs
+        min_limit_2 = 0
+        max_limit_2 = max_T   
+        
+        # Discretize for KDE
+        pts_hs = np.linspace(min_limit_1, max_limit_1, self.Ndata) 
+        pts_t = np.linspace(min_limit_2, max_limit_2, self.Ndata)
+        
+        # Calculate optimal bandwidth for T and Hs
+        sig = robust.scale.mad(T)
+        num = float(len(T))
+        bwT = sig*(4.0/(3.0*num))**(1.0/5.0)
+        
+        sig = robust.scale.mad(Hs)
+        num = float(len(Hs))
+        bwHs = sig*(4.0/(3.0*num))**(1.0/5.0)
+        
+        # Nonparametric PDF for T
+        temp = sm.nonparametric.KDEUnivariate(T)
+        temp.fit(bw = bwT)
+        f_t = temp.evaluate(pts_t)
+        
+        # Nonparametric CDF for Hs
+        temp = sm.nonparametric.KDEUnivariate(Hs)
+        temp.fit(bw = bwHs)
+        tempPDF = temp.evaluate(pts_hs)
+        F_hs = tempPDF/sum(tempPDF)
+        F_hs = np.cumsum(F_hs)
+        
+        # Nonparametric CDF for T
+        F_t = f_t/sum(f_t)
+        F_t = np.cumsum(F_t)
+        
+        nonpara_dist_1 = np.transpose(np.array([pts_hs, F_hs]))
+        nonpara_dist_2 = np.transpose(np.array([pts_t, F_t]))
+        nonpara_pdf_2 = np.transpose(np.array([pts_t, f_t]))
+        
+        return nonpara_dist_1, nonpara_dist_2, nonpara_pdf_2
+        
+    def __gumbelCopula(self, u, alpha):
+        ''' Calculates the Gumbel copula density
+        Parameters
+        ----------
+        u: np.array
+                    Vector of equally spaced points between 0 and twice the
+                    maximum value of T.
+        alpha: float
+                    Copula parameter. Must be greater than or equal to 1.
+        Returns
+        -------
+        y: np.array
+                   Copula density function.
+        '''
+        #Ignore divide by 0 warnings and resulting NaN warnings
+        np.seterr(all='ignore')        
+        v = -np.log(u)
+        v = np.sort(v, axis=0)
+        vmin = v[0, :]
+        vmax = v[1, :]
+        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
+        y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
+        np.seterr(all='warn')
 
+        return(y)        
 
 class PCA(EA):
     def __init__(self, buoy, size_bin=250.):
@@ -543,7 +624,7 @@ class PCA(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create PCA EA object for buoy
@@ -626,7 +707,7 @@ class PCA(EA):
                 import WDRT.ESSC as ESSC
                 
                 # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022')
+                buoy46022 = ESSC.Buoy('46022','NDBC')
                 buoy46022.fetchFromWeb()
                 
                 # Create PCA EA object for buoy
@@ -711,7 +792,7 @@ class PCA(EA):
 
         return Hs_Sample, T_Sample, Weight_points
     
-    def plotData(self):
+    def plotSampleData(self):
         """
         Display a plot of the 100-year return contour, full sea state samples
         and contour samples
@@ -1069,7 +1150,7 @@ class GaussianCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1193,7 +1274,7 @@ class Rosenblatt(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1316,7 +1397,7 @@ class ClaytonCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1385,6 +1466,10 @@ class GumbelCopula(EA):
                 maximum value of Hs for the first bin
             bin_step: float
                 overlap interval for each bin
+            Ndata: int
+                discretization used in the Gumbel copula density estimation, 
+                must be less than the number of contour points used in 
+                getContours
         '''
         self.method = "Gumbel Copula"
         self.buoy = buoy
@@ -1441,7 +1526,7 @@ class GumbelCopula(EA):
             import WDRT.ESSC as ESSC
             
             # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             
             # Create Environtmal Analysis object using above parameters
@@ -1480,7 +1565,7 @@ class GumbelCopula(EA):
         for k in range(0,int(nb_steps)):
             z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
             Z = np.array((z1,z2))
-            Y = self.__gumbelCopula(Z, theta_gum) # Copula density function
+            Y = self._EA__gumbelCopula(Z, theta_gum) # Copula density function
             Y =np.nan_to_num(Y)
             p_x2_x1 = Y*(stats.lognorm.pdf(x2, s = self.para_dist_2[1], loc=0, scale = np.exp(self.para_dist_2[0]))) # pdf 2|1, f(comp_2|comp_1)=c(z1,z2)*f(comp_2)
             dum = np.cumsum(p_x2_x1)
@@ -1520,33 +1605,480 @@ class GumbelCopula(EA):
         groupObj.create_dataset('mean_cond', data=self.mean_cond)
         groupObj.create_dataset('std_cond', data=self.std_cond)
 
-    def __gumbelCopula(self, u, alpha):
-        ''' Calculates the Gumbel copula density
+class NonParaGaussianCopula(EA):
+    '''Create a NonParaGaussianCopula EA class for a buoy object. Contours
+    generated under this class will use a Gaussian copula with non-parametric
+    marginal distribution fits.'''
+    def __init__(self, buoy, Ndata = 1000, max_T=None, max_Hs=None):
+        '''
         Parameters
         ----------
-        u: np.array
-                    Vector of equally spaced points between 0 and twice the
-                    maximum value of T.
-        alpha: float
-                    Copula parameter. Must be greater than or equal to 1.
+            buoy : NDBCData
+                ESSC.Buoy Object
+            NData: int
+                discretization resolution used in KDE construction
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
+        self.method = "Non-parametric Gaussian Copula"
+        self.buoy = buoy
+        self.Ndata = Ndata
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
+        
+        self.max_T = max_T
+        self.max_Hs = max_Hs
+        self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State Gaussian Copula Contour function.
+        This function calculates environmental contours of extreme sea states 
+        using a Gaussian copula with non-parametric marginal distribution fits
+        and the inverse first-order reliability method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
         Returns
         -------
-        y: np.array
-                   Copula density function.
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environtmal Analysis object using above parameters
+            NonParaGauss46022 = ESSC.NonParaGaussianCopula(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Non-Parametric Gaussian copula contour generation example
+            Hs_Return, T_Return = NonParaGauss46022.getContours(Time_SS, Time_r,nb_steps)
         '''
-        #Ignore divide by 0 warnings and resulting NaN warnings
-        np.seterr(all='ignore')        
-        v = -np.log(u)
-        v = np.sort(v, axis=0)
-        vmin = v[0, :]
-        vmax = v[1, :]
-        nlogC = vmax * (1 + (vmin / vmax) ** alpha) ** (1 / alpha)
-        y = (alpha - 1 +nlogC)*np.exp(-nlogC+np.sum((alpha-1)*np.log(v)+v, axis =0) +(1-2*alpha)*np.log(nlogC))
-        np.seterr(all='warn')
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+        
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Gau = np.zeros(nb_steps)
+        
+        # Inverse FORM
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        
+        # Normal Space
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+        
+        # Copula parameters
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0]# Calculate Kendall's tau    
+        rho_gau=np.sin(tau*np.pi/2.);
+        
+        # Component 1 (Hs)
+        z1_Hs = stats.norm.cdf(U1)
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_1,0)):
+                if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
+                    break
+                elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    break
+                else:
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
+        
+        # Component 2 (T)
+        
+        z2_Gau=stats.norm.cdf(U2*np.sqrt(1.-rho_gau**2.)+rho_gau*U1);
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_2,0)):
+                if z2_Gau[k] <= self.nonpara_dist_2[0,1]: 
+                    comp_2_Gau[k] = min(self.nonpara_dist_2[:,0]) 
+                    break
+                elif z2_Gau[k] <= self.nonpara_dist_2[j,1]: 
+                    comp_2_Gau[k] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
+                    break
+                else:
+                    comp_2_Gau[k]= max(self.nonpara_dist_2[:,0])
 
-        return(y)
+        Hs_Return = comp_1
+        T_Return = comp_2_Gau
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        '''Currently not implemented in this version.'''
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
+        groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
+        
+class NonParaClaytonCopula(EA):
+    '''Create a NonParaClaytonCopula EA class for a buoy object. Contours
+    generated under this class will use a Clayton copula with non-parametric
+    marginal distribution fits.'''
+    def __init__(self, buoy, Ndata = 1000, max_T=None, max_Hs=None):
+        '''
+        Parameters
+        ----------
+            buoy : NDBCData
+                ESSC.Buoy Object
+            NData: int
+                discretization resolution used in KDE construction
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
+        self.method = "Non-parametric Clayton Copula"
+        self.buoy = buoy
+        self.Ndata = Ndata
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
+        
+        self.max_T = max_T
+        self.max_Hs = max_Hs
+        self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State non-parameteric Clayton Copula Contour
+        function. This function calculates environmental contours of extreme
+        sea states using a Clayton copula with non-parametric marginal
+        distribution fits and the inverse first-order reliability method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environtmal Analysis object using above parameters
+            NonParaClayton46022 = ESSC.NonParaClaytonCopula(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Non-Parametric Clayton copula contour generation example
+            Hs_Return, T_Return = NonParaClayton46022.getContours(Time_SS, Time_r,nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+        
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Clay = np.zeros(nb_steps)
+        
+        # Inverse FORM
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        
+        # Normal Space
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+        
+        # Copula parameters
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0]# Calculate Kendall's tau    
+        theta_clay = (2.*tau)/(1.-tau);
+        
+        # Component 1 (Hs)
+        z1_Hs = stats.norm.cdf(U1)
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_1,0)):
+                if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
+                    break
+                elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    break
+                else:
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
+        
+        # Component 2 (T)
+        
+        z2_Clay=((1.-stats.norm.cdf(U1)**(-theta_clay)+stats.norm.cdf(U1)**(-theta_clay)/stats.norm.cdf(U2))**(theta_clay/(1.+theta_clay)))**(-1./theta_clay)
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_2,0)):
+                if z2_Clay[k] <= self.nonpara_dist_2[0,1]: 
+                    comp_2_Clay[k,0] = min(self.nonpara_dist_2[:,0]) 
+                    break
+                elif z2_Clay[k] <= self.nonpara_dist_2[j,1]: 
+                    comp_2_Clay[k] = (self.nonpara_dist_2[j,0] + self.nonpara_dist_2[j-1,0])/2
+                    break
+                else:
+                    comp_2_Clay[k]= max(self.nonpara_dist_2[:,0])
+
+        Hs_Return = comp_1
+        T_Return = comp_2_Clay
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        '''Currently not implemented in this version.'''
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
+        groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
+
+class NonParaGumbelCopula(EA):
+    '''Create a NonParaGumbelCopula EA class for a buoy object. Contours
+    generated under this class will use a Gumbel copula with non-parametric
+    marginal distribution fits.'''
+    def __init__(self, buoy, Ndata = 1000, max_T=None, max_Hs=None):
+        '''
+        Parameters
+        ----------
+            buoy : NDBCData
+                ESSC.Buoy Object
+            NData: int
+                discretization resolution used in KDE construction
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
+        self.method = "Non-parametric Gumbel Copula"
+        self.buoy = buoy
+        self.Ndata = Ndata
+
+        self.Hs_ReturnContours = None
+#        self.Hs_SampleCA = None
+#        self.Hs_SampleFSS = None
+
+        self.T_ReturnContours = None
+#        self.T_SampleCA = None
+#        self.T_SampleFSS = None
+
+#        self.Weight_points = None
+
+#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
+        
+        self.max_T = max_T
+        self.max_Hs = max_Hs
+        self.nonpara_dist_1,self.nonpara_dist_2,self.nonpara_pdf_2 = self._EA__getNonParaCopulaParams(Ndata,max_T,max_Hs)
+
+    def getContours(self, time_ss, time_r, nb_steps = 1000):
+        '''WDRT Extreme Sea State non-parameteric Gumbel Copula Contour
+        function. This function calculates environmental contours of extreme
+        sea states using a Gumbel copula with non-parametric marginal
+        distribution fits and the inverse first-order reliability method.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+        nb_steps : float
+            Discretization of the circle in the normal space used for
+            inverse FORM calculation.
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+        nb_steps : float
+            Discretization of the circle in the normal space
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environtmal Analysis object using above parameters
+            NonParaGumbel46022 = ESSC.NonParaGumbelCopula(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)
+            
+            # Non-Parametric Gumbel copula contour generation example
+            Hs_Return, T_Return = NonParaGumbel46022.getContours(Time_SS, Time_r,nb_steps)
+        '''
+        self.time_ss = time_ss
+        self.time_r = time_r
+        self.nb_steps = nb_steps
+        
+        comp_1 = np.zeros(nb_steps)
+        comp_2_Gumb = np.zeros(nb_steps)
+        
+        # Inverse FORM
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+        beta = stats.norm.ppf((1 - p_f), loc=0, scale=1)  # Reliability
+        
+        # Normal Space
+        theta = np.linspace(0, 2 * np.pi, num = nb_steps)
+        U1 = beta * np.cos(theta)
+        U2 = beta * np.sin(theta)
+        
+        # Copula parameters
+        tau = stats.kendalltau(self.buoy.T,self.buoy.Hs)[0]# Calculate Kendall's tau    
+        theta_gum = 1./(1.-tau);
+        
+        # Component 1 (Hs)
+        z1_Hs = stats.norm.cdf(U1)
+        for k in range(0,nb_steps):
+            for j in range(0,np.size(self.nonpara_dist_1,0)):
+                if z1_Hs[k] <= self.nonpara_dist_1[0,1]: 
+                    comp_1[k] = min(self.nonpara_dist_1[:,0]) 
+                    break
+                elif z1_Hs[k] <= self.nonpara_dist_1[j,1]: 
+                    comp_1[k] = (self.nonpara_dist_1[j,0] + self.nonpara_dist_1[j-1,0])/2
+                    break
+                else:
+                    comp_1[k]= max(self.nonpara_dist_1[:,0])
+        
+        # Component 2 (T)
+        
+        fi_u1=stats.norm.cdf(U1);
+        fi_u2=stats.norm.cdf(U2);
+        
+        for k in range(0,nb_steps):
+            z1 = np.linspace(fi_u1[k],fi_u1[k],self.Ndata)
+            Z = np.array((np.transpose(z1),self.nonpara_dist_2[:,1]))
+            Y = self._EA__gumbelCopula(Z, theta_gum)
+            Y =np.nan_to_num(Y) # Need to look into this
+            p_x2_x1 = Y*self.nonpara_pdf_2[:,1]
+            dum = np.cumsum(p_x2_x1)
+            cdf = dum/(dum[self.Ndata-1])
+            table = np.array((self.nonpara_pdf_2[:,0], cdf))
+            table = table.T
+            for j in range(self.Ndata):
+                if fi_u2[k] <= table[0,1]:
+                    comp_2_Gumb[k] = min(table[:,0])
+                    break
+                elif fi_u2[k] <= table[j,1]:
+                    comp_2_Gumb[k] = (table[j,0]+table[j-1,0])/2
+                    break
+                else: 
+                    comp_2_Gumb[k] = max(table[:,0])
 
 
+        Hs_Return = comp_1
+        T_Return = comp_2_Gumb
+
+        self.Hs_ReturnContours = Hs_Return
+        self.T_ReturnContours = T_Return
+        return Hs_Return, T_Return
+
+    def getSamples(self):
+        '''Currently not implemented in this version.'''
+        raise NotImplementedError
+
+    def _saveParams(self, groupObj):
+        groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
+        groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
+        
 class Buoy:
     '''
     This class creates a buoy object to store buoy data for use in the 
@@ -1573,13 +2105,15 @@ class Buoy:
 
 
 
-    def __init__(self, buoyNum, savePath = './Data/'):
+    def __init__(self, buoyNum, buoyType, savePath = './Data/'):
 
         '''
         Parameters
         ___________
             buoyNum : string
                 device number for desired buoy
+            buoyType : string
+                type of buoy device, available options are 'NDBC' or 'CDIP'
             savePath : string
                 relative path where the data read from ndbc.noaa.gov will be stored
 
@@ -1593,6 +2127,7 @@ class Buoy:
         self.dateNum = []
 
         self.buoyNum = buoyNum
+        self.buoyType = buoyType.upper()
         self.savePath = savePath
 
 
@@ -1601,8 +2136,36 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath = None):
-        '''Searches ndbc.noaa.gov for the historical spectral wave density
+
+    def fetchFromWeb(self, saveType="txt", savePath = "./Data/"):
+        '''
+        Calls either __fetchCDIP() or __fetchNDBC() depending on the given
+        buoy's type and fetches the necessary data from its respective website.
+
+        Parameters
+        ----------
+        saveType: string
+            If set to to "h5", the data will be saved in a compressed .h5
+            file
+            If set to "txt", the data will be stored in a raw .txt file
+            Otherwise, a file will not be created
+            NOTE: Only applies 
+        savePath : string
+            Relative path to place directory with data files.
+        Example
+        _________
+        >>> import WDRT.ESSC as ESSC
+        >>> buoy = ESSC.Buoy('46022','NDBC')
+        >>> buoy.fetchFromWeb()
+        '''
+        if self.buoyType == "NDBC":
+            self.__fetchNDBC(saveType = saveType, savePath = savePath)
+        elif self.buoyType == "CDIP":
+            self.__fetchCDIP(savePath = savePath)
+
+    def __fetchNDBC(self,saveType, savePath):
+        '''
+        Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
         to a single .txt file, and stores the values in the swdList, freqList,
         and dateList member variables.
@@ -1614,13 +2177,9 @@ class Buoy:
             file
             If set to "txt", the data will be stored in a raw .txt file
             Otherwise, a file will not be created
+            NOTE: Only applies 
         savePath : string
             Relative path to place directory with data files.
-        Example
-        _________
-        >>> import WDRT.ESSC as ESSC
-        >>> buoy = ESSC.Buoy('46022')
-        >>> buoy.fetchFromWeb()
         '''
         numLines = 0
         numCols = 0
@@ -1744,7 +2303,8 @@ class Buoy:
                     swdFile.close()
         self._prepData()
 
-    def loadFromText(self, dirPath=None):
+
+    def loadFromText(self, dirPath):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -1760,10 +2320,10 @@ class Buoy:
         Example
         -------
         To load data from previously downloaded files 
-        created using fetchFromWeb()::
+        created using fetchFromWeb():
 
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.loadFromText()
         '''
         dateVals = []
@@ -1822,6 +2382,12 @@ class Buoy:
             self.dateList.append(dateValues)
         self._prepData()
 
+    def loadFile(self, dirPath = None):
+        if self.buoyType == "NDBC":
+            self.loadFromText(dirPath)
+        if self.buoyType == "CDIP":
+            self.loadCDIP(dirPath)
+
     def loadFromH5(self, fileName):
         """
         Loads NDBC data previously saved in a .h5 file
@@ -1832,10 +2398,10 @@ class Buoy:
                 Name of the .h5 file to load data from.
         Example
         -------
-        To load data from previously downloaded files::
+        To load data from previously downloaded files:
 
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             buoy46022.saveData()
             buoy46022.loadFromH5('NDBC46022.h5')
@@ -1868,10 +2434,10 @@ class Buoy:
                 
         Example
         -------
-        To save data to h5 file after fetchFromWeb or loadFromText::
+        To save data to h5 file after fetchFromWeb or loadFromText:
             
             import WDRT.ESSC as ESSC
-            buoy46022 = ESSC.Buoy('46022')
+            buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
             buoy46022.saveData()
         '''
@@ -1898,11 +2464,68 @@ class Buoy:
         else:
             RuntimeError('Buoy object contains no data')
 
+    def __loadCDIP(self, filePath = None):
+        """
+        Loads the Hs and T values of the given site from the .nc file downloaded from 
+        http://cdip.ucsd.edu/
+        Parameters
+        ----------
+            filePath : string
+                File path to the respective .nc file containing the Hs and T values
+        """
+        if filePath == None:
+            filePath = "data/" + self.buoyNum + "-CDIP.nc"
+        self.__processCDIPData(filePath)
+
+    def __averageValues(self):
+        """
+        Averages the Hs and T values of the given buoy to get hour time-steps rather than
+        half hour time-steps
+        """
+        self.Hs = np.mean(self.Hs.reshape(-1,2), axis = 1)
+        self.T = np.mean(self.T.reshape(-1,2), axis = 1)
+
+
+    #TODO Delete existing .nc file and create new one with just the Hs and T values
+    def __processCDIPData(self,filePath):
+        """
+        Loads the Hs and T values from the .nc file downloaded from http://cdip.ucsd.edu/
+        Parameters
+        ----------
+            filePath : string
+                File path to the respective .nc file containing the Hs and T values
+        """
+        import netCDF4
+        data = netCDF4.Dataset(filePath)
+        self.Hs = data["waveHs"][:]
+        self.T = data["waveTa"][:]
+        data.close()
+
+        #Some CDIP buoys record data every half hour rather than every hour
+        if len(self.Hs)%2 == 0:
+            self.__averageValues()
+
+    def __fetchCDIP(self, savePath = "data/"):
+        """
+        Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
+        http://cdip.ucsd.edu/
+
+        Parameters
+        ----------
+        savePath : string
+            Relative path to place directory with data files.
+        """
+        url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
+               str(self.buoyNum) +"p1_historic.nc"
+        filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
+        print "Downloading data from: " + url
+        urllib.urlretrieve (url, filePath)
+        self.__processCDIPData(filePath)
+
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any
         NaNs.
         '''
-
         n = len(self.swdList)
         Hs = []
         T = []
@@ -1912,26 +2535,20 @@ class Buoy:
             Hs.extend(tmp1)
             T.extend(tmp2)
             dateNum.extend(_getDateNums(self.dateList[ii]))
-
-        dateList = [date for year in self.dateList for date in year]
-
         Hs = np.array(Hs, dtype=np.float)
         T = np.array(T, dtype=np.float)
         dateNum = np.array(dateNum, dtype=np.float)
-        dateList = np.array(dateList)
 
         # Removing NaN data, assigning T label depending on input (Te or Tp)
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
-        dateList = dateList[Nanrem]
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
-        self.dateList = dateList
-        return Hs, T, dateNum, dateList
+        return Hs, T, dateNum
 
 def _getDateNums(dateArr):
     '''datetime objects
