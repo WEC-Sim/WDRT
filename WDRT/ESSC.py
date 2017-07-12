@@ -2505,7 +2505,7 @@ class Buoy:
         if len(self.Hs)%2 == 0:
             self.__averageValues()
 
-    def __fetchCDIP(self, savePath = "data/"):
+    def fetchCDIP(self, savePath = "data/"):
         """
         Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
         http://cdip.ucsd.edu/
