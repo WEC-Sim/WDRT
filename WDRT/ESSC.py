@@ -36,6 +36,7 @@ import copy
 import statsmodels.api as sm
 from statsmodels import robust
 import urllib
+import sys
 
 
 class EA:
@@ -2496,7 +2497,11 @@ class Buoy:
                 File path to the respective .nc file containing the Hs and T values
         """
         import netCDF4
-        data = netCDF4.Dataset(filePath)
+        try:
+            data = netCDF4.Dataset(filePath)
+        except IOError:
+            raise IOError("Could not find data for CDIP site: " + self.buoyNum)
+            
         self.Hs = data["waveHs"][:]
         self.T = data["waveTa"][:]
         data.close()
@@ -2505,7 +2510,7 @@ class Buoy:
         if len(self.Hs)%2 == 0:
             self.__averageValues()
 
-    def fetchCDIP(self, savePath = "data/"):
+    def __fetchCDIP(self, savePath = "data/"):
         """
         Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
         http://cdip.ucsd.edu/
