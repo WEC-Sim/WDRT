@@ -39,7 +39,7 @@ import urllib
 import sys
 
 
-class EA:
+class EA(object):
     '''The Environmental Assessment (EA) class points to functions for 
     various contour methods (including getContours and getSamples) and allows 
     the user to plot results (plotData), sample along the contour 
@@ -2080,7 +2080,7 @@ class NonParaGumbelCopula(EA):
         groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
         
-class Buoy:
+class Buoy(object):
     '''
     This class creates a buoy object to store buoy data for use in the 
     environmental assessment functions available in the ESSC module.
