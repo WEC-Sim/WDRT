@@ -104,6 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#install-options">Install options</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-wdrt-for-python-beginners">Installing WDRT for Python beginners</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installing-wdrt-for-experienced-python-users">Installing WDRT for experienced Python users</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-your-pythonpth">Configuring your PYTHONPTH</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
@@ -255,6 +256,28 @@ python example_fatigue.py
 </pre></div>
 </div>
 </div>
+<div class="section" id="configuring-your-pythonpth">
+<h3>Configuring your PYTHONPTH<a class="headerlink" href="#configuring-your-pythonpth" title="Permalink to this headline">¶</a></h3>
+<p>The following instructions will help you configure your PYTHONPATH, which is a search path Python uses for
+importing other python modules.</p>
+<dl class="docutils">
+<dt><strong>Windows:</strong></dt>
+<dd><div class="first last line-block">
+<div class="line">1.) Navigate to Control Panel -&gt; System -&gt; Advanced system settings -&gt; Environment Variables</div>
+<div class="line">2.) Click &#8220;New...&#8221;</div>
+<div class="line">3.) Under &#8220;Variable Name&#8221; type: PYTHONPATH</div>
+<div class="line">4.) Under &#8220;Variable Value&#8221; enter the location of your Python source directory (i.e &#8220;C:Python27&#8221;)</div>
+</div>
+</dd>
+<dt><strong>Linux/OS X</strong></dt>
+<dd><div class="first last line-block">
+<div class="line">1.) Navigate to your home directory</div>
+<div class="line">2.) Add a line such as &#8220;export PYTHONPATH=“/path/where/your/modules/are/located&#8221; to your .bash_rc file if running Linux, or .bash_profile if running OS X</div>
+<div class="line">3.) Place the modules you would like to import in the directory you specified in the previous step</div>
+</div>
+</dd>
+</dl>
+</div>
 </div>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
@@ -269,8 +292,13 @@ These packages can easily be installed using using <a class="reference external"
 <li><a class="reference external" href="http://scikit-learn.org/stable/">sklearn</a></li>
 <li><a class="reference external" href="http://docs.python-requests.org/en/master/">requests</a></li>
 <li><a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/">BeautifulSoup4</a></li>
+<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a></li>
 </ul>
 </div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the netCDF4 package is only required if you are using a CDIP site in the ESSC module</p>
+</div>
 </div>
 <div class="section" id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
