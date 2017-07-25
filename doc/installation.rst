@@ -76,6 +76,22 @@ The following installation procedure allows for easier updating of the code with
 	python example_shortTermExtreme.py
 	python example_fatigue.py
 
+Configuring your PYTHONPTH
+````````````````````````````
+The following instructions will help you configure your PYTHONPATH, which is a search path Python uses for 
+importing other python modules.
+
+**Windows:** 
+			| 1.) Navigate to Control Panel -> System -> Advanced system settings -> Environment Variables 
+			| 2.) Click "New..." 
+			| 3.) Under "Variable Name" type: PYTHONPATH 
+			| 4.) Under "Variable Value" enter the location of your Python source directory (i.e "C:\Python27")
+**Linux/OS X**
+			| 1.) Navigate to your home directory
+			| 2.) Add a line such as "export PYTHONPATH=“/path/where/your/modules/are/located" to your .bash_rc file if running Linux, or .bash_profile if running OS X
+			| 3.) Place the modules you would like to import in the directory you specified in the previous step
+
+
 Dependencies
 -------------
 `Python 2.7.x <https://www.python.org/downloads/>`_ and the following Python packages are required to run `WDRT`. `WDRT` currently will not fully run on Python 3.5.x.
@@ -88,6 +104,11 @@ These packages can easily be installed using using `pip <https://pypi.python.org
 	* `sklearn <http://scikit-learn.org/stable/>`_
 	* `requests <http://docs.python-requests.org/en/master/>`_
 	* `BeautifulSoup4 <https://www.crummy.com/software/BeautifulSoup/>`_
+	* `netCDF4  <http://unidata.github.io/netcdf4-python/>`_
+
+.. Note::
+
+	the netCDF4 package is only required if you are using a CDIP site in the ESSC module
 
 Troubleshooting
 ---------------
