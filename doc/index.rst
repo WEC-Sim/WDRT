@@ -12,8 +12,8 @@ Features
 The `WDRT` contains a number of code modules to assist in the major processes of WEC survival design analysis:
 
 * **environmental characterization** - metocean environmental analysis and statistics
-* **shortTermExtreme**  - analysis of short-term (sea-state specific) extreme responses
-* **longTermExtreme** - analysis of long-term (design life) extreme responses
+* **short term extremes**  - analysis of short-term (sea-state specific) extreme responses
+* **long term extremes** - analysis of long-term (design life) extreme responses
 * **fatigue** - fatigue analysis
 * **most-likely extreme response (MLER)** - focused-wave construction for efficient high-fidelity modeling
 

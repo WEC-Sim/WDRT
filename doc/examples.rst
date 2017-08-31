@@ -86,7 +86,7 @@ This example is shown below and can found in ``$WDRT_SOURCE/examples/example_sho
 Long-term extreme response analysis
 -----------------------------------
 The long-term extreme response represents the design response for some specific deployment location and time-span.
-Two major classes of approaches are implemented in the WDRT: the contour approach and the full sea state approach.
+Two major classes of approaches are implemented in the WDRT: a `Contour approach`_ and a `Full sea-sate approach`_.
 
 Contour approach
 ````````````````
@@ -133,6 +133,7 @@ For this example, we will simply load data that was previously produced with a s
 The extreme response for each sea state can be defined as a percentile, :math:`\alpha`, in the extreme response distributions.
 The percentile chosen here should ideally be based on some experience with similar systems.
 Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
+Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
 .. literalinclude:: ../examples/example_contourApproach.py
 	:language: python
@@ -187,7 +188,8 @@ For this example, we will simply load data that was previously produced with a s
 ''''''''''''''''''''''''''''''''''''
 As discussed in the `Short-term extreme response analysis`_ example, the short-term extreme response corresponds to some assumed period of interest, often referred to as the storm period.
 Typically 1 to 3 hour storms are considered.
-Obtain the short-term extreme response distribution for the storm duration of interest, :math:`f_{x_{1\textrm{hr}}|H_s, T_e}(x)`.
+The following lines are used to obtain the short-term extreme responses distribution for the storm duration of interest, :math:`f_{x_{1\textrm{hr}}|H_s, T_e}(x)`.
+Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
 .. literalinclude:: ../examples/example_longTermFullSeaState.py
 	:language: python
@@ -279,9 +281,9 @@ The extreme load is often a matter of chance created by the instantaneous positi
 The occurrence of an extreme load should be studied as a stochastic event because of the nature of the irregular sea states.
 The MLER toolbox were developed to generate a focused wave profile that gives the largest response with the consideration of wave statistics based on spectral analysis and the response amplitude operators (RAOs) of the device.
 
-An example can be found in ``$WDRT_SOURCE/WDRT/MLER_toolbox/example/testrun.py``.
+An example can be found in ``$WDRT_SOURCE/examples/example_MLER_testrun.py``.
 
-.. literalinclude:: ../WDRT/MLER_toolbox/example/testrun.py
+.. literalinclude:: ../examples/example_MLER_testrun.py
 	:language: python
    	:linenos:
 

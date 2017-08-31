@@ -29,6 +29,8 @@ BibTex key
 Related publications
 --------------------
 
+-- L. Manuel, P. Nguyen, J. Canning, R. Coe, A.C. Eckert-Gallup, “On the selection of sea states in assessing extreme loads on a wave energy converter,” in: Proceedings of the 5th Marine Energy Technology Symposium (METS), Washington, DC, 2017.
+
 -- A. Eckert-Gallup, and N. Martin, `Kernel density estimation (KDE) with adaptive bandwidth selection for environmental contours of extreme sea states <http://ieeexplore.ieee.org/abstract/document/7761150/>`_, in: OCEANS 2016 MTS/IEEE Monterey. IEEE, 2016.
 
 -- L. Manuel, J. Canning, R. G. Coe, C. Michelen, On the short-term uncertainty in performance of a point absorber wave energy converter, in: Proceedings of the 4th Marine Energy Technology Symposium (METS), Washington, DC, 2016.

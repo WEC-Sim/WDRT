@@ -36,6 +36,7 @@ import copy
 import statsmodels.api as sm
 from statsmodels import robust
 import urllib
+import sys
 
 
 class EA:
@@ -2079,7 +2080,7 @@ class NonParaGumbelCopula(EA):
         groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
         
-class Buoy:
+class Buoy(object):
     '''
     This class creates a buoy object to store buoy data for use in the 
     environmental assessment functions available in the ESSC module.
@@ -2137,7 +2138,7 @@ class Buoy:
 
 
 
-    def fetchFromWeb(self, saveType="txt", savePath = "./Data/"):
+    def fetchFromWeb(self, saveType="txt", savePath = "./Data/",proxy=None):
         '''
         Calls either __fetchCDIP() or __fetchNDBC() depending on the given
         buoy's type and fetches the necessary data from its respective website.
@@ -2152,6 +2153,8 @@ class Buoy:
             NOTE: Only applies 
         savePath : string
             Relative path to place directory with data files.
+        proxy: dict
+            Proxy server and port, i.e., {http":"http://proxyserver:port"}
         Example
         _________
         >>> import WDRT.ESSC as ESSC
@@ -2159,11 +2162,11 @@ class Buoy:
         >>> buoy.fetchFromWeb()
         '''
         if self.buoyType == "NDBC":
-            self.__fetchNDBC(saveType = saveType, savePath = savePath)
+            self.__fetchNDBC(saveType,savePath,proxy)
         elif self.buoyType == "CDIP":
-            self.__fetchCDIP(savePath = savePath)
+            self.__fetchCDIP(savePath,proxy)
 
-    def __fetchNDBC(self,saveType, savePath):
+    def __fetchNDBC(self, saveType, savePath, proxy):
         '''
         Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -2190,7 +2193,10 @@ class Buoy:
             savePath = self.savePath
 
         url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
-        ndbcURL = requests.get(url,proxies = {"http":"http://wwwproxy.sandia.gov:80"})
+        if proxy == None:
+            ndbcURL = requests.get(url)
+        else:
+            ndbcURL = requests.get(url,proxies=proxy)
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
@@ -2464,6 +2470,21 @@ class Buoy:
         else:
             RuntimeError('Buoy object contains no data')
 
+    def __fetchCDIP(self,savePath,proxy):
+        """
+        Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
+        http://cdip.ucsd.edu/
+
+        Parameters
+        ----------
+        savePath : string
+            Relative path to place directory with data files.
+        """
+        url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
+               str(self.buoyNum) +"p1_historic.nc"            
+        filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
+        self.__processCDIPData(filePath)
+
     def __loadCDIP(self, filePath = None):
         """
         Loads the Hs and T values of the given site from the .nc file downloaded from 
@@ -2496,7 +2517,11 @@ class Buoy:
                 File path to the respective .nc file containing the Hs and T values
         """
         import netCDF4
-        data = netCDF4.Dataset(filePath)
+        try:
+            data = netCDF4.Dataset(filePath)
+        except IOError:
+            raise IOError("Could not find data for CDIP site: " + self.buoyNum)
+            
         self.Hs = data["waveHs"][:]
         self.T = data["waveTa"][:]
         data.close()
@@ -2505,22 +2530,7 @@ class Buoy:
         if len(self.Hs)%2 == 0:
             self.__averageValues()
 
-    def __fetchCDIP(self, savePath = "data/"):
-        """
-        Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from
-        http://cdip.ucsd.edu/
 
-        Parameters
-        ----------
-        savePath : string
-            Relative path to place directory with data files.
-        """
-        url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
-               str(self.buoyNum) +"p1_historic.nc"
-        filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
-        print "Downloading data from: " + url
-        urllib.urlretrieve (url, filePath)
-        self.__processCDIPData(filePath)
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any

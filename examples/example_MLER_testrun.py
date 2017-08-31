@@ -1,8 +1,5 @@
-import sys, os
-libpath     = os.environ['HOME']+'/WDRT/WDRT/MLER_toolbox'
-RAOdir      = libpath+'/example/RAO_data/'
-outputDir   = libpath+'/example/TestData/'
-if (libpath not in sys.path): sys.path.append(libpath)
+RAOdir      = './data/RAO_data/'
+outputDir   = './data/TestData/'
 import mler
 
 # Create the object

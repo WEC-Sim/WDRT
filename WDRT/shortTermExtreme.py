@@ -194,7 +194,7 @@ def empiricalCdf(x,m=0):
     N = len(x_cdf) + m
     i = np.arange(N) + 1.
     cdf = (i) / (N + 1.)
-    return x_cdf, cdf[m:]
+    return x_cdf, cdf[int(m):]
 
 
 def cdf2pdf(x, cdf):
