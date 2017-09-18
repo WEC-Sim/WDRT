@@ -18,7 +18,7 @@ BibTex key
 
 	@InProceedings{,
 	    author    = {Ryan G. Coe and Carlos Michelen and Aubrey C. Eckert-Gallup and Yi-Hsiang Yu and Jennifer van Rij},
-	    title     = {A toolbox for extreme response and fatigue analysis of WECs},
+	    title     = {{WDRT}: A toolbox for extreme response and fatigue analysis of WECs},
 	    booktitle = {METS2016},
 	    Address   = {Washington, D.C.},
 	    year      = {2016},
