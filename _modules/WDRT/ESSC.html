@@ -178,6 +178,10 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">statsmodels</span> <span class="kn">import</span> <span class="n">robust</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 
 <div class="viewcode-block" id="EA"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.EA">[docs]</a><span class="k">class</span> <span class="nc">EA</span><span class="p">:</span>
@@ -293,7 +297,7 @@
 <span class="sd">                import numpy as np</span>
 <span class="sd">                </span>
 <span class="sd">                # Pull spectral data from NDBC website</span>
-<span class="sd">                buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">                buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">                buoy46022.fetchFromWeb()</span>
 <span class="sd">                </span>
 <span class="sd">                # Create PCA EA object for buoy</span>
@@ -377,7 +381,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create PCA EA object for buoy</span>
@@ -451,7 +455,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create PCA EA object for buoy</span>
@@ -477,6 +481,7 @@
             <span class="n">boot_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
             <span class="n">buoycopy</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">[</span><span class="n">boot_inds</span><span class="p">])</span>
             <span class="n">buoycopy</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">boot_inds</span><span class="p">])</span>
+            <span class="n">essccopy</span><span class="o">=</span><span class="bp">None</span>            
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Principle component analysis&quot;</span><span class="p">:</span>
                 <span class="n">essccopy</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_bin</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">:</span>
@@ -487,6 +492,12 @@
                 <span class="n">essccopy</span> <span class="o">=</span> <span class="n">ClaytonCopula</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_1_limit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_step</span><span class="p">)</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Gumbel Copula&quot;</span><span class="p">:</span>
                 <span class="n">essccopy</span> <span class="o">=</span> <span class="n">GumbelCopula</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_1_limit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Non-parametric Gaussian Copula&quot;</span><span class="p">:</span>
+                <span class="n">essccopy</span> <span class="o">=</span> <span class="n">NonParaGaussianCopula</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Non-parametric Clayton Copula&quot;</span><span class="p">:</span>
+                <span class="n">essccopy</span> <span class="o">=</span> <span class="n">NonParaClaytonCopula</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Non-parametric Gumbel Copula&quot;</span><span class="p">:</span>
+                <span class="n">essccopy</span> <span class="o">=</span> <span class="n">NonParaGumbelCopula</span><span class="p">(</span><span class="n">buoycopy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span><span class="p">)</span>
             <span class="n">Hs_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">T_Return_Boot</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">essccopy</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">)</span>
 
         <span class="n">contour97_5_Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">Hs_Return_Boot</span><span class="p">,</span><span class="mf">97.5</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -565,8 +576,79 @@
         <span class="c1"># Estimate coefficients of standard deviation of Ln(T|Hs) (vector 3x1) (quadratic in Hs)</span>
         <span class="n">std_cond</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">phi_std</span><span class="p">,</span><span class="n">para_dist_cond</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">para_dist_1</span><span class="p">,</span> <span class="n">para_dist_2</span><span class="p">,</span> <span class="n">mean_cond</span><span class="p">,</span> <span class="n">std_cond</span></div>
+        <span class="k">return</span> <span class="n">para_dist_1</span><span class="p">,</span> <span class="n">para_dist_2</span><span class="p">,</span> <span class="n">mean_cond</span><span class="p">,</span> <span class="n">std_cond</span>
+        
+    <span class="k">def</span> <span class="nf">__getNonParaCopulaParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Ndata</span><span class="p">,</span> <span class="n">max_T</span><span class="p">,</span> <span class="n">max_Hs</span><span class="p">):</span>
+        <span class="n">sorted_idx</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)),</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+        <span class="n">Hs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span>
+        
+        <span class="c1"># Calcualte KDE bounds (this may be added as an input later)</span>
+        <span class="n">min_limit_1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_limit_1</span> <span class="o">=</span> <span class="n">max_Hs</span>
+        <span class="n">min_limit_2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_limit_2</span> <span class="o">=</span> <span class="n">max_T</span>   
+        
+        <span class="c1"># Discretize for KDE</span>
+        <span class="n">pts_hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_limit_1</span><span class="p">,</span> <span class="n">max_limit_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">)</span> 
+        <span class="n">pts_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_limit_2</span><span class="p">,</span> <span class="n">max_limit_2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate optimal bandwidth for T and Hs</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">robust</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">mad</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+        <span class="n">bwT</span> <span class="o">=</span> <span class="n">sig</span><span class="o">*</span><span class="p">(</span><span class="mf">4.0</span><span class="o">/</span><span class="p">(</span><span class="mf">3.0</span><span class="o">*</span><span class="n">num</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">5.0</span><span class="p">)</span>
+        
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">robust</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">mad</span><span class="p">(</span><span class="n">Hs</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Hs</span><span class="p">))</span>
+        <span class="n">bwHs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">*</span><span class="p">(</span><span class="mf">4.0</span><span class="o">/</span><span class="p">(</span><span class="mf">3.0</span><span class="o">*</span><span class="n">num</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">5.0</span><span class="p">)</span>
+        
+        <span class="c1"># Nonparametric PDF for T</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">nonparametric</span><span class="o">.</span><span class="n">KDEUnivariate</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">bw</span> <span class="o">=</span> <span class="n">bwT</span><span class="p">)</span>
+        <span class="n">f_t</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">pts_t</span><span class="p">)</span>
+        
+        <span class="c1"># Nonparametric CDF for Hs</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">nonparametric</span><span class="o">.</span><span class="n">KDEUnivariate</span><span class="p">(</span><span class="n">Hs</span><span class="p">)</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">bw</span> <span class="o">=</span> <span class="n">bwHs</span><span class="p">)</span>
+        <span class="n">tempPDF</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">pts_hs</span><span class="p">)</span>
+        <span class="n">F_hs</span> <span class="o">=</span> <span class="n">tempPDF</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">tempPDF</span><span class="p">)</span>
+        <span class="n">F_hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">F_hs</span><span class="p">)</span>
+        
+        <span class="c1"># Nonparametric CDF for T</span>
+        <span class="n">F_t</span> <span class="o">=</span> <span class="n">f_t</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">f_t</span><span class="p">)</span>
+        <span class="n">F_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">F_t</span><span class="p">)</span>
+        
+        <span class="n">nonpara_dist_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pts_hs</span><span class="p">,</span> <span class="n">F_hs</span><span class="p">]))</span>
+        <span class="n">nonpara_dist_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pts_t</span><span class="p">,</span> <span class="n">F_t</span><span class="p">]))</span>
+        <span class="n">nonpara_pdf_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pts_t</span><span class="p">,</span> <span class="n">f_t</span><span class="p">]))</span>
+        
+        <span class="k">return</span> <span class="n">nonpara_dist_1</span><span class="p">,</span> <span class="n">nonpara_dist_2</span><span class="p">,</span> <span class="n">nonpara_pdf_2</span>
+        
+    <span class="k">def</span> <span class="nf">__gumbelCopula</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Calculates the Gumbel copula density</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u: np.array</span>
+<span class="sd">                    Vector of equally spaced points between 0 and twice the</span>
+<span class="sd">                    maximum value of T.</span>
+<span class="sd">        alpha: float</span>
+<span class="sd">                    Copula parameter. Must be greater than or equal to 1.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y: np.array</span>
+<span class="sd">                   Copula density function.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#Ignore divide by 0 warnings and resulting NaN warnings</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>        
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">vmin</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">nlogC</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">vmin</span> <span class="o">/</span> <span class="n">vmax</span><span class="p">)</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span><span class="n">nlogC</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">nlogC</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">+</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nlogC</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
 
+        <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>        </div>
 
 <div class="viewcode-block" id="PCA"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.PCA">[docs]</a><span class="k">class</span> <span class="nc">PCA</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">size_bin</span><span class="o">=</span><span class="mf">250.</span><span class="p">):</span>
@@ -688,7 +770,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create PCA EA object for buoy</span>
@@ -771,7 +853,7 @@
 <span class="sd">                import WDRT.ESSC as ESSC</span>
 <span class="sd">                </span>
 <span class="sd">                # Pull spectral data from NDBC website</span>
-<span class="sd">                buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">                buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">                buoy46022.fetchFromWeb()</span>
 <span class="sd">                </span>
 <span class="sd">                # Create PCA EA object for buoy</span>
@@ -856,7 +938,7 @@
 
         <span class="k">return</span> <span class="n">Hs_Sample</span><span class="p">,</span> <span class="n">T_Sample</span><span class="p">,</span> <span class="n">Weight_points</span></div>
     
-<div class="viewcode-block" id="PCA.plotData"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.PCA.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PCA.plotSampleData"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.PCA.plotSampleData">[docs]</a>    <span class="k">def</span> <span class="nf">plotSampleData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Display a plot of the 100-year return contour, full sea state samples</span>
 <span class="sd">        and contour samples</span>
@@ -1214,7 +1296,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create Environtmal Analysis object using above parameters</span>
@@ -1338,7 +1420,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create Environtmal Analysis object using above parameters</span>
@@ -1461,7 +1543,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create Environtmal Analysis object using above parameters</span>
@@ -1530,6 +1612,10 @@
 <span class="sd">                maximum value of Hs for the first bin</span>
 <span class="sd">            bin_step: float</span>
 <span class="sd">                overlap interval for each bin</span>
+<span class="sd">            Ndata: int</span>
+<span class="sd">                discretization used in the Gumbel copula density estimation, </span>
+<span class="sd">                must be less than the number of contour points used in </span>
+<span class="sd">                getContours</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;Gumbel Copula&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span> <span class="o">=</span> <span class="n">buoy</span>
@@ -1586,7 +1672,7 @@
 <span class="sd">            import WDRT.ESSC as ESSC</span>
 <span class="sd">            </span>
 <span class="sd">            # Pull spectral data from NDBC website</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            </span>
 <span class="sd">            # Create Environtmal Analysis object using above parameters</span>
@@ -1625,7 +1711,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)):</span>
             <span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">fi_u1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fi_u1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">)</span>
             <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">z1</span><span class="p">,</span><span class="n">z2</span><span class="p">))</span>
-            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gumbelCopula</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">theta_gum</span><span class="p">)</span> <span class="c1"># Copula density function</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EA__gumbelCopula</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">theta_gum</span><span class="p">)</span> <span class="c1"># Copula density function</span>
             <span class="n">Y</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
             <span class="n">p_x2_x1</span> <span class="o">=</span> <span class="n">Y</span><span class="o">*</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">para_dist_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">para_dist_2</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="c1"># pdf 2|1, f(comp_2|comp_1)=c(z1,z2)*f(comp_2)</span>
             <span class="n">dum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">p_x2_x1</span><span class="p">)</span>
@@ -1663,36 +1749,483 @@
         <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;para_dist_1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">para_dist_1</span><span class="p">)</span>
         <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;para_dist_2&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">para_dist_2</span><span class="p">)</span>
         <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;mean_cond&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_cond</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;std_cond&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">std_cond</span><span class="p">)</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;std_cond&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">std_cond</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__gumbelCopula</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Calculates the Gumbel copula density</span>
+<div class="viewcode-block" id="NonParaGaussianCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGaussianCopula">[docs]</a><span class="k">class</span> <span class="nc">NonParaGaussianCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a NonParaGaussianCopula EA class for a buoy object. Contours</span>
+<span class="sd">    generated under this class will use a Gaussian copula with non-parametric</span>
+<span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        u: np.array</span>
-<span class="sd">                    Vector of equally spaced points between 0 and twice the</span>
-<span class="sd">                    maximum value of T.</span>
-<span class="sd">        alpha: float</span>
-<span class="sd">                    Copula parameter. Must be greater than or equal to 1.</span>
+<span class="sd">            buoy : NDBCData</span>
+<span class="sd">                ESSC.Buoy Object</span>
+<span class="sd">            NData: int</span>
+<span class="sd">                discretization resolution used in KDE construction</span>
+<span class="sd">            max_T:float</span>
+<span class="sd">                Maximum T value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(T)</span>
+<span class="sd">            max_Hs:float</span>
+<span class="sd">                Maximum Hs value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(Hs)    </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;Non-parametric Gaussian Copula&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span> <span class="o">=</span> <span class="n">buoy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span> <span class="o">=</span> <span class="n">Ndata</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.Hs_SampleCA = None</span>
+<span class="c1">#        self.Hs_SampleFSS = None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.T_SampleCA = None</span>
+<span class="c1">#        self.T_SampleFSS = None</span>
+
+<span class="c1">#        self.Weight_points = None</span>
+
+<span class="c1">#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)</span>
+        <span class="k">if</span> <span class="n">max_T</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_T</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        <span class="k">if</span> <span class="n">max_Hs</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_Hs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span> <span class="o">=</span> <span class="n">max_T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span> <span class="o">=</span> <span class="n">max_Hs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_pdf_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EA__getNonParaCopulaParams</span><span class="p">(</span><span class="n">Ndata</span><span class="p">,</span><span class="n">max_T</span><span class="p">,</span><span class="n">max_Hs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NonParaGaussianCopula.getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGaussianCopula.getContours">[docs]</a>    <span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_ss</span><span class="p">,</span> <span class="n">time_r</span><span class="p">,</span> <span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State Gaussian Copula Contour function.</span>
+<span class="sd">        This function calculates environmental contours of extreme sea states </span>
+<span class="sd">        using a Gaussian copula with non-parametric marginal distribution fits</span>
+<span class="sd">        and the inverse first-order reliability method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ___________</span>
+<span class="sd">        time_ss : float</span>
+<span class="sd">            Sea state duration (hours) of measurements in input.</span>
+<span class="sd">        time_r : np.array</span>
+<span class="sd">            Desired return period (years) for calculation of environmental</span>
+<span class="sd">            contour, can be a scalar or a vector.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space used for</span>
+<span class="sd">            inverse FORM calculation.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        y: np.array</span>
-<span class="sd">                   Copula density function.</span>
+<span class="sd">        Hs_Return : np.array</span>
+<span class="sd">            Calculated Hs values along the contour boundary following</span>
+<span class="sd">            return to original input orientation.</span>
+<span class="sd">        T_Return : np.array</span>
+<span class="sd">           Calculated T values along the contour boundary following</span>
+<span class="sd">           return to original input orientation.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        To obtain the contours for a NDBC buoy::</span>
+<span class="sd">            </span>
+<span class="sd">            import WDRT.ESSC as ESSC</span>
+<span class="sd">            </span>
+<span class="sd">            # Pull spectral data from NDBC website</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
+<span class="sd">            buoy46022.fetchFromWeb()</span>
+<span class="sd">            </span>
+<span class="sd">            # Create Environtmal Analysis object using above parameters</span>
+<span class="sd">            NonParaGauss46022 = ESSC.NonParaGaussianCopula(buoy46022)</span>
+<span class="sd">            </span>
+<span class="sd">            # Declare required parameters</span>
+<span class="sd">            Time_SS = 1.  # Sea state duration (hrs)</span>
+<span class="sd">            Time_r = 100  # Return periods (yrs) of interest</span>
+<span class="sd">            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)</span>
+<span class="sd">            </span>
+<span class="sd">            # Non-Parametric Gaussian copula contour generation example</span>
+<span class="sd">            Hs_Return, T_Return = NonParaGauss46022.getContours(Time_SS, Time_r,nb_steps)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1">#Ignore divide by 0 warnings and resulting NaN warnings</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>        
-        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">vmin</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">vmax</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">nlogC</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">vmin</span> <span class="o">/</span> <span class="n">vmax</span><span class="p">)</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">alpha</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span><span class="n">nlogC</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">nlogC</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">+</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nlogC</span><span class="p">))</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span> <span class="o">=</span> <span class="n">time_ss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span> <span class="o">=</span> <span class="n">time_r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span> <span class="o">=</span> <span class="n">nb_steps</span>
+        
+        <span class="n">comp_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">comp_2_Gau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        
+        <span class="c1"># Inverse FORM</span>
+        <span class="n">p_f</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="p">(</span><span class="mi">24</span> <span class="o">/</span> <span class="n">time_ss</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_r</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_f</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reliability</span>
+        
+        <span class="c1"># Normal Space</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">U1</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">U2</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        
+        <span class="c1"># Copula parameters</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kendalltau</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="c1"># Calculate Kendall&#39;s tau    </span>
+        <span class="n">rho_gau</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.</span><span class="p">);</span>
+        
+        <span class="c1"># Component 1 (Hs)</span>
+        <span class="n">z1_Hs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="c1"># Component 2 (T)</span>
+        
+        <span class="n">z2_Gau</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">rho_gau</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span><span class="o">+</span><span class="n">rho_gau</span><span class="o">*</span><span class="n">U1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">z2_Gau</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_2_Gau</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">z2_Gau</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_2_Gau</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">comp_2_Gau</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+        <span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">comp_1</span>
+        <span class="n">T_Return</span> <span class="o">=</span> <span class="n">comp_2_Gau</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="n">Hs_Return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="n">T_Return</span>
+        <span class="k">return</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span></div>
+
+<div class="viewcode-block" id="NonParaGaussianCopula.getSamples"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGaussianCopula.getSamples">[docs]</a>    <span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Currently not implemented in this version.&#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_saveParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupObj</span><span class="p">):</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">)</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_2&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="NonParaClaytonCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaClaytonCopula">[docs]</a><span class="k">class</span> <span class="nc">NonParaClaytonCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a NonParaClaytonCopula EA class for a buoy object. Contours</span>
+<span class="sd">    generated under this class will use a Clayton copula with non-parametric</span>
+<span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            buoy : NDBCData</span>
+<span class="sd">                ESSC.Buoy Object</span>
+<span class="sd">            NData: int</span>
+<span class="sd">                discretization resolution used in KDE construction</span>
+<span class="sd">            max_T:float</span>
+<span class="sd">                Maximum T value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(T)</span>
+<span class="sd">            max_Hs:float</span>
+<span class="sd">                Maximum Hs value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(Hs)    </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;Non-parametric Clayton Copula&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span> <span class="o">=</span> <span class="n">buoy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span> <span class="o">=</span> <span class="n">Ndata</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.Hs_SampleCA = None</span>
+<span class="c1">#        self.Hs_SampleFSS = None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.T_SampleCA = None</span>
+<span class="c1">#        self.T_SampleFSS = None</span>
+
+<span class="c1">#        self.Weight_points = None</span>
+
+<span class="c1">#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)</span>
+        <span class="k">if</span> <span class="n">max_T</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_T</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        <span class="k">if</span> <span class="n">max_Hs</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_Hs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span> <span class="o">=</span> <span class="n">max_T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span> <span class="o">=</span> <span class="n">max_Hs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_pdf_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EA__getNonParaCopulaParams</span><span class="p">(</span><span class="n">Ndata</span><span class="p">,</span><span class="n">max_T</span><span class="p">,</span><span class="n">max_Hs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NonParaClaytonCopula.getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaClaytonCopula.getContours">[docs]</a>    <span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_ss</span><span class="p">,</span> <span class="n">time_r</span><span class="p">,</span> <span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State non-parameteric Clayton Copula Contour</span>
+<span class="sd">        function. This function calculates environmental contours of extreme</span>
+<span class="sd">        sea states using a Clayton copula with non-parametric marginal</span>
+<span class="sd">        distribution fits and the inverse first-order reliability method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ___________</span>
+<span class="sd">        time_ss : float</span>
+<span class="sd">            Sea state duration (hours) of measurements in input.</span>
+<span class="sd">        time_r : np.array</span>
+<span class="sd">            Desired return period (years) for calculation of environmental</span>
+<span class="sd">            contour, can be a scalar or a vector.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space used for</span>
+<span class="sd">            inverse FORM calculation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Hs_Return : np.array</span>
+<span class="sd">            Calculated Hs values along the contour boundary following</span>
+<span class="sd">            return to original input orientation.</span>
+<span class="sd">        T_Return : np.array</span>
+<span class="sd">           Calculated T values along the contour boundary following</span>
+<span class="sd">           return to original input orientation.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        To obtain the contours for a NDBC buoy::</span>
+<span class="sd">            </span>
+<span class="sd">            import WDRT.ESSC as ESSC</span>
+<span class="sd">            </span>
+<span class="sd">            # Pull spectral data from NDBC website</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
+<span class="sd">            buoy46022.fetchFromWeb()</span>
+<span class="sd">            </span>
+<span class="sd">            # Create Environtmal Analysis object using above parameters</span>
+<span class="sd">            NonParaClayton46022 = ESSC.NonParaClaytonCopula(buoy46022)</span>
+<span class="sd">            </span>
+<span class="sd">            # Declare required parameters</span>
+<span class="sd">            Time_SS = 1.  # Sea state duration (hrs)</span>
+<span class="sd">            Time_r = 100  # Return periods (yrs) of interest</span>
+<span class="sd">            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)</span>
+<span class="sd">            </span>
+<span class="sd">            # Non-Parametric Clayton copula contour generation example</span>
+<span class="sd">            Hs_Return, T_Return = NonParaClayton46022.getContours(Time_SS, Time_r,nb_steps)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span> <span class="o">=</span> <span class="n">time_ss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span> <span class="o">=</span> <span class="n">time_r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span> <span class="o">=</span> <span class="n">nb_steps</span>
+        
+        <span class="n">comp_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">comp_2_Clay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        
+        <span class="c1"># Inverse FORM</span>
+        <span class="n">p_f</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="p">(</span><span class="mi">24</span> <span class="o">/</span> <span class="n">time_ss</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_r</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_f</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reliability</span>
+        
+        <span class="c1"># Normal Space</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">U1</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">U2</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        
+        <span class="c1"># Copula parameters</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kendalltau</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="c1"># Calculate Kendall&#39;s tau    </span>
+        <span class="n">theta_clay</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">tau</span><span class="p">);</span>
+        
+        <span class="c1"># Component 1 (Hs)</span>
+        <span class="n">z1_Hs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="c1"># Component 2 (T)</span>
+        
+        <span class="n">z2_Clay</span><span class="o">=</span><span class="p">((</span><span class="mf">1.</span><span class="o">-</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">theta_clay</span><span class="p">)</span><span class="o">+</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">theta_clay</span><span class="p">)</span><span class="o">/</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="n">theta_clay</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">theta_clay</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">theta_clay</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">z2_Clay</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_2_Clay</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">z2_Clay</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_2_Clay</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">comp_2_Clay</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">comp_1</span>
+        <span class="n">T_Return</span> <span class="o">=</span> <span class="n">comp_2_Clay</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="n">Hs_Return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="n">T_Return</span>
+        <span class="k">return</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span></div>
+
+<div class="viewcode-block" id="NonParaClaytonCopula.getSamples"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaClaytonCopula.getSamples">[docs]</a>    <span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Currently not implemented in this version.&#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_saveParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupObj</span><span class="p">):</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">)</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_2&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NonParaGumbelCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGumbelCopula">[docs]</a><span class="k">class</span> <span class="nc">NonParaGumbelCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a NonParaGumbelCopula EA class for a buoy object. Contours</span>
+<span class="sd">    generated under this class will use a Gumbel copula with non-parametric</span>
+<span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            buoy : NDBCData</span>
+<span class="sd">                ESSC.Buoy Object</span>
+<span class="sd">            NData: int</span>
+<span class="sd">                discretization resolution used in KDE construction</span>
+<span class="sd">            max_T:float</span>
+<span class="sd">                Maximum T value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(T)</span>
+<span class="sd">            max_Hs:float</span>
+<span class="sd">                Maximum Hs value for KDE contstruction, must include possible </span>
+<span class="sd">                range of contour. Default value is 2*max(Hs)    </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;Non-parametric Gumbel Copula&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span> <span class="o">=</span> <span class="n">buoy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span> <span class="o">=</span> <span class="n">Ndata</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.Hs_SampleCA = None</span>
+<span class="c1">#        self.Hs_SampleFSS = None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1">#        self.T_SampleCA = None</span>
+<span class="c1">#        self.T_SampleFSS = None</span>
+
+<span class="c1">#        self.Weight_points = None</span>
+
+<span class="c1">#        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)</span>
+        <span class="k">if</span> <span class="n">max_T</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_T</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        <span class="k">if</span> <span class="n">max_Hs</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">max_Hs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">2.</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_T</span> <span class="o">=</span> <span class="n">max_T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_Hs</span> <span class="o">=</span> <span class="n">max_Hs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_pdf_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EA__getNonParaCopulaParams</span><span class="p">(</span><span class="n">Ndata</span><span class="p">,</span><span class="n">max_T</span><span class="p">,</span><span class="n">max_Hs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NonParaGumbelCopula.getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGumbelCopula.getContours">[docs]</a>    <span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_ss</span><span class="p">,</span> <span class="n">time_r</span><span class="p">,</span> <span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State non-parameteric Gumbel Copula Contour</span>
+<span class="sd">        function. This function calculates environmental contours of extreme</span>
+<span class="sd">        sea states using a Gumbel copula with non-parametric marginal</span>
+<span class="sd">        distribution fits and the inverse first-order reliability method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ___________</span>
+<span class="sd">        time_ss : float</span>
+<span class="sd">            Sea state duration (hours) of measurements in input.</span>
+<span class="sd">        time_r : np.array</span>
+<span class="sd">            Desired return period (years) for calculation of environmental</span>
+<span class="sd">            contour, can be a scalar or a vector.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space used for</span>
+<span class="sd">            inverse FORM calculation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Hs_Return : np.array</span>
+<span class="sd">            Calculated Hs values along the contour boundary following</span>
+<span class="sd">            return to original input orientation.</span>
+<span class="sd">        T_Return : np.array</span>
+<span class="sd">           Calculated T values along the contour boundary following</span>
+<span class="sd">           return to original input orientation.</span>
+<span class="sd">        nb_steps : float</span>
+<span class="sd">            Discretization of the circle in the normal space</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        To obtain the contours for a NDBC buoy::</span>
+<span class="sd">            </span>
+<span class="sd">            import WDRT.ESSC as ESSC</span>
+<span class="sd">            </span>
+<span class="sd">            # Pull spectral data from NDBC website</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
+<span class="sd">            buoy46022.fetchFromWeb()</span>
+<span class="sd">            </span>
+<span class="sd">            # Create Environtmal Analysis object using above parameters</span>
+<span class="sd">            NonParaGumbel46022 = ESSC.NonParaGumbelCopula(buoy46022)</span>
+<span class="sd">            </span>
+<span class="sd">            # Declare required parameters</span>
+<span class="sd">            Time_SS = 1.  # Sea state duration (hrs)</span>
+<span class="sd">            Time_r = 100  # Return periods (yrs) of interest</span>
+<span class="sd">            nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)</span>
+<span class="sd">            </span>
+<span class="sd">            # Non-Parametric Gumbel copula contour generation example</span>
+<span class="sd">            Hs_Return, T_Return = NonParaGumbel46022.getContours(Time_SS, Time_r,nb_steps)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span> <span class="o">=</span> <span class="n">time_ss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span> <span class="o">=</span> <span class="n">time_r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span> <span class="o">=</span> <span class="n">nb_steps</span>
+        
+        <span class="n">comp_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">comp_2_Gumb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_steps</span><span class="p">)</span>
+        
+        <span class="c1"># Inverse FORM</span>
+        <span class="n">p_f</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="p">(</span><span class="mi">24</span> <span class="o">/</span> <span class="n">time_ss</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_r</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p_f</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reliability</span>
+        
+        <span class="c1"># Normal Space</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">nb_steps</span><span class="p">)</span>
+        <span class="n">U1</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">U2</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        
+        <span class="c1"># Copula parameters</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">kendalltau</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="c1"># Calculate Kendall&#39;s tau    </span>
+        <span class="n">theta_gum</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">tau</span><span class="p">);</span>
+        
+        <span class="c1"># Component 1 (Hs)</span>
+        <span class="n">z1_Hs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">z1_Hs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span> 
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">comp_1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="c1"># Component 2 (T)</span>
+        
+        <span class="n">fi_u1</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U1</span><span class="p">);</span>
+        <span class="n">fi_u2</span><span class="o">=</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">U2</span><span class="p">);</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">):</span>
+            <span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">fi_u1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fi_u1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">)</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">z1</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EA__gumbelCopula</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">theta_gum</span><span class="p">)</span>
+            <span class="n">Y</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="c1"># Need to look into this</span>
+            <span class="n">p_x2_x1</span> <span class="o">=</span> <span class="n">Y</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_pdf_2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">p_x2_x1</span><span class="p">)</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="n">dum</span><span class="o">/</span><span class="p">(</span><span class="n">dum</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_pdf_2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">cdf</span><span class="p">))</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ndata</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">fi_u2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">comp_2_Gumb</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">fi_u2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">table</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">comp_2_Gumb</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">table</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">comp_2_Gumb</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">table</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 
 
-<div class="viewcode-block" id="Buoy"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy">[docs]</a><span class="k">class</span> <span class="nc">Buoy</span><span class="p">:</span>
+        <span class="n">Hs_Return</span> <span class="o">=</span> <span class="n">comp_1</span>
+        <span class="n">T_Return</span> <span class="o">=</span> <span class="n">comp_2_Gumb</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="n">Hs_Return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="n">T_Return</span>
+        <span class="k">return</span> <span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span></div>
+
+<div class="viewcode-block" id="NonParaGumbelCopula.getSamples"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.NonParaGumbelCopula.getSamples">[docs]</a>    <span class="k">def</span> <span class="nf">getSamples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Currently not implemented in this version.&#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_saveParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupObj</span><span class="p">):</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_1&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_1</span><span class="p">)</span>
+        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nonpara_dist_2&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nonpara_dist_2</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Buoy"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy">[docs]</a><span class="k">class</span> <span class="nc">Buoy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This class creates a buoy object to store buoy data for use in the </span>
 <span class="sd">    environmental assessment functions available in the ESSC module.</span>
@@ -1718,13 +2251,15 @@
 
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoyNum</span><span class="p">,</span> <span class="n">savePath</span> <span class="o">=</span> <span class="s1">&#39;./Data/&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoyNum</span><span class="p">,</span> <span class="n">buoyType</span><span class="p">,</span> <span class="n">savePath</span> <span class="o">=</span> <span class="s1">&#39;./Data/&#39;</span><span class="p">):</span>
 
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ___________</span>
 <span class="sd">            buoyNum : string</span>
 <span class="sd">                device number for desired buoy</span>
+<span class="sd">            buoyType : string</span>
+<span class="sd">                type of buoy device, available options are &#39;NDBC&#39; or &#39;CDIP&#39;</span>
 <span class="sd">            savePath : string</span>
 <span class="sd">                relative path where the data read from ndbc.noaa.gov will be stored</span>
 
@@ -1738,6 +2273,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dateNum</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span> <span class="o">=</span> <span class="n">buoyNum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buoyType</span> <span class="o">=</span> <span class="n">buoyType</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">savePath</span> <span class="o">=</span> <span class="n">savePath</span>
 
 
@@ -1746,8 +2282,38 @@
 
 
 
-<div class="viewcode-block" id="Buoy.fetchFromWeb"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.fetchFromWeb">[docs]</a>    <span class="k">def</span> <span class="nf">fetchFromWeb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saveType</span><span class="o">=</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">savePath</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Searches ndbc.noaa.gov for the historical spectral wave density</span>
+
+<div class="viewcode-block" id="Buoy.fetchFromWeb"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.fetchFromWeb">[docs]</a>    <span class="k">def</span> <span class="nf">fetchFromWeb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saveType</span><span class="o">=</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="n">savePath</span> <span class="o">=</span> <span class="s2">&quot;./Data/&quot;</span><span class="p">,</span><span class="n">proxy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calls either __fetchCDIP() or __fetchNDBC() depending on the given</span>
+<span class="sd">        buoy&#39;s type and fetches the necessary data from its respective website.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        saveType: string</span>
+<span class="sd">            If set to to &quot;h5&quot;, the data will be saved in a compressed .h5</span>
+<span class="sd">            file</span>
+<span class="sd">            If set to &quot;txt&quot;, the data will be stored in a raw .txt file</span>
+<span class="sd">            Otherwise, a file will not be created</span>
+<span class="sd">            NOTE: Only applies </span>
+<span class="sd">        savePath : string</span>
+<span class="sd">            Relative path to place directory with data files.</span>
+<span class="sd">        proxy: dict</span>
+<span class="sd">            Proxy server and port, i.e., {http&quot;:&quot;http://proxyserver:port&quot;}</span>
+<span class="sd">        Example</span>
+<span class="sd">        _________</span>
+<span class="sd">        &gt;&gt;&gt; import WDRT.ESSC as ESSC</span>
+<span class="sd">        &gt;&gt;&gt; buoy = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; buoy.fetchFromWeb()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyType</span> <span class="o">==</span> <span class="s2">&quot;NDBC&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__fetchNDBC</span><span class="p">(</span><span class="n">saveType</span><span class="p">,</span><span class="n">savePath</span><span class="p">,</span><span class="n">proxy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyType</span> <span class="o">==</span> <span class="s2">&quot;CDIP&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__fetchCDIP</span><span class="p">(</span><span class="n">savePath</span><span class="p">,</span><span class="n">proxy</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__fetchNDBC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saveType</span><span class="p">,</span> <span class="n">savePath</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Searches ndbc.noaa.gov for the historical spectral wave density</span>
 <span class="sd">        data of a given device and writes the annual files from the website</span>
 <span class="sd">        to a single .txt file, and stores the values in the swdList, freqList,</span>
 <span class="sd">        and dateList member variables.</span>
@@ -1759,13 +2325,9 @@
 <span class="sd">            file</span>
 <span class="sd">            If set to &quot;txt&quot;, the data will be stored in a raw .txt file</span>
 <span class="sd">            Otherwise, a file will not be created</span>
+<span class="sd">            NOTE: Only applies </span>
 <span class="sd">        savePath : string</span>
 <span class="sd">            Relative path to place directory with data files.</span>
-<span class="sd">        Example</span>
-<span class="sd">        _________</span>
-<span class="sd">        &gt;&gt;&gt; import WDRT.ESSC as ESSC</span>
-<span class="sd">        &gt;&gt;&gt; buoy = ESSC.Buoy(&#39;46022&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; buoy.fetchFromWeb()</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">numLines</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">numCols</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1776,7 +2338,10 @@
             <span class="n">savePath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">savePath</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.ndbc.noaa.gov/station_history.php?station=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span>
-        <span class="n">ndbcURL</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;http&quot;</span><span class="p">:</span><span class="s2">&quot;http://wwwproxy.sandia.gov:80&quot;</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">proxy</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ndbcURL</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ndbcURL</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">proxies</span><span class="o">=</span><span class="n">proxy</span><span class="p">)</span>
         <span class="n">ndbcURL</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="n">ndbcHTML</span> <span class="o">=</span> <span class="n">bs4</span><span class="o">.</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">ndbcURL</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">ndbcHTML</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Spectral wave density data: &quot;</span><span class="p">)</span>
@@ -1887,9 +2452,10 @@
 
                 <span class="k">if</span><span class="p">(</span><span class="n">saveType</span> <span class="ow">is</span> <span class="s2">&quot;txt&quot;</span><span class="p">):</span>
                     <span class="n">swdFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prepData</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepData</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Buoy.loadFromText"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.loadFromText">[docs]</a>    <span class="k">def</span> <span class="nf">loadFromText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirPath</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Buoy.loadFromText"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.loadFromText">[docs]</a>    <span class="k">def</span> <span class="nf">loadFromText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirPath</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Loads NDBC data previously downloaded to a series of text files in the</span>
 <span class="sd">        specified directory.</span>
 
@@ -1908,7 +2474,7 @@
 <span class="sd">        created using fetchFromWeb():</span>
 
 <span class="sd">            import WDRT.ESSC as ESSC</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.loadFromText()</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">dateVals</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1967,6 +2533,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dateList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dateValues</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepData</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="Buoy.loadFile"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirPath</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyType</span> <span class="o">==</span> <span class="s2">&quot;NDBC&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">(</span><span class="n">dirPath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyType</span> <span class="o">==</span> <span class="s2">&quot;CDIP&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadCDIP</span><span class="p">(</span><span class="n">dirPath</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Buoy.loadFromH5"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.loadFromH5">[docs]</a>    <span class="k">def</span> <span class="nf">loadFromH5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads NDBC data previously saved in a .h5 file</span>
@@ -1980,7 +2552,7 @@
 <span class="sd">        To load data from previously downloaded files:</span>
 
 <span class="sd">            import WDRT.ESSC as ESSC</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            buoy46022.saveData()</span>
 <span class="sd">            buoy46022.loadFromH5(&#39;NDBC46022.h5&#39;)</span>
@@ -2016,7 +2588,7 @@
 <span class="sd">        To save data to h5 file after fetchFromWeb or loadFromText:</span>
 <span class="sd">            </span>
 <span class="sd">            import WDRT.ESSC as ESSC</span>
-<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;)</span>
+<span class="sd">            buoy46022 = ESSC.Buoy(&#39;46022&#39;,&#39;NDBC&#39;)</span>
 <span class="sd">            buoy46022.fetchFromWeb()</span>
 <span class="sd">            buoy46022.saveData()</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -2042,6 +2614,68 @@
             <span class="n">f_dateNum</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;datenum&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Buoy object contains no data&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__fetchCDIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">savePath</span><span class="p">,</span><span class="n">proxy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetches the Hs and T values of a CDIP site by downloading the respective .nc file from</span>
+<span class="sd">        http://cdip.ucsd.edu/</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        savePath : string</span>
+<span class="sd">            Relative path to place directory with data files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;p1/&quot;</span> <span class="o">+</span> \
+               <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span><span class="s2">&quot;p1_historic.nc&quot;</span>            
+        <span class="n">filePath</span> <span class="o">=</span> <span class="n">savePath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-CDIP.nc&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__loadCDIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the Hs and T values of the given site from the .nc file downloaded from </span>
+<span class="sd">        http://cdip.ucsd.edu/</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            filePath : string</span>
+<span class="sd">                File path to the respective .nc file containing the Hs and T values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filePath</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">filePath</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span> <span class="o">+</span> <span class="s2">&quot;-CDIP.nc&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__averageValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Averages the Hs and T values of the given buoy to get hour time-steps rather than</span>
+<span class="sd">        half hour time-steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+
+    <span class="c1">#TODO Delete existing .nc file and create new one with just the Hs and T values</span>
+    <span class="k">def</span> <span class="nf">__processCDIPData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filePath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the Hs and T values from the .nc file downloaded from http://cdip.ucsd.edu/</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            filePath : string</span>
+<span class="sd">                File path to the respective .nc file containing the Hs and T values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">netCDF4</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not find data for CDIP site: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveHs&quot;</span><span class="p">][:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveTa&quot;</span><span class="p">][:]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1">#Some CDIP buoys record data every half hour rather than every hour</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__averageValues</span><span class="p">()</span>
+
+
 
     <span class="k">def</span> <span class="nf">_prepData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Runs _getStats and _getDataNums for full set of data, then removes any</span>

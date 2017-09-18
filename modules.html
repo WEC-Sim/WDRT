@@ -24,8 +24,6 @@
 
   
   
-  
-  
 
   
 
@@ -43,9 +41,6 @@
   
 
   
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="WDRT 1.0 documentation" href="index.html"/>
         <link rel="next" title="Examples" href="examples.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
@@ -57,7 +52,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -98,12 +92,9 @@
           
             
             
-              
-            
-            
-              <ul class="current">
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Toolbox Modules</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Toolbox Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.fatigue">WDRT.fatigue module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.shortTermExtreme">WDRT.shortTermExtreme module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
@@ -127,10 +118,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">WDRT</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">WDRT</a>
       </nav>
 
 
@@ -143,36 +132,19 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>Toolbox Modules</li>
-    
-    
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Toolbox Modules</li>
       <li class="wy-breadcrumbs-aside">
         
-            
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+          
+            <a href="_sources/modules.txt" rel="nofollow"> View page source</a>
           
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -183,7 +155,7 @@
 <p>The following sections contain the documentation for <cite>WDRT</cite>.
 Note that this documentation is also contained in the python source code.
 As such, documentation for any <cite>WDRT</cite> function or class can also be accessed in iPython via by calling</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="o">&lt;</span><span class="n">wdrt</span> <span class="k">class</span> <span class="nc">or</span> <span class="n">module</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="o">&lt;</span><span class="n">wdrt</span> <span class="k">class</span> <span class="nc">or</span> <span class="n">module</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="module-WDRT.fatigue">
@@ -200,13 +172,14 @@ Downing &amp; Socie, 1982, &#8220;Simple rainflow counting algorithms&#8221;</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>F</strong> (<em></em><em>(</em><em>np.array</em><em>)</em><em></em>) &#8211; Force or stress history</li>
-<li><strong>N</strong> (<em></em><em>(</em><em>float</em><em>)</em><em></em>) &#8211; Number of lifetime cycles</li>
-<li><strong>m</strong> (<em></em><em>(</em><em>float</em><em>)</em><em></em>) &#8211; S-N curve slope</li>
+<li><strong>F</strong> (<em>(np.array)</em>) &#8211; Force or stress history</li>
+<li><strong>N</strong> (<em>(float)</em>) &#8211; Number of lifetime cycles</li>
+<li><strong>m</strong> (<em>(float)</em>) &#8211; S-N curve slope</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Feq</strong> &#8211; Equivalent force or stress</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Feq</strong> &#8211;
+Equivalent force or stress</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(float)</p>
@@ -232,31 +205,36 @@ an error or a NaN if input is outside of bounds(x).</p>
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.pdf">
 <code class="descname">pdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.pdf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Probability density function</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
+<p>Probability density function</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.cdf">
 <code class="descname">cdf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.cdf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Cumulative distribution function</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
+<p>Cumulative distribution function</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.ppf">
 <code class="descname">ppf</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.ppf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>scipy.interpolate.interpolate.interp1d</em> &#8211; Percent point function (inverse cdf)</p>
+<dd><p><em>scipy.interpolate.interpolate.interp1d</em></p>
+<p>Percent point function (inverse cdf)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.getExpVal">
 <code class="descname">getExpVal</code><a class="reference internal" href="_modules/WDRT/shortTermExtreme.html#ecmDist.getExpVal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.getExpVal" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>method</em> &#8211; Expected value of distribution</p>
+<dd><p><em>method</em></p>
+<p>Expected value of distribution</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.shortTermExtreme.ecmDist.gerRthValue">
 <code class="descname">gerRthValue</code><a class="headerlink" href="#WDRT.shortTermExtreme.ecmDist.gerRthValue" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>method</em> &#8211; Rth percentile value of distribution</p>
+<dd><p><em>method</em></p>
+<p>Rth percentile value of distribution</p>
 </dd></dl>
 
 <p>Class initialization function</p>
@@ -276,11 +254,11 @@ for x</li>
 </table>
 <p class="rubric">Example</p>
 <p>To create an ecmDist object, you can use either the PDF:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist1</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="n">my_PDF</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist1</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="n">my_PDF</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or the CDF:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist2</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">my_CDF</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myDist2</span> <span class="o">=</span> <span class="n">ste</span><span class="o">.</span><span class="n">ecmDist</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">my_x</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="n">my_CDF</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -292,7 +270,8 @@ for x</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ev</strong> &#8211; Expected value (mean)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ev</strong> &#8211;
+Expected value (mean)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
@@ -300,7 +279,7 @@ for x</li>
 </table>
 <p class="rubric">Example</p>
 <p>In order to find the expected value from the distribution</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vExp</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vExp</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getExpVal</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -316,7 +295,8 @@ for x</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r</strong> (<em>float</em>) &#8211; Target percentile (0 &lt; r &lt; 1)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>xr</strong> &#8211; Response for rth percentile</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>xr</strong> &#8211;
+Response for rth percentile</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
@@ -324,7 +304,7 @@ for x</li>
 </table>
 <p class="rubric">Example</p>
 <p>In order to find the 95th percentile value from the distribution:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v95</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v95</span> <span class="o">=</span> <span class="n">myDist</span><span class="o">.</span><span class="n">getRthVal</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -346,7 +326,8 @@ for x</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>block_maxima</strong> &#8211; Block maxima (i.e. largest peak in each block)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>block_maxima</strong> &#8211;
+Block maxima (i.e. largest peak in each block)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -371,7 +352,8 @@ distribution function via numerical differentiation.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdf</strong> &#8211; Probability density function values at x</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pdf</strong> &#8211;
+Probability density function values at x</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -406,9 +388,12 @@ short-term extreme distribution. The methods are:
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>fig1</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of peaks distribution.</li>
-<li><strong>fig2</strong> (<em>matplotlib.pyplot figure</em>) &#8211; Figure containing the comparison of short-term extreme distribution</li>
-<li><strong>expected_value_of_short_term_extreme</strong> (<em>dictionary</em>) &#8211; Expected value of the short-term extreme distribution from each method</li>
+<li><strong>fig1</strong> (<em>matplotlib.pyplot figure</em>) &#8211;
+Figure containing the comparison of peaks distribution.</li>
+<li><strong>fig2</strong> (<em>matplotlib.pyplot figure</em>) &#8211;
+Figure containing the comparison of short-term extreme distribution</li>
+<li><strong>expected_value_of_short_term_extreme</strong> (<em>dictionary</em>) &#8211;
+Expected value of the short-term extreme distribution from each method</li>
 </ul>
 </p>
 </td>
@@ -434,8 +419,10 @@ for entire population wanted.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>x_cdf</strong> (<em>np.array</em>) &#8211; x locations</li>
-<li><strong>cdf</strong> (<em>np.array</em>) &#8211; CDF values at x_cdf</li>
+<li><strong>x_cdf</strong> (<em>np.array</em>) &#8211;
+x locations</li>
+<li><strong>cdf</strong> (<em>np.array</em>) &#8211;
+CDF values at x_cdf</li>
 </ul>
 </p>
 </td>
@@ -462,8 +449,10 @@ for entire population wanted.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211; Bin (x) locations</li>
-<li><strong>pdf</strong> (<em>np.array</em>) &#8211; PDF values at x_pdf</li>
+<li><strong>x_pdf</strong> (<em>np.array</em>) &#8211;
+Bin (x) locations</li>
+<li><strong>pdf</strong> (<em>np.array</em>) &#8211;
+PDF values at x_pdf</li>
 </ul>
 </p>
 </td>
@@ -492,10 +481,14 @@ locFlag = 1: Location parameter of Weibull distribution is calculated in fit</li
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
-<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the peaks.</li>
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211;
+Parameters of peak&#8217;s distribution (Weibull)
 [shape_a, shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -522,19 +515,25 @@ fit method.</p>
 <li><strong>avg</strong> (<em>float</em>) &#8211; The average of the time response, if this was substracted before
 identifying global peaks. Else it is assumed that the average is
 zero.</li>
-<li><strong>p0</strong> (<em>list length 2:</em><em> [</em><em>float</em><em>, </em><em>float</em><em>]</em><em></em>) &#8211; Initial guess for the Weibull parameters [shape, scale]</li>
+<li><strong>p0</strong> (<em>list length 2: [float, float]</em>) &#8211; Initial guess for the Weibull parameters [shape, scale]</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the peaks.</li>
-<li><strong>subset_shape_params</strong> (<em>np.array length 7</em>) &#8211; Shape parameter for each of the seven Weibull fits for the
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the peaks.</li>
+<li><strong>subset_shape_params</strong> (<em>np.array length 7</em>) &#8211;
+Shape parameter for each of the seven Weibull fits for the
 subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
-<li><strong>subset_scale_params</strong> (<em>np.array length 7</em>) &#8211; Scale parameter for each of the seven Weibull fits for the
+<li><strong>subset_scale_params</strong> (<em>np.array length 7</em>) &#8211;
+Scale parameter for each of the seven Weibull fits for the
 subsets of data corresponding to F&gt;[0.65,0.7,...,0.95].</li>
-<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211; Parameters of peak&#8217;s distribution (Weibull)
+<li><strong>peaks_params</strong> (<em>np.array length 4</em>) &#8211;
+Parameters of peak&#8217;s distribution (Weibull)
 [shape_a, shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -561,11 +560,15 @@ method and the Generalized Extreme Value distribution.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>ste_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of the short term extreme distribution (Generalized
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 3</em>) &#8211;
+Parameters of the short term extreme distribution (Generalized
 Extreme Value) [shape_c, loc, scale].</li>
-<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211;
+Block maxima (i.e. largest peak in each block).</li>
 </ul>
 </p>
 </td>
@@ -591,11 +594,15 @@ method and the Gumbel (right) distribution.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>ste_params</strong> (<em>np.array length 2</em>) &#8211; Parameters of the short term extreme distribution (Gumbel_r)
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>ste_params</strong> (<em>np.array length 2</em>) &#8211;
+Parameters of the short term extreme distribution (Gumbel_r)
 [loc, scale].</li>
-<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211; Block maxima (i.e. largest peak in each block).</li>
+<li><strong>block_maxima</strong> (<em>np.array</em>) &#8211;
+Block maxima (i.e. largest peak in each block).</li>
 </ul>
 </p>
 </td>
@@ -623,11 +630,16 @@ threshold method.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the short-term extreme.</li>
-<li><strong>peaks_dist</strong> (<em>ecmDist object</em>) &#8211; Probability distribution of the peaks.</li>
-<li><strong>peaksOverThreshold_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211; Probaility distribution of the peaks over threshold.</li>
-<li><strong>pot_params</strong> (<em>np.array length 3</em>) &#8211; Parameters of peak over threshold&#8217;s distribution using Generalized
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>stextreme_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the short-term extreme.</li>
+<li><strong>peaks_dist</strong> (<em>ecmDist object</em>) &#8211;
+Probability distribution of the peaks.</li>
+<li><strong>peaksOverThreshold_dist</strong> (<em>scipy.stats rv_frozen</em>) &#8211;
+Probaility distribution of the peaks over threshold.</li>
+<li><strong>pot_params</strong> (<em>np.array length 3</em>) &#8211;
+Parameters of peak over threshold&#8217;s distribution using Generalized
 Pareto[shape_c, loc, scale].</li>
 </ul>
 </p>
@@ -653,8 +665,10 @@ of a zero-centered response time-series</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>t_peaks</strong> (<em>np.array</em>) &#8211; Time vector for peaks</li>
-<li><strong>peaks</strong> (<em>np.array</em>) &#8211; Peaks of the response time-series</li>
+<li><strong>t_peaks</strong> (<em>np.array</em>) &#8211;
+Time vector for peaks</li>
+<li><strong>peaks</strong> (<em>np.array</em>) &#8211;
+Peaks of the response time-series</li>
 </ul>
 </p>
 </td>
@@ -675,7 +689,7 @@ the return level plot, and probability density function (PDF) plot.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<em>np.array</em>) &#8211; Data which the probability model represents</li>
-<li><strong>prob_func</strong> (<em>{scipy.stats rv_frozen}</em><em> or </em><em>{ecmDist object}</em>) &#8211; Probability function that models the data.</li>
+<li><strong>prob_func</strong> (<em>{scipy.stats rv_frozen} or {ecmDist object}</em>) &#8211; Probability function that models the data.</li>
 <li><strong>x_pdf</strong> (<em>np.array</em>) &#8211; Array of x values at which to evaluate the PDF.</li>
 <li><strong>bins_pdf</strong> (<em>int</em>) &#8211; Number of bins to use for the PDF plot.</li>
 <li><strong>np_return</strong> (<em>int</em>) &#8211; Number of points to use in the return level plot.</li>
@@ -685,7 +699,8 @@ goodness of fit plots for entire population wanted.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fgof</strong> &#8211; Figure containing the four goodness of fit subplots.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fgof</strong> &#8211;
+Figure containing the four goodness of fit subplots.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib.pyplot figure</p>
@@ -710,10 +725,10 @@ First line is header with same delimiter as data, followed by data.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;</p>
-<dl class="docutils">
-<dt>Data as a dictionary:</dt>
-<dd><dl class="first last docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;
+Data as a dictionary:</p>
+<blockquote>
+<div><dl class="docutils">
 <dt>keys: str</dt>
 <dd><p class="first last">Header name for each column.</p>
 </dd>
@@ -721,8 +736,7 @@ First line is header with same delimiter as data, followed by data.</p>
 <dd><p class="first last">Column data</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</div></blockquote>
 </p>
 </td>
 </tr>
@@ -748,7 +762,8 @@ density function via numerical integration.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> &#8211; Cumulative distribution function values at x</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cdf</strong> &#8211;
+Cumulative distribution function values at x</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -778,6 +793,25 @@ density function via numerical integration.</p>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="WDRT.longTermExtreme.fullLongTermSurvival.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/longTermExtreme.html#fullLongTermSurvival.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.longTermExtreme.fullLongTermSurvival.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Survival function (S(x) = 1 - F(x))</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np array</em>) &#8211; Points at which to evaluate survival function.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>S</strong> &#8211;
+Survival function value(s) at x.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -787,46 +821,53 @@ density function via numerical integration.</p>
 calculate environmental contours of extreme sea states for buoy data.</p>
 <dl class="class">
 <dt id="WDRT.ESSC.Buoy">
-<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">Buoy</code><span class="sig-paren">(</span><em>buoyNum</em>, <em>savePath='./Data/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class creates a buoy object to store buoy data for use in the
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">Buoy</code><span class="sig-paren">(</span><em>buoyNum</em>, <em>buoyType</em>, <em>savePath='./Data/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class creates a buoy object to store buoy data for use in the
 environmental assessment functions available in the ESSC module.</p>
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.swdList">
 <code class="descname">swdList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.swdList" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; List that contains numpy arrays of the spectral wave density data,
+<dd><p><em>list</em></p>
+<p>List that contains numpy arrays of the spectral wave density data,
 separated by year.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.freqList">
 <code class="descname">freqList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.freqList" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; List that contains numpy arrays that contain the frequency values
+<dd><p><em>list</em></p>
+<p>List that contains numpy arrays that contain the frequency values
 for each year</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.dateList">
 <code class="descname">dateList</code><a class="headerlink" href="#WDRT.ESSC.Buoy.dateList" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; List that contains numpy arrays of the date values for each line of
+<dd><p><em>list</em></p>
+<p>List that contains numpy arrays of the date values for each line of
 spectral data, separated by year</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.Hs">
 <code class="descname">Hs</code><a class="headerlink" href="#WDRT.ESSC.Buoy.Hs" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; Significant wave height.</p>
+<dd><p><em>list</em></p>
+<p>Significant wave height.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.T">
 <code class="descname">T</code><a class="headerlink" href="#WDRT.ESSC.Buoy.T" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; Energy period.</p>
+<dd><p><em>list</em></p>
+<p>Energy period.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="WDRT.ESSC.Buoy.dateNum">
 <code class="descname">dateNum</code><a class="headerlink" href="#WDRT.ESSC.Buoy.dateNum" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; List of datetime objects.</p>
+<dd><p><em>list</em></p>
+<p>List of datetime objects.</p>
 </dd></dl>
 
 <table class="docutils field-list" frame="void" rules="none">
@@ -835,6 +876,7 @@ spectral data, separated by year</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>buoyNum</strong> (<em>string</em>) &#8211; device number for desired buoy</li>
+<li><strong>buoyType</strong> (<em>string</em>) &#8211; type of buoy device, available options are &#8216;NDBC&#8217; or &#8216;CDIP&#8217;</li>
 <li><strong>savePath</strong> (<em>string</em>) &#8211; relative path where the data read from ndbc.noaa.gov will be stored</li>
 </ul>
 </td>
@@ -843,11 +885,9 @@ spectral data, separated by year</p>
 </table>
 <dl class="method">
 <dt id="WDRT.ESSC.Buoy.fetchFromWeb">
-<code class="descname">fetchFromWeb</code><span class="sig-paren">(</span><em>saveType='txt'</em>, <em>savePath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.fetchFromWeb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.fetchFromWeb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches ndbc.noaa.gov for the historical spectral wave density
-data of a given device and writes the annual files from the website
-to a single .txt file, and stores the values in the swdList, freqList,
-and dateList member variables.</p>
+<code class="descname">fetchFromWeb</code><span class="sig-paren">(</span><em>saveType='txt'</em>, <em>savePath='./Data/'</em>, <em>proxy=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.fetchFromWeb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.fetchFromWeb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls either __fetchCDIP() or __fetchNDBC() depending on the given
+buoy&#8217;s type and fetches the necessary data from its respective website.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -856,20 +896,27 @@ and dateList member variables.</p>
 <li><strong>saveType</strong> (<em>string</em>) &#8211; If set to to &#8220;h5&#8221;, the data will be saved in a compressed .h5
 file
 If set to &#8220;txt&#8221;, the data will be stored in a raw .txt file
-Otherwise, a file will not be created</li>
+Otherwise, a file will not be created
+NOTE: Only applies</li>
 <li><strong>savePath</strong> (<em>string</em>) &#8211; Relative path to place directory with data files.</li>
+<li><strong>proxy</strong> (<em>dict</em>) &#8211; Proxy server and port, i.e., {http&#8221;:&#8221;<a class="reference external" href="http://proxyserver:port">http://proxyserver:port</a>&#8220;}</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">buoy</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.Buoy.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>dirPath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="WDRT.ESSC.Buoy.loadFromH5">
@@ -885,18 +932,17 @@ Otherwise, a file will not be created</li>
 </table>
 <p class="rubric">Example</p>
 <p>To load data from previously downloaded files:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">saveData</span><span class="p">()</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">loadFromH5</span><span class="p">(</span><span class="s1">&#39;NDBC46022.h5&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
+<blockquote>
+<div>import WDRT.ESSC as ESSC
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.fetchFromWeb()
+buoy46022.saveData()
+buoy46022.loadFromH5(&#8216;NDBC46022.h5&#8217;)</div></blockquote>
 </dd></dl>
 
 <dl class="method">
 <dt id="WDRT.ESSC.Buoy.loadFromText">
-<code class="descname">loadFromText</code><span class="sig-paren">(</span><em>dirPath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.loadFromText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.loadFromText" title="Permalink to this definition">¶</a></dt>
+<code class="descname">loadFromText</code><span class="sig-paren">(</span><em>dirPath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#Buoy.loadFromText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.Buoy.loadFromText" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads NDBC data previously downloaded to a series of text files in the
 specified directory.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -913,11 +959,10 @@ the root.</td>
 <p class="rubric">Example</p>
 <p>To load data from previously downloaded files
 created using fetchFromWeb():</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">()</span>
-</pre></div>
-</div>
+<blockquote>
+<div>import WDRT.ESSC as ESSC
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.loadFromText()</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -938,12 +983,11 @@ NDBC(buoyNum).h5 in location where code is running.</td>
 </table>
 <p class="rubric">Example</p>
 <p>To save data to h5 file after fetchFromWeb or loadFromText:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">saveData</span><span class="p">()</span>
-</pre></div>
-</div>
+<blockquote>
+<div>import WDRT.ESSC as ESSC
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.fetchFromWeb()
+buoy46022.saveData()</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -989,11 +1033,14 @@ inverse FORM calculation.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
 </ul>
 </p>
 </td>
@@ -1002,10 +1049,10 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create Environtmal Analysis object using above parameters</span>
@@ -1050,18 +1097,20 @@ time depends on selected boot_size.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>boot_size</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Number of bootstrap samples that will be used to calculate 95%
+<li><strong>boot_size</strong> (<em>int (optional)</em>) &#8211; Number of bootstrap samples that will be used to calculate 95%
 confidence interval. Should be large enough to calculate stable
 statistics. If left blank will be set to 1000.</li>
-<li><strong>plotResults</strong> (<em>boolean</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Option for showing plot of bootstrap confidence bounds. If left
+<li><strong>plotResults</strong> (<em>boolean (optional)</em>) &#8211; Option for showing plot of bootstrap confidence bounds. If left
 blank will be set to True and plot will be shown.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>contourmean_Hs</strong> (<em>nparray</em>) &#8211; Hs values for mean contour calculated as the average over all
+<li><strong>contourmean_Hs</strong> (<em>nparray</em>) &#8211;
+Hs values for mean contour calculated as the average over all
 bootstrap contours.</li>
-<li><strong>contourmean_T</strong> (<em>nparray</em>) &#8211; T values for mean contour calculated as the average over all
+<li><strong>contourmean_T</strong> (<em>nparray</em>) &#8211;
+T values for mean contour calculated as the average over all
 bootstrap contours.</li>
 </ul>
 </p>
@@ -1071,27 +1120,22 @@ bootstrap contours.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To generate 95% boostrap contours for a given contour method:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-
-<span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
-
-<span class="c1"># Create PCA EA object for buoy</span>
-<span class="n">pca46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
-
-<span class="c1"># Declare required parameters</span>
-<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
-<span class="n">Time_r</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
-<span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Enter discretization of the circle in the normal space (optional)</span>
-
-<span class="c1"># Contour generation</span>
-<span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">)</span>
-
-<span class="c1"># Calculate boostrap confidence interval</span>
-<span class="n">contourmean_Hs</span><span class="p">,</span> <span class="n">contourmean_T</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">bootStrap</span><span class="p">(</span><span class="n">boot_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>import WDRT.ESSC as ESSC</p>
+<p># Pull spectral data from NDBC website
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.fetchFromWeb()</p>
+<p># Create PCA EA object for buoy
+pca46022 = ESSC.PCA(buoy46022)</p>
+<p># Declare required parameters
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = 100  # Return periods (yrs) of interest
+nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)</p>
+<p># Contour generation
+Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)</p>
+<p># Calculate boostrap confidence interval
+contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -1105,7 +1149,8 @@ user-defined T values.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>T_Sample</strong> (<em>nparray</em>) &#8211; points for sampling along return contour</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>Hs_SampleCA</strong> &#8211; points sampled along return contour</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>Hs_SampleCA</strong> &#8211;
+points sampled along return contour</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">nparray</td>
 </tr>
@@ -1114,29 +1159,24 @@ user-defined T values.</p>
 <p class="rubric">Example</p>
 <p>To calculate Hs values along the contour at specific
 user-defined T values:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
-
-<span class="c1"># Create PCA EA object for buoy</span>
-<span class="n">pca46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
-
-<span class="c1"># Declare required parameters</span>
-<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
-<span class="n">Time_r</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
-<span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Enter discretization of the circle in the normal space (optional)</span>
-
-<span class="c1"># Generate contour</span>
-<span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">)</span>
-
-<span class="c1"># Use getContourPoints to find specific points along the contour</span>
-<span class="n">T_sampleCA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">Hs_sampleCA</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContourPoints</span><span class="p">(</span><span class="n">T_sampleCA</span><span class="p">)</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>import WDRT.ESSC as ESSC
+import numpy as np</p>
+<p># Pull spectral data from NDBC website
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.fetchFromWeb()</p>
+<p># Create PCA EA object for buoy
+pca46022 = ESSC.PCA(buoy46022)</p>
+<p># Declare required parameters
+Time_SS = 1.  # Sea state duration (hrs)
+Time_r = 100  # Return periods (yrs) of interest
+nb_steps = 1000  # Enter discretization of the circle in the normal space (optional)</p>
+<p># Generate contour
+Hs_Return, T_Return = pca46022.getContours(Time_SS, Time_r,nb_steps)</p>
+<p># Use getContourPoints to find specific points along the contour
+T_sampleCA = np.arange(12, 26, 2)
+Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -1202,9 +1242,11 @@ and shallow water, as appropriate:</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>SteepH</strong> (<em>np.array</em>) &#8211; H values [m] that correspond to the T_mesh values creating the
+<li><strong>SteepH</strong> (<em>np.array</em>) &#8211;
+H values [m] that correspond to the T_mesh values creating the
 steepness curve.</li>
-<li><strong>T_steep</strong> (<em>np.array</em>) &#8211; T values [sec] over which the steepness curve is defined.</li>
+<li><strong>T_steep</strong> (<em>np.array</em>) &#8211;
+T values [sec] over which the steepness curve is defined.</li>
 </ul>
 </p>
 </td>
@@ -1213,25 +1255,20 @@ steepness curve.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To find limit the steepness of waves on a contour by breaking:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
-
-<span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
-
-<span class="c1"># Create PCA EA object for buoy</span>
-<span class="n">pca46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
-
-<span class="n">T_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="n">SteepMax</span> <span class="o">=</span> <span class="mf">0.07</span>  <span class="c1"># Optional: enter estimate of breaking steepness</span>
-
-<span class="c1"># Declare required parameters</span>
-<span class="n">depth</span> <span class="o">=</span> <span class="mf">391.4</span>  <span class="c1"># Depth at measurement point (m)</span>
-
-<span class="n">SteepH</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="n">SteepMax</span><span class="p">,</span><span class="n">T_vals</span><span class="p">)</span>
-</pre></div>
-</div>
+<blockquote>
+<div><p>import numpy as np
+import WDRT.ESSC as ESSC</p>
+<p># Pull spectral data from NDBC website
+buoy46022 = ESSC.Buoy(&#8216;46022&#8217;,&#8217;NDBC&#8217;)
+buoy46022.fetchFromWeb()</p>
+<p># Create PCA EA object for buoy
+pca46022 = ESSC.PCA(buoy46022)</p>
+<p>T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
+SteepMax = 0.07  # Optional: enter estimate of breaking steepness</p>
+<p># Declare required parameters
+depth = 391.4  # Depth at measurement point (m)</p>
+<p>SteepH = pca46022.steepness(depth,SteepMax,T_vals)</p>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -1277,11 +1314,14 @@ inverse FORM calculation.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
 </ul>
 </p>
 </td>
@@ -1290,10 +1330,10 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create Environtmal Analysis object using above parameters</span>
@@ -1333,6 +1373,9 @@ under this class will use a Gumbel copula.</p>
 <li><strong>n_size</strong> (<em>float</em>) &#8211; minimum bin size used for Copula contour methods</li>
 <li><strong>bin_1_limit</strong> (<em>float</em>) &#8211; maximum value of Hs for the first bin</li>
 <li><strong>bin_step</strong> (<em>float</em>) &#8211; overlap interval for each bin</li>
+<li><strong>Ndata</strong> (<em>int</em>) &#8211; discretization used in the Gumbel copula density estimation,
+must be less than the number of contour points used in
+getContours</li>
 </ul>
 </td>
 </tr>
@@ -1359,11 +1402,14 @@ inverse FORM calculation.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
 </ul>
 </p>
 </td>
@@ -1372,10 +1418,10 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create Environtmal Analysis object using above parameters</span>
@@ -1395,6 +1441,270 @@ return to original input orientation.</li>
 <dl class="method">
 <dt id="WDRT.ESSC.GumbelCopula.getSamples">
 <code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#GumbelCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.GumbelCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently not implemented in this version.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.NonParaClaytonCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">NonParaClaytonCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>Ndata=1000</em>, <em>max_T=None</em>, <em>max_Hs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaClaytonCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaClaytonCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<p>Create a NonParaClaytonCopula EA class for a buoy object. Contours
+generated under this class will use a Clayton copula with non-parametric
+marginal distribution fits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>NData</strong> (<em>int</em>) &#8211; discretization resolution used in KDE construction</li>
+<li><strong>max_T</strong> (<em>float</em>) &#8211; Maximum T value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(T)</li>
+<li><strong>max_Hs</strong> (<em>float</em>) &#8211; Maximum Hs value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(Hs)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaClaytonCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaClaytonCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaClaytonCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State non-parameteric Clayton Copula Contour
+function. This function calculates environmental contours of extreme
+sea states using a Clayton copula with non-parametric marginal
+distribution fits and the inverse first-order reliability method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To obtain the contours for a NDBC buoy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+
+<span class="c1"># Pull spectral data from NDBC website</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
+
+<span class="c1"># Create Environtmal Analysis object using above parameters</span>
+<span class="n">NonParaClayton46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">NonParaClaytonCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+
+<span class="c1"># Declare required parameters</span>
+<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
+<span class="n">Time_r</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
+<span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Enter discretization of the circle in the normal space (optional)</span>
+
+<span class="c1"># Non-Parametric Clayton copula contour generation example</span>
+<span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">NonParaClayton46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaClaytonCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaClaytonCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaClaytonCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently not implemented in this version.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.NonParaGaussianCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">NonParaGaussianCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>Ndata=1000</em>, <em>max_T=None</em>, <em>max_Hs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGaussianCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGaussianCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<p>Create a NonParaGaussianCopula EA class for a buoy object. Contours
+generated under this class will use a Gaussian copula with non-parametric
+marginal distribution fits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>NData</strong> (<em>int</em>) &#8211; discretization resolution used in KDE construction</li>
+<li><strong>max_T</strong> (<em>float</em>) &#8211; Maximum T value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(T)</li>
+<li><strong>max_Hs</strong> (<em>float</em>) &#8211; Maximum Hs value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(Hs)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaGaussianCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGaussianCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGaussianCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State Gaussian Copula Contour function.
+This function calculates environmental contours of extreme sea states
+using a Gaussian copula with non-parametric marginal distribution fits
+and the inverse first-order reliability method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To obtain the contours for a NDBC buoy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+
+<span class="c1"># Pull spectral data from NDBC website</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
+
+<span class="c1"># Create Environtmal Analysis object using above parameters</span>
+<span class="n">NonParaGauss46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">NonParaGaussianCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+
+<span class="c1"># Declare required parameters</span>
+<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
+<span class="n">Time_r</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
+<span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Enter discretization of the circle in the normal space (optional)</span>
+
+<span class="c1"># Non-Parametric Gaussian copula contour generation example</span>
+<span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">NonParaGauss46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaGaussianCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGaussianCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGaussianCopula.getSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently not implemented in this version.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="WDRT.ESSC.NonParaGumbelCopula">
+<em class="property">class </em><code class="descclassname">WDRT.ESSC.</code><code class="descname">NonParaGumbelCopula</code><span class="sig-paren">(</span><em>buoy</em>, <em>Ndata=1000</em>, <em>max_T=None</em>, <em>max_Hs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGumbelCopula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGumbelCopula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#WDRT.ESSC.EA" title="WDRT.ESSC.EA"><code class="xref py py-class docutils literal"><span class="pre">WDRT.ESSC.EA</span></code></a></p>
+<p>Create a NonParaGumbelCopula EA class for a buoy object. Contours
+generated under this class will use a Gumbel copula with non-parametric
+marginal distribution fits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>buoy</strong> (<em>NDBCData</em>) &#8211; ESSC.Buoy Object</li>
+<li><strong>NData</strong> (<em>int</em>) &#8211; discretization resolution used in KDE construction</li>
+<li><strong>max_T</strong> (<em>float</em>) &#8211; Maximum T value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(T)</li>
+<li><strong>max_Hs</strong> (<em>float</em>) &#8211; Maximum Hs value for KDE contstruction, must include possible
+range of contour. Default value is 2*max(Hs)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaGumbelCopula.getContours">
+<code class="descname">getContours</code><span class="sig-paren">(</span><em>time_ss</em>, <em>time_r</em>, <em>nb_steps=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGumbelCopula.getContours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGumbelCopula.getContours" title="Permalink to this definition">¶</a></dt>
+<dd><p>WDRT Extreme Sea State non-parameteric Gumbel Copula Contour
+function. This function calculates environmental contours of extreme
+sea states using a Gumbel copula with non-parametric marginal
+distribution fits and the inverse first-order reliability method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time_ss</strong> (<em>float</em>) &#8211; Sea state duration (hours) of measurements in input.</li>
+<li><strong>time_r</strong> (<em>np.array</em>) &#8211; Desired return period (years) for calculation of environmental
+contour, can be a scalar or a vector.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space used for
+inverse FORM calculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
+return to original input orientation.</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>To obtain the contours for a NDBC buoy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
+
+<span class="c1"># Pull spectral data from NDBC website</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
+
+<span class="c1"># Create Environtmal Analysis object using above parameters</span>
+<span class="n">NonParaGumbel46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">NonParaGumbelCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
+
+<span class="c1"># Declare required parameters</span>
+<span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
+<span class="n">Time_r</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
+<span class="n">nb_steps</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Enter discretization of the circle in the normal space (optional)</span>
+
+<span class="c1"># Non-Parametric Gumbel copula contour generation example</span>
+<span class="n">Hs_Return</span><span class="p">,</span> <span class="n">T_Return</span> <span class="o">=</span> <span class="n">NonParaGumbel46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_r</span><span class="p">,</span><span class="n">nb_steps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="WDRT.ESSC.NonParaGumbelCopula.getSamples">
+<code class="descname">getSamples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#NonParaGumbelCopula.getSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.NonParaGumbelCopula.getSamples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Currently not implemented in this version.</p>
 </dd></dl>
 
@@ -1440,11 +1750,14 @@ inverse FORM calculation.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
 </ul>
 </p>
 </td>
@@ -1453,10 +1766,10 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create PCA EA object for buoy</span>
@@ -1488,16 +1801,19 @@ sample between contours of user-defined return periods.</p>
 <li><strong>contour_returns</strong> (<em>np.array</em>) &#8211; Vector of return periods that define the contour intervals in
 which samples will be taken. Values must be greater than zero and
 must be in increasing order.</li>
-<li><strong>random_seed</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em><em></em>) &#8211; Random seed for sample generation, required for sample
+<li><strong>random_seed</strong> (<em>int (optional)</em>) &#8211; Random seed for sample generation, required for sample
 repeatability. If left blank, a seed will automatically be
 generated.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Samples</strong> (<em>np.array</em>) &#8211; Vector of Hs values for each sample point.</li>
-<li><strong>Te_Samples</strong> (<em>np.array</em>) &#8211; Vector of Te values for each sample point.</li>
-<li><strong>Weight_points</strong> (<em>np.array</em>) &#8211; Vector of probabilistic weights for each sampling point
+<li><strong>Hs_Samples</strong> (<em>np.array</em>) &#8211;
+Vector of Hs values for each sample point.</li>
+<li><strong>Te_Samples</strong> (<em>np.array</em>) &#8211;
+Vector of Te values for each sample point.</li>
+<li><strong>Weight_points</strong> (<em>np.array</em>) &#8211;
+Vector of probabilistic weights for each sampling point
 to be used in risk calculations.</li>
 </ul>
 </p>
@@ -1507,11 +1823,11 @@ to be used in risk calculations.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To get weighted samples from a set of contours:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create PCA EA object for buoy</span>
@@ -1537,8 +1853,8 @@ to be used in risk calculations.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="WDRT.ESSC.PCA.plotData">
-<code class="descname">plotData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#PCA.plotData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.PCA.plotData" title="Permalink to this definition">¶</a></dt>
+<dt id="WDRT.ESSC.PCA.plotSampleData">
+<code class="descname">plotSampleData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WDRT/ESSC.html#PCA.plotSampleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#WDRT.ESSC.PCA.plotSampleData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display a plot of the 100-year return contour, full sea state samples
 and contour samples</p>
 </dd></dl>
@@ -1586,11 +1902,14 @@ inverse FORM calculation.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211; Calculated Hs values along the contour boundary following
+<li><strong>Hs_Return</strong> (<em>np.array</em>) &#8211;
+Calculated Hs values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>T_Return</strong> (<em>np.array</em>) &#8211; Calculated T values along the contour boundary following
+<li><strong>T_Return</strong> (<em>np.array</em>) &#8211;
+Calculated T values along the contour boundary following
 return to original input orientation.</li>
-<li><strong>nb_steps</strong> (<em>float</em>) &#8211; Discretization of the circle in the normal space</li>
+<li><strong>nb_steps</strong> (<em>float</em>) &#8211;
+Discretization of the circle in the normal space</li>
 </ul>
 </p>
 </td>
@@ -1599,10 +1918,10 @@ return to original input orientation.</li>
 </table>
 <p class="rubric">Example</p>
 <p>To obtain the contours for a NDBC buoy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="k">as</span> <span class="nn">ESSC</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">WDRT.ESSC</span> <span class="kn">as</span> <span class="nn">ESSC</span>
 
 <span class="c1"># Pull spectral data from NDBC website</span>
-<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">)</span>
+<span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 <span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
 
 <span class="c1"># Create Environtmal Analysis object using above parameters</span>
@@ -1639,18 +1958,15 @@ Because it uses linear theory, the underlying assumption is that the higher-orde
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1684,8 +2000,7 @@ Because it uses linear theory, the underlying assumption is that the higher-orde
             VERSION:'1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
