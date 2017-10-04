@@ -29,9 +29,13 @@ BibTex key
 Related publications
 --------------------
 
+-- ​R.G. Coe, C. Michelen, A. Eckert-Gallup, C. Sallaberry, `Full Long-term Design Response Analysis of a Wave Energy Converter <http://www.sciencedirect.com/science/article/pii/S0960148117309187>`_, accepted by Renewable Energy.
+
+-- J. Canning, S. Edwards, T. Esterly, B. Seng, L. Smith, W. Stuart, N. Martin, A. Eckert-Gallup, R.G. Coe, `WEC Extreme Conditions Modeling Sandia Summer Intern 2017 Report <http://energy.sandia.gov/download/42311/>`_, SAND2017-10592, 2017.​
+
 -- Y. Guo, Y.-H. Yu, J. van Rij, N.M. Tom, `Inclusion of Structural Flexibility in Design Load Analysis for Wave Energy Converters <https://www.nrel.gov/docs/fy17osti/68923.pdf>`_, in Proceedings of the European Wave and Tidal Energy Conference (EWTEC2017), Cork, Ireland, 8/27−9/1, 2017.
 
--- J. Canning, P. Nguyen, L. Manuel, R. Coe, "On the long-term reliability analysis of a point absorber wave energy converter,” in Proceedings of the ASME 2017 36th International Conference on Ocean, Offshore and Arctic Engineering (OMAE2017), ASME, Trondheim, Norway, 2017.
+-- J. Canning, P. Nguyen, L. Manuel, R. Coe, `On the long-term reliability analysis of a point absorber wave energy converter <http://proceedings.asmedigitalcollection.asme.org/proceeding.aspx?articleid=2656019>`_, in Proceedings of the ASME 2017 36th International Conference on Ocean, Offshore and Arctic Engineering (OMAE2017), ASME, Trondheim, Norway, 2017.
 
 -- J. van Rij, Y.-H. Yu, and Y. Guo., `Structural Loads Analysis for Wave Energy Converters <https://www.nrel.gov/docs/fy17osti/68048.pdf>`_, in Proceedings of the 36th International Conference on Ocean, Offshore & Arctic Engineering (OMAE2017), ASME, Trondheim, Norway, 2017.
 
