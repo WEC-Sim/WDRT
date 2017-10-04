@@ -220,17 +220,17 @@ These reliability levels are needed to drive both contour and full sea state sty
 <span class="n">buoy46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">Buoy</span><span class="p">(</span><span class="s1">&#39;46022&#39;</span><span class="p">,</span><span class="s1">&#39;NDBC&#39;</span><span class="p">)</span>
 
 <span class="c1"># Read data from ndbc.noaa.gov</span>
-<span class="n">buoy46022</span><span class="o">.</span><span class="n">fetchFromWeb</span><span class="p">()</span>
+<span class="c1"># buoy46022.fetchFromWeb()</span>
 
 <span class="c1"># Load data from .txt file if avilable</span>
-<span class="c1"># buoy46022.loadFromText()</span>
+<span class="n">buoy46022</span><span class="o">.</span><span class="n">loadFromText</span><span class="p">(</span><span class="s1">&#39;./data/NDBC46022&#39;</span><span class="p">)</span>
 
 <span class="c1"># Load data from .h5 file if available</span>
 <span class="c1"># buoy46022.loadFromH5(&#39;./data/NDBC46022.h5&#39;)</span>
 
 <span class="c1"># Declare required parameters</span>
 <span class="n">Time_SS</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># Sea state duration (hrs)</span>
-<span class="n">Time_R</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Return periods (yrs) of interest</span>
+<span class="n">Time_R</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># Return periods (yrs) of interest</span>
 
 <span class="c1"># Create PCA EA object for the buoy</span>
 <span class="n">pca46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
@@ -239,10 +239,10 @@ These reliability levels are needed to drive both contour and full sea state sty
 <span class="n">pca_Hs_Return</span><span class="p">,</span> <span class="n">pca_T_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
 
 <span class="c1"># Show a plot of the data</span>
-<span class="n">pca46022</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+<span class="c1"># pca46022.plotData()</span>
 
 <span class="c1"># Save data in h5 file</span>
-<span class="n">pca46022</span><span class="o">.</span><span class="n">saveData</span><span class="p">(</span><span class="s1">&#39;./data/NDBC</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pca46022</span><span class="o">.</span><span class="n">buoy</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">))</span>
+<span class="c1"># pca46022.saveData(&#39;./data/NDBC%s&#39; % (pca46022.buoy.buoyNum))</span>
 
 <span class="c1"># Create EA objects for remaining contour methods</span>
 <span class="n">Gauss46022</span> <span class="o">=</span> <span class="n">ESSC</span><span class="o">.</span><span class="n">GaussianCopula</span><span class="p">(</span><span class="n">buoy46022</span><span class="p">)</span>
@@ -262,7 +262,7 @@ These reliability levels are needed to drive both contour and full sea state sty
 <span class="n">NonParaClay_Hs_Return</span><span class="p">,</span> <span class="n">NonParaClay_T_Return</span> <span class="o">=</span> <span class="n">NonParaClay46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
 <span class="n">NonParaGum_Hs_Return</span><span class="p">,</span> <span class="n">NonParaGum_T_Return</span> <span class="o">=</span> <span class="n">NonParaGum46022</span><span class="o">.</span><span class="n">getContours</span><span class="p">(</span><span class="n">Time_SS</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">)</span>
 
-<span class="c1"># Plot all contour results for comparison </span>
+<span class="c1"># Plot all contour results for comparison</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">set_window_title</span><span class="p">(</span><span class="s1">&#39;NDBC</span><span class="si">%s</span><span class="s1">, </span><span class="si">%i</span><span class="s1">-year contours&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">,</span> <span class="n">Time_R</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">buoy46022</span><span class="o">.</span><span class="n">Hs</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">)</span>
@@ -277,37 +277,38 @@ These reliability levels are needed to drive both contour and full sea state sty
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy period, $T_e$ [s]&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Sig. wave height, $H_s$ [m]&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center right&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.4</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;tmp.pdf&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># Sample Generation Example</span>
-<span class="n">num_contour_points</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># Number of points to be sampled for each</span>
-<span class="c1"># contour interval.</span>
-<span class="n">contour_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
-<span class="c1"># Probabilities defining sampling contour bounds.</span>
-<span class="n">random_seed</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Random seed for sample generation</span>
+<span class="c1"># # Sample Generation Example</span>
+<span class="c1"># num_contour_points = 20  # Number of points to be sampled for each</span>
+<span class="c1"># # contour interval.</span>
+<span class="c1"># contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])</span>
+<span class="c1"># # Probabilities defining sampling contour bounds.</span>
+<span class="c1"># random_seed = 2  # Random seed for sample generation</span>
 
-<span class="c1"># Get samples for a full sea state long term analysis</span>
-<span class="n">Hs_sampleFSS</span><span class="p">,</span> <span class="n">T_sampleFSS</span><span class="p">,</span> <span class="n">Weight_sampleFSS</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getSamples</span><span class="p">(</span><span class="n">num_contour_points</span><span class="p">,</span>
-                                                     <span class="n">contour_returns</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
-<span class="c1"># Get samples for a contour approach long term analysis</span>
-<span class="n">T_sampleCA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">Hs_sampleCA</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">getContourPoints</span><span class="p">(</span><span class="n">T_sampleCA</span><span class="p">)</span>
+<span class="c1"># # Get samples for a full sea state long term analysis</span>
+<span class="c1"># Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,</span>
+<span class="c1">#                                                      contour_returns, random_seed)</span>
+<span class="c1"># # Get samples for a contour approach long term analysis</span>
+<span class="c1"># T_sampleCA = np.arange(12, 26, 2)</span>
+<span class="c1"># Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)</span>
 
-<span class="c1"># Modify contour by steepness curve if they intersect</span>
-<span class="c1"># Declare required parameters</span>
-<span class="n">depth</span> <span class="o">=</span> <span class="mf">391.4</span>  <span class="c1"># Depth at measurement point (m)</span>
-<span class="n">SteepMax</span> <span class="o">=</span> <span class="mf">0.07</span>  <span class="c1"># Optional: enter estimate of breaking steepness</span>
-<span class="n">T_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">buoy46022</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="c1"># # Modify contour by steepness curve if they intersect</span>
+<span class="c1"># # Declare required parameters</span>
+<span class="c1"># depth = 391.4  # Depth at measurement point (m)</span>
+<span class="c1"># SteepMax = 0.07  # Optional: enter estimate of breaking steepness</span>
+<span class="c1"># T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)</span>
 
-<span class="n">SteepH</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">T_vals</span><span class="p">)</span>
-<span class="n">SteepH_Return</span> <span class="o">=</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">steepness</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">SteepMax</span><span class="p">,</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="p">)</span>
+<span class="c1"># SteepH = pca46022.steepness(depth, SteepMax, T_vals)</span>
+<span class="c1"># SteepH_Return = pca46022.steepness(depth, SteepMax, pca46022.T_ReturnContours)</span>
 
-<span class="n">Steep_correction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">SteepH_Return</span> <span class="o">&lt;</span> <span class="n">pca46022</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
-<span class="n">Hs_Return_Steep</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">pca46022</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
-<span class="n">Hs_Return_Steep</span><span class="p">[</span><span class="n">Steep_correction</span><span class="p">]</span> <span class="o">=</span> <span class="n">SteepH_Return</span><span class="p">[</span><span class="n">Steep_correction</span><span class="p">]</span>
+<span class="c1"># Steep_correction = np.where(SteepH_Return &lt; pca46022.Hs_ReturnContours)</span>
+<span class="c1"># Hs_Return_Steep = copy.deepcopy(pca46022.Hs_ReturnContours)</span>
+<span class="c1"># Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]</span>
 
-<span class="n">pca46022</span><span class="o">.</span><span class="n">plotSampleData</span><span class="p">()</span>
+<span class="c1"># pca46022.plotSampleData()</span>
 
 <span class="c1"># Calculate bootstrap confidence intervals, commented out due to long run time</span>
 <span class="c1"># Note that stable bootstrap confidence intervals require large sample sizes</span>
