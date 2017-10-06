@@ -383,6 +383,308 @@ class EA:
 
         return contourmean_Hs, contourmean_T
 
+    def outsidePoints(self):
+        
+        testBuoy = self.buoy
+        trainingT = self.T_ReturnContours
+        trainingHs = self.Hs_ReturnContours
+        
+        rightEdge = max(trainingT)
+        leftEdge = min(trainingT)
+        
+        for i in range(len(trainingT)):
+            if trainingT[i] == rightEdge:
+               rightIndex = i
+            if trainingT[i] == leftEdge:
+               leftIndex = i
+            
+        if trainingT[1] < trainingT[2]:
+            indexDirection = "L2R"    
+        else: 
+            indexDirection = "R2L"     
+            
+        m = (trainingHs[leftIndex] - trainingHs[rightIndex]) / (trainingT[leftIndex] - trainingT[rightIndex])
+        b = trainingHs[leftIndex] - m*trainingT[leftIndex]    
+            
+        if indexDirection == "L2R":    
+            if leftIndex < rightIndex:    
+                upperTs = trainingT[leftIndex:rightIndex]
+                upperHs = trainingHs[leftIndex:rightIndex]
+                lowerTs = trainingT[rightIndex:len(trainingT)]
+                lowerTs = np.append(lowerTs,trainingT[0:leftIndex])
+                lowerHs = trainingHs[rightIndex:len(trainingT)]
+                lowerHs = np.append(lowerHs,trainingHs[0:leftIndex])
+            if leftIndex > rightIndex:    
+                lowerTs = trainingT[rightIndex:leftIndex]
+                lowerHs = trainingHs[rightIndex:leftIndex]
+                upperTs = trainingT[leftIndex:len(trainingT)]
+                upperTs = np.append(upperTs,trainingT[0:rightIndex]) 
+                upperHs = trainingHs[leftIndex:len(trainingT)]
+                upperHs = np.append(upperHs,trainingHs[0:rightIndex]) 
+                
+            upperMs = []
+            upperBs = []
+            lowerMs = []
+            lowerBs = []
+            for i in range(len(lowerHs)-1):
+                lowerMs.append((lowerHs[i+1] - lowerHs[i]) / (lowerTs[i+1] - lowerTs[i]))
+                lowerBs.append(lowerHs[i] - lowerMs[i]*lowerTs[i])    
+            for i in range(len(upperHs)-1):
+                upperMs.append((upperHs[i+1] - upperHs[i]) / (upperTs[i+1] - upperTs[i]))
+                upperBs.append(upperHs[i] - upperMs[i]*upperTs[i])     
+                
+            outsides = 0
+            outsideIndex = []
+            
+            for i in range(len(testBuoy.T)):
+                yhat = m * testBuoy.T[i] + b
+                if testBuoy.Hs[i] > yhat:
+                   for j in range(len(upperTs)-1):
+                       if(testBuoy.T[i] > upperTs[j] and testBuoy.T[i] < upperTs[j+1]):
+                           contourHs = upperMs[j] * testBuoy.T[i] + upperBs[j]
+                           if(testBuoy.Hs[i] > contourHs):
+                               outsides += 1
+                               outsideIndex.append(i)
+            
+                if testBuoy.Hs[i] < yhat:
+                   for j in range(len(lowerTs)-1):
+                       if(testBuoy.T[i] < lowerTs[j] and testBuoy.T[i] > lowerTs[j+1]):
+                           contourHs = lowerMs[j] * testBuoy.T[i] + lowerBs[j]
+                           if(testBuoy.Hs[i] < contourHs):
+                               outsides += 1
+                               outsideIndex.append(i)
+                
+        if indexDirection == "R2L":    
+            if leftIndex < rightIndex:    
+                lowerTs = trainingT[leftIndex:rightIndex]
+                lowerHs = trainingHs[leftIndex:rightIndex]
+                upperTs = trainingT[rightIndex:len(trainingT)]
+                upperTs = np.append(upperTs,trainingT[0:leftIndex])
+                upperHs = trainingHs[rightIndex:len(trainingT)]
+                upperHs = np.append(upperHs,trainingHs[0:leftIndex])
+            if leftIndex > rightIndex:    
+                upperTs = trainingT[rightIndex:leftIndex]
+                upperHs = trainingHs[rightIndex:leftIndex]
+                lowerTs = trainingT[leftIndex:len(trainingT)]
+                lowerTs = np.append(lowerTs,trainingT[0:rightIndex]) 
+                lowerHs = trainingHs[leftIndex:len(trainingT)]
+                lowerHs = np.append(lowerHs,trainingHs[0:rightIndex]) 
+            
+            upperMs = []
+            upperBs = []
+            lowerMs = []
+            lowerBs = []
+            for i in range(len(lowerHs)-1):
+                lowerMs.append((lowerHs[i] - lowerHs[i+1]) / (lowerTs[i] - lowerTs[i+1]))
+                lowerBs.append(lowerHs[i] - lowerMs[i]*lowerTs[i])    
+            for i in range(len(upperHs)-1):
+                upperMs.append((upperHs[i] - upperHs[i+1]) / (upperTs[i] - upperTs[i+1]))
+                upperBs.append(upperHs[i] - upperMs[i]*upperTs[i])     
+                
+            outsides = 0
+            outsideIndex = []
+            
+            
+            
+            for i in range(len(testBuoy.T)):
+                yhat = m * testBuoy.T[i] + b
+                if testBuoy.Hs[i] > yhat:
+                   for j in range(len(upperTs)-1):
+                       if(testBuoy.T[i] < upperTs[j] and testBuoy.T[i] > upperTs[j+1]):
+                           contourHs = upperMs[j] * testBuoy.T[i] + upperBs[j]
+                           if(testBuoy.Hs[i] > contourHs):
+                               outsides += 1
+                               outsideIndex.append(i)
+            
+                if testBuoy.Hs[i] < yhat:
+                   for j in range(len(lowerTs)-1):
+                       if(testBuoy.T[i] < lowerTs[j] and testBuoy.T[i] > lowerTs[j+1]):
+                           contourHs = lowerMs[j] * testBuoy.T[i] + lowerBs[j]
+                           if(testBuoy.Hs[i] < contourHs):
+                               outsides += 1
+                               outsideIndex.append(i)    
+            
+        for i in range(len(testBuoy.T)):
+            if testBuoy.T[i] > max(trainingT):
+                outsideIndex.append(i)
+            if testBuoy.T[i] < min(trainingT):
+                outsideIndex.append(i)
+            
+        return(testBuoy.Hs[outsideIndex], testBuoy.T[outsideIndex])
+    
+
+    def contourIntegrator(self):    
+               
+        contourTs = self.T_ReturnContours
+        contourHs = self.Hs_ReturnContours
+        
+        rightEdge = max(contourTs)
+        leftEdge = min(contourTs)
+        
+        for i in range(len(contourTs)):
+            if contourTs[i] == rightEdge:
+               rightIndex = i
+            if contourTs[i] == leftEdge:
+               leftIndex = i
+            
+        if contourTs[1] < contourTs[2]:
+            indexDirection = "L2R"    
+        else: 
+             indexDirection = "R2L"     
+            
+        m = (contourHs[leftIndex] - contourHs[rightIndex]) / (contourTs[leftIndex] - contourTs[rightIndex])
+        b = contourHs[leftIndex] - m*contourTs[leftIndex]    
+           
+        area = 0
+         
+        if indexDirection == "L2R":    
+            if leftIndex < rightIndex:    
+                upperTs = contourTs[leftIndex:rightIndex]
+                upperHs = contourHs[leftIndex:rightIndex]
+                lowerTs = contourTs[rightIndex:len(contourTs)]
+                lowerTs = np.append(lowerTs,contourTs[0:leftIndex])
+                lowerHs = contourHs[rightIndex:len(contourTs)]
+                lowerHs = np.append(lowerHs,contourHs[0:leftIndex])
+            if leftIndex > rightIndex:    
+                lowerTs = contourTs[rightIndex:leftIndex]
+                lowerHs = contourHs[rightIndex:leftIndex]
+                upperTs = contourTs[leftIndex:len(contourTs)]
+                upperTs = np.append(upperTs,contourTs[0:rightIndex]) 
+                upperHs = contourHs[leftIndex:len(contourTs)]
+                upperHs = np.append(upperHs,contourHs[0:rightIndex]) 
+        
+            if m > 0:        
+                for i in range(len(upperTs)-1):
+                    if upperHs[i] < upperHs[i+1]:
+                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
+                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
+                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if upperHs[i] >= upperHs[i+1]:
+                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
+                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
+                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea           
+                for i in range(len(lowerTs)-1):
+                    if lowerHs[i] < lowerHs[i+1]:
+                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
+                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if lowerHs[i] >= lowerHs[i+1]:
+                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i])
+                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
+                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+            
+            if m < 0:        
+                for i in range(len(upperTs)-1):
+                    if upperHs[i] < upperHs[i+1]:
+                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i] + b)) 
+                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
+                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if upperHs[i] > upperHs[i+1]:
+                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
+                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
+                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea           
+                for i in range(len(lowerTs)-1):
+                    if lowerHs[i] < lowerHs[i+1]:
+                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
+                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if lowerHs[i] > lowerHs[i+1]:
+                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
+                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                        
+        if indexDirection == "R2L":    
+            if leftIndex < rightIndex:    
+                lowerTs = contourTs[leftIndex:rightIndex]
+                lowerHs = contourHs[leftIndex:rightIndex]
+                upperTs = contourTs[rightIndex:len(contourTs)]
+                upperTs = np.append(upperTs,contourTs[0:leftIndex])
+                upperHs = contourHs[rightIndex:len(contourTs)]
+                upperHs = np.append(upperHs,contourHs[0:leftIndex])
+            if leftIndex > rightIndex:    
+                upperTs = contourTs[rightIndex:leftIndex]
+                upperHs = contourHs[rightIndex:leftIndex]
+                lowerTs = contourTs[leftIndex:len(contourTs)]
+                lowerTs = np.append(lowerTs,contourTs[0:rightIndex]) 
+                lowerHs = contourHs[leftIndex:len(contourTs)]
+                lowerHs = np.append(lowerHs,contourHs[0:rightIndex]) 
+                
+            if m > 0:        
+                for i in range(len(upperTs)-1):
+                    if upperHs[i] < upperHs[i+1]:
+                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i] + b)) 
+                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
+                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if upperHs[i] >= upperHs[i+1]:
+                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
+                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
+                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea           
+                for i in range(len(lowerTs)-1):
+                    if lowerHs[i] < lowerHs[i+1]:
+                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
+                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if lowerHs[i] >= lowerHs[i+1]:
+                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
+                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+            
+            if m < 0:        
+                for i in range(len(upperTs)-1):
+                    if upperHs[i] < upperHs[i+1]:
+                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
+                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
+                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if upperHs[i] >= upperHs[i+1]:
+                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
+                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
+                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea           
+                for i in range(len(lowerTs)-1):
+                    if lowerHs[i] < lowerHs[i+1]:
+                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
+                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                    if lowerHs[i] >= lowerHs[i+1]:
+                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
+                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
+                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
+                        sectionArea = rect + lowerTri + upperTri
+                        area += sectionArea
+                        
+        return(area)
+    
+
+
     def __getCopulaParams(self,n_size,bin_1_limit,bin_step):
         sorted_idx = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
         Hs = self.buoy.Hs[sorted_idx]
@@ -521,8 +823,12 @@ class PCA(EA):
         '''
         self.method = "Principle component analysis"
         self.buoy = buoy
-        self.size_bin = size_bin
-
+        if size_bin > len(buoy.Hs)*0.25:
+            self.size_bin = len(buoy.Hs)*0.25
+            print round(len(buoy.Hs)*0.25,2),'is the max bin size for this buoy. The bin size has been set to this amount.'
+        else:
+            self.size_bin = size_bin
+            
         self.Hs_ReturnContours = None
         self.Hs_SampleCA = None
         self.Hs_SampleFSS = None
@@ -533,7 +839,7 @@ class PCA(EA):
 
         self.Weight_points = None
 
-        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(self.size_bin)
 
     def __generateParams(self, size_bin=250.0):
         pca = skPCA(n_components=2)
@@ -1208,7 +1514,7 @@ class GaussianCopula(EA):
 class Rosenblatt(EA):
     '''Create a Rosenblatt EA class for a buoy object. Contours generated 
     under this class will use a Rosenblatt transformation and the I-FORM.'''    
-    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, buoy, n_size=50., bin_1_limit= .5, bin_step=0.25):
         '''
         Parameters
         ----------
@@ -1223,9 +1529,26 @@ class Rosenblatt(EA):
         '''
         self.method = "Rosenblatt"
         self.buoy = buoy
-        self.n_size = n_size
-        self.bin_1_limit = bin_1_limit
-        self.bin_step = bin_step
+        
+        if n_size > 100:
+            self.n_size = 100
+            print 100,'is the maximum "minimum bin size" for this buoy. The minimum bin size has been set to this amount.'
+        else:
+            self.n_size = n_size
+        
+        if bin_step > max(buoy.Hs)*.1:
+            self.bin_step = max(buoy.Hs)*.1
+            print round(max(buoy.Hs)*.1,2),'is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.'
+        else:
+            self.bin_step = bin_step
+
+        if bin_1_limit  > max(buoy.Hs)*.25:
+            self.bin_1_limit = max(buoy.Hs)*.25
+            print round(max(buoy.Hs)*.25,2),'is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.'
+        else:
+                self.bin_1_limit = bin_1_limit           
+        
+        
 
         self.Hs_ReturnContours = None
 #        self.Hs_SampleCA = None
@@ -1238,7 +1561,7 @@ class Rosenblatt(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(self.n_size,self.bin_1_limit,self.bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Rosenblatt Copula Contour function.
@@ -2170,8 +2493,8 @@ class BivariateKDE(EA):
         vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
         plt.clf()
         contourVals = vals.allsegs[0][0]
-        self.Hs_ReturnContour = contourVals[:,1]
-        self.T_ReturnContour = contourVals[:,0]
+        self.Hs_ReturnContours = contourVals[:,1]
+        self.T_ReturnContours = contourVals[:,0]
 
         return self.Hs_ReturnContours, self.T_ReturnContours
 
@@ -2551,6 +2874,7 @@ class Buoy(object):
                 fileName = fileName + '.h5'
         f = h5py.File(fileName, 'w')
         self._saveData(f)
+        
 
     def _saveData(self, fileObj):
         if(self.Hs is not None):
