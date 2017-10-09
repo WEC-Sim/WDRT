@@ -29,7 +29,7 @@ BibTex key
 Related publications
 --------------------
 
--- ​R.G. Coe, C. Michelen, A. Eckert-Gallup, C. Sallaberry, `Full Long-term Design Response Analysis of a Wave Energy Converter <http://www.sciencedirect.com/science/article/pii/S0960148117309187>`_, accepted by Renewable Energy.
+-- ​R.G. Coe, C. Michelen, A. Eckert-Gallup, C. Sallaberry, `Full Long-term Design Response Analysis of a Wave Energy Converter <http://www.sciencedirect.com/science/article/pii/S0960148117309187>`_, Renewable Energy 2018, 116, 356–366.
 
 -- J. Canning, S. Edwards, T. Esterly, B. Seng, L. Smith, W. Stuart, N. Martin, A. Eckert-Gallup, R.G. Coe, `WEC Extreme Conditions Modeling Sandia Summer Intern 2017 Report <http://energy.sandia.gov/download/42311/>`_, SAND2017-10592, 2017.​
 
