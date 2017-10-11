@@ -2080,100 +2080,6 @@ class NonParaGumbelCopula(EA):
         groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
 
-class BivariateKDE(EA):
-
-    def __init__(self, buoy, NData = 100, logTransform = True):
-        self.method = "Bivariate KDE"
-        self.buoy = buoy
-
-        self.Hs_ReturnContours = None
-        self.T_ReturnContours = None
-        self.NData = NData
-
-        self.logTransform = logTransform
-
-    def getContours(self, time_ss, time_r):
-        p_f = 1 / (365 * (24 / time_ss) * time_r)
-
-        if self.logTransform: 
-            # Take log of both variables
-            logTp = np.log(self.buoy.T)
-            logHs = np.log(self.buoy.Hs)
-            # Get rid of weird data points close to 0
-            idx = np.where(logHs > -1) 
-            logTp = logTp[idx,][0]
-            logHs = logHs[idx,][0]
-            ty = [logTp, logHs]
-        else: 
-            ty = [self.buoy.T, self.buoy.Hs]
-        # Calculate optimal bandwidth for log(Tp) and log(Hs) or Tp and Hs
-        if self.logTransform: 
-            sig = robust.scale.mad(logTp)
-            num = float(len(logTp))
-            bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-            
-            sig = robust.scale.mad(logHs)
-            num = float(len(logHs))
-            bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
-        else: 
-            sig = robust.scale.mad(self.buoy.T)
-            num = float(len(self.buoy.T))
-            bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-            
-            sig = robust.scale.mad(self.buoy.Hs)
-            num = float(len(self.buoy.Hs))
-            bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
-
-        bw = [bwTp, bwHs]
-
-        # Create grid of points
-        Ndata = 100
-        min_limit_1 = min(self.buoy.T) - 2
-        max_limit_1 = max(self.buoy.T) + 10
-        min_limit_2 = 0
-        max_limit_2 = max(self.buoy.Hs) + 10
-        pts_tp = np.linspace(min_limit_1, max_limit_1, Ndata) 
-        pts_hs = np.linspace(min_limit_2, max_limit_2, Ndata)
-        pt1,pt2 = np.meshgrid(pts_tp, pts_hs)
-        pts_tp = pt1.flatten()
-        pts_hs = pt2.flatten()
-
-        # Transform gridded points using log
-        xi = [pts_tp, pts_hs]
-        if self.logTransform: 
-            txi = [np.log(pts_tp), np.log(pts_hs)]
-        else: 
-            txi = xi
-
-        m = len(txi[0])
-        n = len(ty[0])
-        d = 2
-
-        # Create contour
-        f = np.zeros((1,m))
-        weight = np.ones((1,n))
-        for i in range(0,m):
-            ftemp = np.ones((n,1))
-            for j in range(0,d):
-                z = (txi[j][i] - ty[j])/bw[j]
-                fk = stats.norm.pdf(z)
-                if self.logTransform:     
-                    fnew = fk*(1/np.transpose(xi[j][i]))
-                else: 
-                    fnew = fk
-                fnew = np.reshape(fnew, (n,1))
-                ftemp = np.multiply(ftemp,fnew)
-            f[:,i] = np.dot(weight,ftemp)
-
-
-        fhat = f.reshape(100,100)
-        vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
-        plt.clf()
-        contourVals = vals.allsegs[0][0]
-        self.Hs_ReturnContour = contourVals[:,1]
-        self.T_ReturnContour = contourVals[:,0]
-
-        return self.Hs_ReturnContours, self.T_ReturnContours
 
         
 class Buoy(object):
@@ -2641,20 +2547,24 @@ class Buoy(object):
             Hs.extend(tmp1)
             T.extend(tmp2)
             dateNum.extend(_getDateNums(self.dateList[ii]))
+
+        dateList = [date for year in self.dateList for date in year]
         Hs = np.array(Hs, dtype=np.float)
         T = np.array(T, dtype=np.float)
         dateNum = np.array(dateNum, dtype=np.float)
+        dateList = np.array(dateList)
 
         # Removing NaN data, assigning T label depending on input (Te or Tp)
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
+        dateList = dateList[Nanrem]
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
-        return Hs, T, dateNum
+        return Hs, T, dateNum, dateList
 
 def _getDateNums(dateArr):
     '''datetime objects
