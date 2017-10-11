@@ -2545,20 +2545,25 @@ class Buoy(object):
             Hs.extend(tmp1)
             T.extend(tmp2)
             dateNum.extend(_getDateNums(self.dateList[ii]))
+
+        dateList = [date for year in self.dateList for date in year]
         Hs = np.array(Hs, dtype=np.float)
         T = np.array(T, dtype=np.float)
         dateNum = np.array(dateNum, dtype=np.float)
+        dateList = np.array(dateList)
 
         # Removing NaN data, assigning T label depending on input (Te or Tp)
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
+        dateList = dateList[Nanrem]
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
-        return Hs, T, dateNum
+        self.dateList = dateList
+        return Hs, T, dateNum, dateList
 
 def _getDateNums(dateArr):
     '''datetime objects
