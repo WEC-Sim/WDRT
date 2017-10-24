@@ -402,28 +402,27 @@ class EA:
         Example
         -------
         
-            To get correseponding T and Hs arrays of observations that are outside
-            of a given contour:
-                
-                import WDRT.ESSC as ESSC
-                import numpy as np
-                
-                # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022','NDBC')
-                buoy46022.fetchFromWeb()
-                
-                # Create PCA EA object for buoy
-                rosen46022 = ESSC.Rosenblatt(buoy46022)
-                
-                # Declare required parameters
-                Time_SS = 1.  # Sea state duration (hrs)
-                Time_r = 100  # Return periods (yrs) of interest
-                
-                # Generate contour
-                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
-                
-                # Return the outside point Hs/T combinations
-                outsideHs, outsideT = rosen46022.outsidePoints()
+        To get correseponding T and Hs arrays of observations that are outside
+        of a given contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            
+            # Generate contour
+            Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+            
+            # Return the outside point Hs/T combinations
+            outsideHs, outsideT = rosen46022.outsidePoints()
         
         
         '''
@@ -573,28 +572,27 @@ class EA:
         Example
         -------
         
-            To get correseponding T and Hs arrays of observations that are outside
-            of a given contour:
-                
-                import WDRT.ESSC as ESSC
-                import numpy as np
-                
-                # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022','NDBC')
-                buoy46022.fetchFromWeb()
-                
-                # Create PCA EA object for buoy
-                rosen46022 = ESSC.Rosenblatt(buoy46022)
-                
-                # Declare required parameters
-                Time_SS = 1.  # Sea state duration (hrs)
-                Time_r = 100  # Return periods (yrs) of interest
-                
-                # Generate contour
-                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
-                
-                # Return the area of the contour
-                rosenArea = rosen46022.contourIntegrator()
+        To get correseponding T and Hs arrays of observations that are outside
+        of a given contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            
+            # Generate contour
+            Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+            
+            # Return the area of the contour
+            rosenArea = rosen46022.contourIntegrator()
         
         
         '''        
@@ -2978,18 +2976,17 @@ class Buoy(object):
         Example
         -------
         
-            To get correseponding T and Hs arrays of observations that are outside
-            of a given contour:
-                
-                import WDRT.ESSC as ESSC
-                import numpy as np
-                
-                # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022','NDBC')
-                buoy46022.fetchFromWeb()
-                
-                # Create a subset of buoy 46022 consisting of the first 10 years
-                subsetBuoy = buoy46022.createSubsetBuoy(10)
+        To get correseponding T and Hs arrays of observations that are outside
+        of a given contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create a subset of buoy 46022 consisting of the first 10 years
+            subsetBuoy = buoy46022.createSubsetBuoy(10)
         
         
         '''  
