@@ -2482,7 +2482,9 @@ class Buoy(object):
         """
         url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
                str(self.buoyNum) +"p1_historic.nc"            
+        print "Downloading data from: " + url
         filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
+        urllib.urlretrieve (url, filePath)
         self.__processCDIPData(filePath)
 
     def __loadCDIP(self, filePath = None):
