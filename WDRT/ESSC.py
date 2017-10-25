@@ -459,7 +459,8 @@ class EA:
         
         # Nonparametric PDF for T
         temp = sm.nonparametric.KDEUnivariate(T)
-        temp.fit(bw = bwT)
+
+        temp.fit(bw = bwT.astype(np.double))
         f_t = temp.evaluate(pts_t)
         
         # Nonparametric CDF for Hs
@@ -2487,7 +2488,7 @@ class Buoy(object):
         urllib.urlretrieve (url, filePath)
         self.__processCDIPData(filePath)
 
-    def __loadCDIP(self, filePath = None):
+    def loadCDIP(self, filePath = None):
         """
         Loads the Hs and T values of the given site from the .nc file downloaded from 
         http://cdip.ucsd.edu/
@@ -2524,8 +2525,8 @@ class Buoy(object):
         except IOError:
             raise IOError("Could not find data for CDIP site: " + self.buoyNum)
             
-        self.Hs = data["waveHs"][:]
-        self.T = data["waveTa"][:]
+        self.Hs = np.array(data["waveHs"][:], dtype = np.double)
+        self.T = np.array(data["waveTa"][:], dtype = np.double)
         data.close()
 
         #Some CDIP buoys record data every half hour rather than every hour
