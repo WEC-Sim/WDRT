@@ -2577,8 +2577,8 @@ class BivariateKDE(EA):
         vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
         plt.clf()
         contourVals = vals.allsegs[0][0]
-        self.Hs_ReturnContour = contourVals[:,1]
-        self.T_ReturnContour = contourVals[:,0]
+        self.Hs_ReturnContours = contourVals[:,1]
+        self.T_ReturnContours = contourVals[:,0]
 
         return self.Hs_ReturnContours, self.T_ReturnContours
 
