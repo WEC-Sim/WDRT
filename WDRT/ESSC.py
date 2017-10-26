@@ -2489,14 +2489,14 @@ class NonParaGumbelCopula(EA):
 
 class BivariateKDE(EA):
 
-    def __init__(self, buoy, NData = 100, logTransform = True):
+    def __init__(self, buoy, bw, NData = 100, logTransform = True):
         self.method = "Bivariate KDE"
         self.buoy = buoy
 
         self.Hs_ReturnContours = None
         self.T_ReturnContours = None
         self.NData = NData
-
+        self.bw = bw
         self.logTransform = logTransform
 
     def getContours(self, time_ss, time_r):
@@ -2514,24 +2514,24 @@ class BivariateKDE(EA):
         else: 
             ty = [self.buoy.T, self.buoy.Hs]
         # Calculate optimal bandwidth for log(Tp) and log(Hs) or Tp and Hs
-        if self.logTransform: 
-            sig = robust.scale.mad(logTp)
-            num = float(len(logTp))
-            bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-            
-            sig = robust.scale.mad(logHs)
-            num = float(len(logHs))
-            bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
-        else: 
-            sig = robust.scale.mad(self.buoy.T)
-            num = float(len(self.buoy.T))
-            bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-            
-            sig = robust.scale.mad(self.buoy.Hs)
-            num = float(len(self.buoy.Hs))
-            bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
+        #if self.logTransform: 
+        #    sig = robust.scale.mad(logTp)
+        #    num = float(len(logTp))
+        #    bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
+        #    
+        #    sig = robust.scale.mad(logHs)
+        #    num = float(len(logHs))
+        #    bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
+       # else: 
+       #     sig = robust.scale.mad(self.buoy.T)
+       #     num = float(len(self.buoy.T))
+       #     bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
+       #     
+       #     sig = robust.scale.mad(self.buoy.Hs)
+       #    num = float(len(self.buoy.Hs))
+       #     bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
 
-        bw = [bwTp, bwHs]
+       # bw = [bwTp, bwHs]
 
         # Create grid of points
         Ndata = 100
@@ -2562,7 +2562,7 @@ class BivariateKDE(EA):
         for i in range(0,m):
             ftemp = np.ones((n,1))
             for j in range(0,d):
-                z = (txi[j][i] - ty[j])/bw[j]
+                z = (txi[j][i] - ty[j])/self.bw[j]
                 fk = stats.norm.pdf(z)
                 if self.logTransform:     
                     fnew = fk*(1/np.transpose(xi[j][i]))
@@ -2577,8 +2577,8 @@ class BivariateKDE(EA):
         vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
         plt.clf()
         contourVals = vals.allsegs[0][0]
-        self.Hs_ReturnContours = contourVals[:,1]
-        self.T_ReturnContours = contourVals[:,0]
+        self.Hs_ReturnContour = contourVals[:,1]
+        self.T_ReturnContour = contourVals[:,0]
 
         return self.Hs_ReturnContours, self.T_ReturnContours
 
