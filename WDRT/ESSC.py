@@ -37,6 +37,7 @@ import statsmodels.api as sm
 from statsmodels import robust
 import urllib
 import sys
+import matplotlib
 
 
 class EA:
@@ -393,6 +394,62 @@ class EA:
             
         Returns
         -------
+            outsideHs : nparray
+                The Hs values of the observations that are outside of the contour
+        
+            outsideT : nparray
+                The T values of the observations that are outside of the contour
+        
+        Example
+        -------
+        
+            To get correseponding T and Hs arrays of observations that are outside
+            of a given contour:
+                
+                import WDRT.ESSC as ESSC
+                import numpy as np
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022','NDBC')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                rosen46022 = ESSC.Rosenblatt(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                
+                # Generate contour
+                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+                
+                # Return the outside point Hs/T combinations
+                outsideHs, outsideT = rosen46022.outsidePoints()
+        
+        
+        '''
+        
+        
+        
+        
+        path_contour = matplotlib.path.Path(np.column_stack((self.T_ReturnContours,self.Hs_ReturnContours)))
+        contains_test = path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
+        out_inds = np.where(~contains_test)
+        outsideHs = self.buoy.Hs[out_inds]
+        outsideT = self.buoy.T[out_inds]
+        
+        return(outsideHs, outsideT)
+
+    def outsidePoints_OLD(self):
+        
+        '''Determines which buoy observations are outside of a given contour.
+        
+        Parameters
+        ----------
+            None
+            
+        Returns
+        -------
             testBuoy.Hs : nparray
                 The Hs values of the observations that are outside of the contour
         
@@ -555,8 +612,59 @@ class EA:
             
         return(testBuoy.Hs[outsideIndex], testBuoy.T[outsideIndex])
     
-
     def contourIntegrator(self):    
+             
+        '''Calculates the "area" of the contour. Even though the units are different, the metric will
+        still give a good representation of how conservative (large) a contour is.
+        
+        Parameters
+        ----------
+            None
+            
+        Returns
+        -------
+            area : float
+                The area of the contour in TxHs units. 
+        
+        Example
+        -------
+        
+            To get correseponding T and Hs arrays of observations that are outside
+            of a given contour:
+                
+                import WDRT.ESSC as ESSC
+                import numpy as np
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022','NDBC')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                rosen46022 = ESSC.Rosenblatt(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                
+                # Generate contour
+                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+                
+                # Return the area of the contour
+                rosenArea = rosen46022.contourIntegrator()
+        
+        
+        '''        
+        
+        
+        
+        contourTs = self.T_ReturnContours
+        contourHs = self.Hs_ReturnContours
+    
+        area = 0.5*np.abs(np.dot(contourTs,np.roll(contourHs,1))-np.dot(contourHs,np.roll(contourTs,1))) 
+    
+        return area
+
+    def contourIntegrator_OLD(self):    
              
         '''Calculates the "area" of the contour. Even though the units are different, the metric will
         still give a good representation of how conservative (large) a contour is.
@@ -645,26 +753,26 @@ class EA:
                         rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
                         lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
                         upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if upperHs[i] >= upperHs[i+1]:
                         rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
                         lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
                         upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea           
                 for i in range(len(lowerTs)-1):
                     if lowerHs[i] < lowerHs[i+1]:
                         rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
                         upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if lowerHs[i] >= lowerHs[i+1]:
                         rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i])
                         lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
                         upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
             
             if m < 0:        
@@ -673,26 +781,26 @@ class EA:
                         rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i] + b)) 
                         lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
                         upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if upperHs[i] > upperHs[i+1]:
                         rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
                         lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
                         upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea           
                 for i in range(len(lowerTs)-1):
                     if lowerHs[i] < lowerHs[i+1]:
                         rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
                         upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if lowerHs[i] > lowerHs[i+1]:
                         rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
                         upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                         
         if indexDirection == "R2L":    
@@ -717,26 +825,26 @@ class EA:
                         rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i] + b)) 
                         lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
                         upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if upperHs[i] >= upperHs[i+1]:
                         rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
                         lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
                         upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea           
                 for i in range(len(lowerTs)-1):
                     if lowerHs[i] < lowerHs[i+1]:
                         rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
                         upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if lowerHs[i] >= lowerHs[i+1]:
                         rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
                         upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
             
             if m < 0:        
@@ -745,26 +853,26 @@ class EA:
                         rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
                         lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
                         upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if upperHs[i] >= upperHs[i+1]:
                         rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
                         lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
                         upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea           
                 for i in range(len(lowerTs)-1):
                     if lowerHs[i] < lowerHs[i+1]:
                         rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
                         upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                     if lowerHs[i] >= lowerHs[i+1]:
                         rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
                         lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
                         upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = rect + lowerTri + upperTri
+                        sectionArea = abs(rect + lowerTri + upperTri)
                         area += sectionArea
                         
         return(area)
