@@ -3004,7 +3004,7 @@ class Buoy(object):
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
-            buoy46022.saveData()
+            buoy46022.saveAsH5()
         '''
         if (fileName is None):
             fileName = 'NDBC' + str(self.buoyNum) + '.h5'
@@ -3016,6 +3016,24 @@ class Buoy(object):
         self._saveData(f)
      
     def saveAsTxt(self, savePath = "./Data/"):
+        """
+        Saves spectral wave density data to a .txt file in the same format as the files 
+        found on NDBC's website.
+
+        Parameters
+        ----------
+            savePath : string
+                Relative file path where the .txt files will be saved. 
+                
+        Example
+        -------
+        To save data to h5 file after fetchFromWeb or loadFromText:
+            
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveAsTxt()
+        """
         curYear = self.dateList[0][0]
         dateIndexDiff = 0
         bFile = False #NDBC sometimes splits years into two files, the second one titled "YYYYb"
