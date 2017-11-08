@@ -2717,7 +2717,7 @@ class Buoy(object):
 
 
 
-    def __init__(self, buoyNum, buoyType, savePath = './Data/'):
+    def __init__(self, buoyNum, buoyType):
 
         '''
         Parameters
@@ -2740,16 +2740,10 @@ class Buoy(object):
 
         self.buoyNum = buoyNum
         self.buoyType = buoyType.upper()
-        self.savePath = savePath
-
-
-        if not os.path.exists(savePath):
-          os.makedirs(savePath)
 
 
 
-
-    def fetchFromWeb(self, saveType="txt", savePath = "./Data/",proxy=None):
+    def fetchFromWeb(self, savePath = "./Data/",proxy=None):
         '''
         Calls either __fetchCDIP() or __fetchNDBC() depending on the given
         buoy's type and fetches the necessary data from its respective website.
@@ -2773,11 +2767,11 @@ class Buoy(object):
         >>> buoy.fetchFromWeb()
         '''
         if self.buoyType == "NDBC":
-            self.__fetchNDBC(saveType,savePath,proxy)
+            self.__fetchNDBC(proxy)
         elif self.buoyType == "CDIP":
             self.__fetchCDIP(savePath,proxy)
 
-    def __fetchNDBC(self, saveType, savePath, proxy):
+    def __fetchNDBC(self, proxy):
         '''
         Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -2800,8 +2794,6 @@ class Buoy(object):
         numDates = 0
         dateVals = []
         spectralVals = []
-        if savePath == None:
-            savePath = self.savePath
 
         url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
         if proxy == None:
@@ -2823,44 +2815,12 @@ class Buoy(object):
 
         links = [a["href"] for a in headers.find_next_siblings("a", href=True)]
 
-        if(saveType is 'txt'):
-            # Grab the device number so the filename is more specific
-            saveDir = os.path.join(self.savePath, 'NDBC%s' % (self.buoyNum))
-            print "Saving in :", saveDir
-            if not os.path.exists(saveDir):
-                os.makedirs(saveDir)
-
-        if(saveType is "h5"):
-            saveDir = os.path.join(self.savePath, 'NDBC%s-raw.h5' %(self.buoyNum))
-            print "Saving in :", saveDir
-            f = h5py.File(saveDir, 'w')
-
         for link in links:
             dataLink = "http://ndbc.noaa.gov" + link
-            year = int(re.findall("[0-9]+", link)[1])
-            if(saveType is 'txt'):
-            #certain years have multiple files marked with the letter 'b'
-                if ('b' + str(year)) not in link:
-                    swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
-                                   (self.buoyNum, year)), 'w')
-                else:
-                    swdFile = open(os.path.join(saveDir, "SWD-%s-%s.txt" %
-                                   (self.buoyNum, str(year) + 'b')), 'w')
-
-            if(saveType is 'h5'):
-                if ('b' + str(year)) not in link:
-                    dataSetName = str(("SWD-%s-%d" %
-                                   (self.buoyNum, year)))
-                else:
-                    dataSetName = str(("SWD-%s-%s" %
-                                   (self.buoyNum, str(year) + 'b')))
-
 
             fileName = dataLink.replace('download_data', 'view_text_file')
             data = urllib2.urlopen(fileName)
             print "Reading from:", data.geturl()
-
-
 
             #First Line of every file contains the frequency data
             frequency = data.readline()
@@ -2870,20 +2830,15 @@ class Buoy(object):
             else:
                 numDates = 4
 
-            if (saveType is "txt"):
-                swdFile.write(frequency)
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
 
 
             for line in data:
-                if (saveType is "txt"):
-                    swdFile.write(line)
+
                 currentLine = line.split()
                 numCols = len(currentLine)
                 if numCols - numDates != len(frequency):
                     print "NDBC File is corrupted - Skipping and deleting data"
-                    swdFile.close()
-                    os.remove(swdFile.name)
                     spectralVals = []
                     dateVals = []
                     break
@@ -2906,18 +2861,11 @@ class Buoy(object):
             numCols = 0
 
             if len(spectralVals) != 0:
-                if(saveType is "h5"):
-                    f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
-                    f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
-                    f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
                 del dateVals[:]
                 del spectralVals[:]
                 self.swdList.append(spectralValues)
                 self.freqList.append(frequency)
                 self.dateList.append(dateValues)
-
-                if(saveType is "txt"):
-                    swdFile.close()
         self._prepData()
 
 
@@ -3036,7 +2984,7 @@ class Buoy(object):
         self.dateNum = np.array(f['buoy_Data/dateNum'][:])
         print "----> SUCCESS"
 
-    def saveData(self, fileName=None):
+    def saveAsH5(self, fileName=None):
         '''
         Saves NDBC buoy data to h5 file after fetchFromWeb() or loadFromText(). 
         This data can later be used to create a buoy object using the 
@@ -3067,6 +3015,48 @@ class Buoy(object):
         f = h5py.File(fileName, 'w')
         self._saveData(f)
      
+    def saveAsTxt(self, savePath = "./Data/"):
+        curYear = self.dateList[0][0]
+        dateIndexDiff = 0
+        bFile = False #NDBC sometimes splits years into two files, the second one titled "YYYYb"
+        saveDir = os.path.join(savePath, 'NDBC%s' % (self.buoyNum))
+        print "Saving in :", saveDir
+        if not os.path.exists(saveDir):
+            os.makedirs(saveDir)
+        for i in range(len(self.swdList)):
+            if not bFile:
+                swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
+                                   (self.buoyNum, curYear)), 'w')
+            else:
+                swdFile = open(os.path.join(saveDir, "SWD-%s-%db.txt" %
+                                   (self.buoyNum, curYear)), 'w')
+                bFile = False
+            
+            freqLine = "YYYY MM DD hh"
+            for j in range(len(self.freqList[i])):
+                freqLine += ("   " + "%2.3f" % self.freqList[i][j])
+            freqLine += "\n"
+            swdFile.write(freqLine)
+            for j in range(len(self.dateList)):
+                if (j + dateIndexDiff + 1) > len(self.dateList):
+                    break
+                newYear = self.dateList[j + dateIndexDiff][0]
+                if curYear != newYear:
+                    dateIndexDiff += (j)
+                    curYear = newYear
+                    break
+                if (j+1) > len(self.swdList[i]):
+                    dateIndexDiff += (j)
+                    bFile = True
+                    break
+                swdLine = ' '.join("%0*d" % (2,dateVal) for dateVal in self.dateList[j + dateIndexDiff]) + "   "
+                swdLine += "   ".join("%5s" % val for val in self.swdList[i][j]) + "\n"
+                swdFile.write(swdLine)
+                
+
+        
+
+
     def createSubsetBuoy(self, trainingSize):
         
         '''Takes a given buoy and creates a subset buoy of a given length in years.
@@ -3078,7 +3068,7 @@ class Buoy(object):
             
         Returns
         -------
-            subsetBuoy : ESSC.Buoy object
+            # subsetBuoy : ESSC.Buoy object
                 A buoy (with Hs, T, and dateList values) that is a subset of the given buoy 
         
         Example
