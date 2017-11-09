@@ -2834,7 +2834,6 @@ class Buoy(object):
 
 
             for line in data:
-
                 currentLine = line.split()
                 numCols = len(currentLine)
                 if numCols - numDates != len(frequency):
@@ -2845,7 +2844,7 @@ class Buoy(object):
 
                 if float(currentLine[numDates+1]) < 999:
                     numLines += 1
-                    for j in range(numDates):
+                    for j in range(4):
                         dateVals.append(currentLine[j])
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
@@ -2854,7 +2853,7 @@ class Buoy(object):
                 dateValues = np.array(dateVals, dtype=np.int)
                 spectralValues = np.array(spectralVals, dtype=np.float)
 
-                dateValues = np.reshape(dateValues, (numLines, numDates))
+                dateValues = np.reshape(dateValues, (numLines, 4))
                 spectralValues = np.reshape(spectralValues, (numLines,
                                                              (numCols - numDates)))
             numLines = 0
@@ -2869,7 +2868,7 @@ class Buoy(object):
         self._prepData()
 
 
-    def loadFromText(self, dirPath):
+    def loadFromText(self, dirPath = None):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -2914,6 +2913,7 @@ class Buoy(object):
             f = open(fileName, 'r')
             frequency = f.readline().split()
             numCols = len(frequency)
+
             if frequency[4] == 'mm':
                 frequency = np.array(frequency[5:], dtype=np.float)
                 numTimeVals = 5
@@ -2926,7 +2926,7 @@ class Buoy(object):
                 currentLine = line.split()
                 if float(currentLine[numTimeVals + 1]) < 999:
                     numLines += 1
-                    for i in range(numTimeVals):
+                    for i in range(4):
                         dateVals.append(currentLine[i])
                     for i in range(numCols - numTimeVals):
                         spectralVals.append(currentLine[i + numTimeVals])
@@ -3254,13 +3254,9 @@ def _getDateNums(dateArr):
     for times in dateArr:
         if  times[0] < 1900:
             times[0] = 1900 + times[0]
-        if times[0] < 2005:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3])))
-        else:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3],
-                                                   times[4])))
+        dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                               times[2], times[3])))
+
     return dateNum
 
 def _getStats(swdArr, freqArr):
