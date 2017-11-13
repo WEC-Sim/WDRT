@@ -875,6 +875,191 @@ class EA:
                         
         return(area)
     
+    def dataContour(self, tStepSize = 1, hsStepSize = .5):
+    
+        '''Creates a contour around the ordered pairs of buoy observations. How tightly
+           the contour fits around the data will be determined by step size parameters.
+        
+        Parameters
+        ----------
+            tStepSize : float
+                Determines how far to search for the next point in the T direction. 
+                Smaller values will produce contours that follow the data more closely.
+    
+            hsStepSize : float
+                Determines how far to search for the next point in the Hs direction. 
+                Smaller values will produce contours that follow the data more closely.
+                
+        Returns
+        -------
+            dataBoundryHs : nparray
+                The Hs values of the boundry observations
+        
+            dataBoundryT : nparray
+                The Hs values of the boundry observations
+        
+        Example
+        -------
+        
+        To get correseponding T and Hs arrays of observations that are outside
+        of a given contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Calculate the data contour
+            dataHs, dataT = rosen46022.dataArea(tStepSize = 1, hsStepSize = .5)
+        
+        
+        '''    
+    
+        
+        
+        maxHs = max(self.buoy.Hs)
+        minHs = min(self.buoy.Hs)
+        
+        sortedHsBuoy = copy.deepcopy(self.buoy)
+        sortedTBuoy = copy.deepcopy(self.buoy)
+        
+        sortedTIndex = sorted(range(len(self.buoy.T)),key=lambda x:self.buoy.T[x])
+        sortedHsIndex = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
+        
+        sortedHsBuoy.Hs = self.buoy.Hs[sortedHsIndex]
+        sortedHsBuoy.T = self.buoy.T[sortedHsIndex]
+        sortedTBuoy.Hs = self.buoy.Hs[sortedTIndex]
+        sortedTBuoy.T = self.buoy.T[sortedTIndex]
+        
+        hsBin1 = []
+        hsBin2 = []
+        hsBin3 = []
+        hsBin4 = []
+        tBin1 = []
+        tBin2 = []
+        tBin3 = []
+        tBin4 = []
+    
+        
+        startingPoint = sortedTBuoy.T[0]
+        hsBin4.append(sortedTBuoy.Hs[0])
+        tBin4.append(sortedTBuoy.T[0])
+        while True:
+            tempNextBinTs = sortedTBuoy.T[sortedTBuoy.T < startingPoint + tStepSize]    
+            tempNextBinHs = sortedTBuoy.Hs[sortedTBuoy.T < startingPoint + tStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinTs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinTs > startingPoint]
+            
+            try:
+                nextHs = max(nextBinHs)
+                nextT = nextBinTs[nextBinHs.argmax(axis=0)]
+                
+                hsBin4.append(nextHs)
+                tBin4.append(nextT)
+            
+                startingPoint = nextT
+            except ValueError:
+                startingPoint += tStepSize
+                break
+     
+            if nextHs == maxHs:
+                break
+        
+        startingPoint = sortedTBuoy.T[0]
+        hsBin1.append(sortedTBuoy.Hs[0])
+        tBin1.append(sortedTBuoy.T[0])
+        while True:
+            tempNextBinTs = sortedTBuoy.T[sortedTBuoy.T < startingPoint + tStepSize]    
+            tempNextBinHs = sortedTBuoy.Hs[sortedTBuoy.T < startingPoint + tStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinTs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinTs > startingPoint]
+            
+            try:
+                nextHs = min(nextBinHs)
+                nextT = nextBinTs[nextBinHs.argmin(axis=0)]
+                
+                hsBin1.append(nextHs)
+                tBin1.append(nextT)
+            
+                startingPoint = nextT
+            except ValueError:
+                startingPoint += tStepSize
+                break
+            
+            
+            if nextHs == minHs:
+                break
+        
+        
+        startingPoint = sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)]
+        hsBin3.append(sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)])
+        tBin3.append(sortedHsBuoy.T[sortedHsBuoy.T.argmax(axis=0)])
+        while True:
+            tempNextBinTs = sortedHsBuoy.T[sortedHsBuoy.Hs < startingPoint + hsStepSize]    
+            tempNextBinHs = sortedHsBuoy.Hs[sortedHsBuoy.Hs < startingPoint + hsStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinHs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinHs > startingPoint]
+        
+            try:
+                nextT = max(nextBinTs)
+                nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
+                
+                if nextHs not in hsBin4:
+                
+                    hsBin3.append(nextHs)
+                    tBin3.append(nextT)
+        
+                startingPoint = nextHs
+            
+            except ValueError:
+                startingPoint += hsStepSize
+                break
+    
+            if nextHs == maxHs:
+                break
+     
+        
+        startingPoint = sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)]
+        while True:
+            tempNextBinTs = sortedHsBuoy.T[sortedHsBuoy.Hs > startingPoint - hsStepSize]    
+            tempNextBinHs = sortedHsBuoy.Hs[sortedHsBuoy.Hs > startingPoint - hsStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinHs < startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinHs < startingPoint]
+        
+            try:    
+                nextT = max(nextBinTs)
+                nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
+            
+                if nextHs not in hsBin1:
+            
+                    hsBin2.append(nextHs)
+                    tBin2.append(nextT)
+        
+                startingPoint = nextHs
+            except ValueError:
+                startingPoint = startingPoint - hsStepSize
+                break
+    
+            
+            if nextHs == minHs:
+                break
+        
+        hsBin2 = hsBin2[::-1] # Reverses the order of the array
+        tBin2 = tBin2[::-1]
+        hsBin4 = hsBin4[::-1] # Reverses the order of the array
+        tBin4 = tBin4[::-1]
+        
+        dataBoundryHs = np.concatenate((hsBin1,hsBin2,hsBin3,hsBin4),axis = 0)
+        dataBoundryT = np.concatenate((tBin1,tBin2,tBin3,tBin4),axis = 0)
+        dataBoundryHs = dataBoundryHs[::-1]
+        dataBoundryT = dataBoundryT[::-1]
+        
+        return(dataBoundryHs, dataBoundryT)
+    
 
 
     def __getCopulaParams(self,n_size,bin_1_limit,bin_step):
