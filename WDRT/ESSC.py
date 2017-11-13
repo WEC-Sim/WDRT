@@ -2974,6 +2974,9 @@ class Buoy(object):
         savePath : string
             Relative path to place directory with data files.
         '''
+        maxRecordedDateValues = 4
+
+
         numLines = 0
         numCols = 0
         numDates = 0
@@ -3019,7 +3022,6 @@ class Buoy(object):
 
 
             for line in data:
-
                 currentLine = line.split()
                 numCols = len(currentLine)
                 if numCols - numDates != len(frequency):
@@ -3030,7 +3032,7 @@ class Buoy(object):
 
                 if float(currentLine[numDates+1]) < 999:
                     numLines += 1
-                    for j in range(numDates):
+                    for j in range(maxRecordedDateValues):
                         dateVals.append(currentLine[j])
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
@@ -3039,7 +3041,7 @@ class Buoy(object):
                 dateValues = np.array(dateVals, dtype=np.int)
                 spectralValues = np.array(spectralVals, dtype=np.float)
 
-                dateValues = np.reshape(dateValues, (numLines, numDates))
+                dateValues = np.reshape(dateValues, (numLines, maxRecordedDateValues))
                 spectralValues = np.reshape(spectralValues, (numLines,
                                                              (numCols - numDates)))
             numLines = 0
@@ -3054,7 +3056,7 @@ class Buoy(object):
         self._prepData()
 
 
-    def loadFromText(self, dirPath):
+    def loadFromText(self, dirPath = None):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -3079,6 +3081,7 @@ class Buoy(object):
         dateVals = []
         spectralVals = []
         numLines = 0
+        maxRecordedDateValues = 4
 
         if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
@@ -3099,6 +3102,7 @@ class Buoy(object):
             f = open(fileName, 'r')
             frequency = f.readline().split()
             numCols = len(frequency)
+
             if frequency[4] == 'mm':
                 frequency = np.array(frequency[5:], dtype=np.float)
                 numTimeVals = 5
@@ -3111,14 +3115,14 @@ class Buoy(object):
                 currentLine = line.split()
                 if float(currentLine[numTimeVals + 1]) < 999:
                     numLines += 1
-                    for i in range(numTimeVals):
+                    for i in range(maxRecordedDateValues):
                         dateVals.append(currentLine[i])
                     for i in range(numCols - numTimeVals):
                         spectralVals.append(currentLine[i + numTimeVals])
 
             dateValues = np.array(dateVals, dtype=np.int)
             spectralValues = np.array(spectralVals, dtype=np.double)
-            dateValues = np.reshape(dateValues, (numLines, numTimeVals))
+            dateValues = np.reshape(dateValues, (numLines, maxRecordedDateValues))
             spectralValues = np.reshape(
                 spectralValues, (numLines, (numCols - numTimeVals)))
 
@@ -3324,6 +3328,8 @@ class Buoy(object):
             f_T.attrs['description'] = 'energy period'
             f_dateNum = gbd.create_dataset('dateNum', data=self.dateNum)
             f_dateNum.attrs['description'] = 'datenum'
+            f_dateList = gbd.create_dataset('dateList', data=self.dateList)
+            f_dateList.attrs['description'] = 'date list'
         else:
             RuntimeError('Buoy object contains no data')
 
@@ -3439,13 +3445,9 @@ def _getDateNums(dateArr):
     for times in dateArr:
         if  times[0] < 1900:
             times[0] = 1900 + times[0]
-        if times[0] < 2005:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3])))
-        else:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3],
-                                                   times[4])))
+        dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                               times[2], times[3])))
+
     return dateNum
 
 def _getStats(swdArr, freqArr):
