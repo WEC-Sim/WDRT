@@ -59,7 +59,7 @@ class EA:
         return
 
     def saveContour(self, fileName=None):
-        '''Saves all available data obtained via the EA module to
+        '''Saves all available contour data obtained via the EA module to
         a .h5 file
 
         Parameters

@@ -8,7 +8,9 @@ buoy46022 = ESSC.Buoy('46022','NDBC')
 
 # Read data from ndbc.noaa.gov
 buoy46022.fetchFromWeb()
+#buoy46022.loadFromH5('./data/NDBC46022.h5')
 buoy46022.saveAsTxt(savePath = ".\Data")
+buoy46022.saveAsH5()
 
 # Load data from .txt file if avilable
 # buoy46022.loadFromText()
@@ -30,7 +32,7 @@ pca_Hs_Return, pca_T_Return = pca46022.getContours(Time_SS, Time_R)
 pca46022.plotData()
 
 # Save data in h5 file
-pca46022.saveData('./data/NDBC%s' % (pca46022.buoy.buoyNum))
+pca46022.saveContour('./data/NDBC%s' % (pca46022.buoy.buoyNum))
 
 # Create EA objects for remaining contour methods
 Gauss46022 = ESSC.GaussianCopula(buoy46022)
