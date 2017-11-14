@@ -58,7 +58,7 @@ class EA:
         additional contour methods planned for future release.'''
         return
 
-    def saveData(self, fileName=None):
+    def saveContour(self, fileName=None):
         '''Saves all available data obtained via the EA module to
         a .h5 file
 
@@ -79,9 +79,6 @@ class EA:
             f.create_dataset('method', data=self.method)
             gp = f.create_group('parameters')
             self._saveParams(gp)
-
-            if(self.buoy.Hs is not None):
-                self.buoy._saveData(fileObj=f)
 
             if(self.Hs_ReturnContours is not None):
                 grc = f.create_group('ReturnContours')
