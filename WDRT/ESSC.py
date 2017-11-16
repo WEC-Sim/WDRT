@@ -911,7 +911,7 @@ class EA:
             rosen46022 = ESSC.Rosenblatt(buoy46022)
             
             # Calculate the data contour
-            dataHs, dataT = rosen46022.dataArea(tStepSize = 1, hsStepSize = .5)
+            dataHs, dataT = rosen46022.dataContour(tStepSize = 1, hsStepSize = .5)
         
         
         '''    
