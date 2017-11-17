@@ -241,7 +241,7 @@ class EA:
             pca46022 = ESSC.PCA(buoy46022)
             
             T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
-            SteepMax = 0.07  # Optional: enter estimate of breaking steepness
+            SteepMax = 0.07  # Enter estimate of breaking steepness
             
             # Declare required parameters
             depth = 391.4  # Depth at measurement point (m)
@@ -421,7 +421,7 @@ class EA:
                 Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
                 
                 # Return the outside point Hs/T combinations
-                outsideHs, outsideT = rosen46022.outsidePoints()
+                outsideT, outsideHs = rosen46022.outsidePoints()
         
         
         '''
@@ -435,7 +435,7 @@ class EA:
         outsideHs = self.buoy.Hs[out_inds]
         outsideT = self.buoy.T[out_inds]
         
-        return(outsideHs, outsideT)
+        return(outsideT, outsideHs)
 
     def outsidePoints_OLD(self):
         
