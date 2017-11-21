@@ -210,12 +210,13 @@ class EA:
 
         Parameters
         ----------
-        depth: float
-            Depth at site
         SteepMax: float
             Wave breaking steepness estimate (e.g., 0.07).
         T_vals :np.array
             Array of T values [sec] at which to calculate the breaking height.
+        depth: float
+            Depth at site
+            Note: if left as
 
         Returns
         -------
@@ -252,7 +253,7 @@ class EA:
         # Calculate the wavelength at a given depth at each value of T
 
         if depth == None:
-            self.__fetchDepth()
+            depth = self.__fetchDepth()
         lambdaT = []
 
         g = 9.81  # [m/s^2]
