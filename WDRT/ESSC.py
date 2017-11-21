@@ -192,7 +192,7 @@ class EA:
         self.Hs_SampleCA = Hs_SampleCA
         return Hs_SampleCA
 
-    def steepness(self, depth, SteepMax, T_vals):
+    def steepness(self, SteepMax, T_vals, depth = None):
         '''This function calculates a steepness curve to be plotted on an H vs. T
         diagram.  First, the function calculates the wavelength based on the
         depth and T. The T vector can be the input data vector, or will be
@@ -250,6 +250,9 @@ class EA:
         '''
 
         # Calculate the wavelength at a given depth at each value of T
+
+        if depth == None:
+            self.__fetchDepth()
         lambdaT = []
 
         g = 9.81  # [m/s^2]
@@ -276,6 +279,25 @@ class EA:
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
         return SteepH
+    def __fetchDepth(self):
+        if self.buoy.buoyType == "NDBC":
+            url = "http://www.ndbc.noaa.gov/station_page.php?station=%s" % (46022)
+            ndbcURL = requests.get(url)
+            ndbcURL.raise_for_status()
+            ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
+            header = ndbcHTML.find("b", text="Water depth:")
+            return float(str(header.nextSibling).split()[0])
+        elif self.buoy.buoyType == "CDIP":
+            url = "http://cdip.ucsd.edu/cgi-bin/wnc_metadata?ARCHIVE/%sp1/%sp1_historic" % (self.buoy.buoyNum, self.buoy.buoyNum)
+            cdipURL = requests.get(url)
+            cdipURL.raise_for_status()
+            cdipHTML = bs4.BeautifulSoup(cdipURL.text, "lxml")
+            #Parse the table for the depth value
+            depthString = str(cdipHTML.findChildren("td", {"class" : "plus"})[0])
+            depthString = depthString.split("<br/>")[2]
+            return float(re.findall(r"[-+]?\d*\.\d+|\d+", depthString)[0])
+
+
 
     def bootStrap(self, boot_size=1000, plotResults=True):
         '''Get 95% confidence bounds about a contour using the bootstrap
@@ -3341,11 +3363,14 @@ class Buoy(object):
             Relative path to place directory with data files.
         """
         url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
-               str(self.buoyNum) +"p1_historic.nc"            
+               str(self.buoyNum) +"p1_historic.nc"        
+        print "Downloading data from: " + url    
         filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
+        urllib.urlretrieve (url, filePath)
+
         self.__processCDIPData(filePath)
 
-    def __loadCDIP(self, filePath = None):
+    def loadCDIP(self, filePath = None):
         """
         Loads the Hs and T values of the given site from the .nc file downloaded from 
         http://cdip.ucsd.edu/
@@ -3382,8 +3407,8 @@ class Buoy(object):
         except IOError:
             raise IOError("Could not find data for CDIP site: " + self.buoyNum)
             
-        self.Hs = data["waveHs"][:]
-        self.T = data["waveTa"][:]
+        self.Hs = np.array(data["waveHs"][:], dtype = np.double)
+        self.T = np.array(data["waveTa"][:],  dtype = np.double)
         data.close()
 
         #Some CDIP buoys record data every half hour rather than every hour
