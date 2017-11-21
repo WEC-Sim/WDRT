@@ -216,7 +216,8 @@ class EA:
             Array of T values [sec] at which to calculate the breaking height.
         depth: float
             Depth at site
-            Note: if left as
+            Note: if not inputted, the depth will tried to be grabbed from the respective
+            buoy type's website.
 
         Returns
         -------
