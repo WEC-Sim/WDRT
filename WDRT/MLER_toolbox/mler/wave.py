@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import numpy as np
 
 class wave(object):
@@ -99,11 +99,11 @@ class wave(object):
         freq = self._w / (2*np.pi)
         Tp = self.T
         Hs = self.H
-        B = (1.057/Tp)**4
-        A_irreg = B*(Hs/2)**2
+        B = (1.057/Tp)**4  # [(rad/s)^4]
+        A_irreg = B*(Hs/2)**2  # [m^2/s^4]
 
         orig_settings = np.seterr(divide='ignore',invalid='ignore')
-        S_f = (A_irreg*freq**(-5)*np.exp(-B*freq**(-4)))
+        S_f = (A_irreg*freq**(-5)*np.exp(-B*freq**(-4)))  # [m^2*s]
         if np.isnan( S_f[0] ): # defined to avoid a NaN
             S_f[0] = 0.
         np.seterr(**orig_settings)

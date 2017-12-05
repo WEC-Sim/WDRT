@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import numpy as np
 import scipy.interpolate
 
@@ -160,11 +160,11 @@ class mler(object):
 
         DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
         
-        S_tmp           = np.zeros(self.waves.numFreq);
-        self._S         = np.zeros(self.waves.numFreq);
-        self._A         = np.zeros(self.waves.numFreq);
-        self._CoeffA_Rn = np.zeros(self.waves.numFreq);
-        self._phase     = np.zeros(self.waves.numFreq);
+        S_tmp           = np.zeros(self.waves.numFreq)  # [RAO units] * [m]
+        self._S         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
+        self._A         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
+        self._CoeffA_Rn = np.zeros(self.waves.numFreq)  # [RAO units] * [1/m]
+        self._phase     = np.zeros(self.waves.numFreq)
         
         # calculate the RAO times sqrt of spectrum
         # note that we could define:  a_n=(waves.A*waves.dw).^0.5; (AP)
