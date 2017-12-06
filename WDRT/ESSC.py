@@ -2997,7 +2997,7 @@ class Buoy(object):
         '''
         maxRecordedDateValues = 4
 
-
+        numRemoves = 0
         numLines = 0
         numCols = 0
         numDates = 0
@@ -3057,6 +3057,8 @@ class Buoy(object):
                         dateVals.append(currentLine[j])
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
+                else:
+                    numRemoves += 1
 
             if len(spectralVals) != 0:
                 dateValues = np.array(dateVals, dtype=np.int)
@@ -3163,7 +3165,7 @@ class Buoy(object):
         if self.buoyType == "CDIP":
             self.loadCDIP(dirPath)
 
-    def loadFromH5(self, fileName):
+    def loadFromH5(self, fileName = None):
         """
         Loads NDBC data previously saved in a .h5 file
 
@@ -3181,6 +3183,8 @@ class Buoy(object):
             buoy46022.saveData()
             buoy46022.loadFromH5('NDBC46022.h5')
         """
+        if fileName == None:
+            fileName = self.buoyType + self.buoyNum + ".h5"
         _, file_extension = os.path.splitext(fileName)
         if not file_extension:
             fileName = fileName + '.h5'
@@ -3216,7 +3220,7 @@ class Buoy(object):
             buoy46022.fetchFromWeb()
             buoy46022.saveAsH5()
         '''
-        if (fileName is None):
+        if (fileName == None):
             fileName = 'NDBC' + str(self.buoyNum) + '.h5'
         else:
             _, file_extension = os.path.splitext(fileName)
@@ -3268,6 +3272,7 @@ class Buoy(object):
             for j in range(len(self.dateList)):
                 if (j + dateIndexDiff + 1) > len(self.dateList):
                     break
+
                 newYear = self.dateList[j + dateIndexDiff][0]
                 if curYear != newYear:
                     dateIndexDiff += (j)
@@ -3276,7 +3281,7 @@ class Buoy(object):
                 if (j+1) > len(self.swdList[i]):
                     dateIndexDiff += (j)
                     bFile = True
-                    break
+                    break            
                 swdLine = ' '.join("%0*d" % (2,dateVal) for dateVal in self.dateList[j + dateIndexDiff]) + "   "
                 swdLine += "   ".join("%5s" % val for val in self.swdList[i][j]) + "\n"
                 swdFile.write(swdLine)
@@ -3442,14 +3447,19 @@ class Buoy(object):
         # Removing NaN data, assigning T label depending on input (Te or Tp)
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
+        count = 0
+        for i in range(len(Nanrem)):
+            if Nanrem[i] == False:
+                count += 1
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
-        dateList = dateList[Nanrem]
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
+        #dateList = dateList[Nanrem]
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
         self.dateList = dateList
+
         return Hs, T, dateNum, dateList
 
 def _getDateNums(dateArr):

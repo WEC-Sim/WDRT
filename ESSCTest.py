@@ -3,12 +3,20 @@ import WDRT.ESSC as ESSC
 import matplotlib.pyplot as plt
 import collections
 
+#Parameters for testing
+n_size = 40. 
+bin_1_limit = 1. 
+bin_step = 0.25
+Time_SS = 1.  # Sea state duration (hrs)
+Time_R = 100  # Return periods (yrs) of interest
+
+tol = 1e-5
 def test():
 	testFiles = loadTestData()
 	testData = generateTestData()
 	differences = getDiffereces(testFiles,testData)
 	for contourType in differences:
-		if differences[contourType] != 0:
+		if differences[contourType] > tol:
 			print "TEST FAILED - " + contourType
 			print contourType + " - ", differences[contourType]
 		else:
@@ -61,18 +69,18 @@ def loadTestData():
 	print "--> Test Data loaded"
 	return testFiles
 
+
 def generateTestData():
 	buoy46022 = ESSC.Buoy('46022','NDBC')
 
 	buoy46022.fetchFromWeb()
+	compareLoadMethods(buoy46022)
 
-	Time_SS = 1.  # Sea state duration (hrs)
-	Time_R = 100  # Return periods (yrs) of interest
 	pca46022 = ESSC.PCA(buoy46022)
-	Gauss46022 = ESSC.GaussianCopula(buoy46022)
-	Gumbel46022 = ESSC.GumbelCopula(buoy46022)
-	Clayton46022 = ESSC.ClaytonCopula(buoy46022)
-	rosen46022 = ESSC.Rosenblatt(buoy46022)
+	Gauss46022 = ESSC.GaussianCopula(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
+	Gumbel46022 = ESSC.GumbelCopula(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
+	Clayton46022 = ESSC.ClaytonCopula(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
+	rosen46022 = ESSC.Rosenblatt(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
 	NonParaGauss46022 = ESSC.NonParaGaussianCopula(buoy46022)
 	NonParaClay46022 = ESSC.NonParaClaytonCopula(buoy46022)
 	NonParaGum46022 = ESSC.NonParaGumbelCopula(buoy46022)
@@ -105,4 +113,32 @@ def generateTestData():
 				"Rosen-Hs" : rosen_Hs_Return,
 				"Rosen-T" :rosen_T_Return}
 	return testData
+
+
+def compareLoadMethods(buoy):
+	buoy.saveAsTxt('.\TestTxt')
+	buoy.saveAsH5()
+	txtBuoy = ESSC.Buoy('46022', 'NDBC')
+	txtBuoy.loadFromText('.\TestTxt\NDBC46022\\')
+	errCount = 0;
+	h5Buoy = ESSC.Buoy('46022', 'NDBC')
+	h5Buoy.loadFromH5()
+
+	print sum(txtBuoy.dateList[0])
+	print sum(buoy.dateList[0])
+
+	print "error: ", errCount
+	if(sum(buoy.Hs - txtBuoy.Hs) > tol and sum(buoy.T - txtBuoy.T) > tol):
+		print "TEST FAILED = .txt Files"
+		print sum(buoy.Hs - txtBuoy.Hs)
+		for i in range(len(buoy.Hs)):
+			if buoy.Hs[i] - txtBuoy.Hs[i] != 0:
+				print buoy.Hs[i] - txtBuoy.Hs[i]
+	else:
+		print "TEST PASSED - .txt Files"
+	if(sum(buoy.Hs - h5Buoy.Hs) > tol and sum(buoy.T - h5Buoy.T) > tol):
+		print "TEST FAILED = .h5 Files"
+	else:
+		print "TEST PASSED - .h5 Files"
+
 test()
