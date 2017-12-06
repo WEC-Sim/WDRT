@@ -2997,7 +2997,6 @@ class Buoy(object):
         '''
         maxRecordedDateValues = 4
 
-        numRemoves = 0
         numLines = 0
         numCols = 0
         numDates = 0
@@ -3057,8 +3056,6 @@ class Buoy(object):
                         dateVals.append(currentLine[j])
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
-                else:
-                    numRemoves += 1
 
             if len(spectralVals) != 0:
                 dateValues = np.array(dateVals, dtype=np.int)
@@ -3447,14 +3444,9 @@ class Buoy(object):
         # Removing NaN data, assigning T label depending on input (Te or Tp)
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
-        count = 0
-        for i in range(len(Nanrem)):
-            if Nanrem[i] == False:
-                count += 1
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
-        #dateList = dateList[Nanrem]
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
