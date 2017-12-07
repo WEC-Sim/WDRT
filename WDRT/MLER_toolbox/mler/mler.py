@@ -160,7 +160,7 @@ class mler(object):
 
         DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
         
-        S_tmp           = np.zeros(self.waves.numFreq)  # [RAO units] * [m]
+        S_R             = np.zeros(self.waves.numFreq)  # [RAO units] * [m]
         self._S         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
         self._A         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
         self._CoeffA_Rn = np.zeros(self.waves.numFreq)  # [RAO units] * [1/m]
@@ -171,10 +171,11 @@ class mler(object):
         #S_tmp(:)=squeeze(abs(obj.RAO(:,DOFtoCalc))).*2 .* obj.waves.A;          % Response spectrum.
         # note: self.A == 2*self.S  (EWQ)
         #   i.e. S_tmp is 4 * RAO * calculatedeWaveSpectrum
-        S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
+       #S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
+        S_R[:] = np.abs(self._RAO[:,DOFtoCalc])**2 * self.waves._A  # Response spectrum -- Quon2016 Eqn. 3
 
         # calculate spectral moments and other important spectral values.
-        self._Spect = spectrum.stats( S_tmp, self.waves._w, self.waves._dw )
+        self._Spect = spectrum.stats( S_R, self.waves._w, self.waves._dw )
        
         # calculate coefficient A_{R,n}
         self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
