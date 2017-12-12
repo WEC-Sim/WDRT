@@ -145,21 +145,32 @@ class mler(object):
         plt.legend()
         if show is True: plt.show()
         
-    def MLERcoeffsGen(self,DOFtoCalc,respDesired=1.0):
+    def MLERcoeffsGen(self,DOFtoCalc,response_desired=None,safety_factor=None):
         """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
         DOFtoCalc: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
-        respDesired: desired response, units should correspond to DOFtoCalc
+        response_desired: desired response, units should correspond to DOFtoCalc
+        safety_factor: alternative to specifying response_desired; non-dimensional scaling factor applied to
+                half the significant wave height
         Sets self._S, self._A, self._CoeffA_Rn, self._phase
         Sets self._Spect containing spectral information
         """
-        # check that we asked for something non-zero
-        if respDesired == 0:
-            raise ValueError('Desired response amplitude (respDesired) should be non-zero.')
-        self.desiredRespAmp = respDesired
-
         DOFtoCalc -= 1 # convert to zero-based indices (EWQ)
         
+        # check that we specified a response
+        if (response_desired is None) and (safety_factor is None):
+            raise ValueError('Specify response_desired or safety_factor.')
+        elif safety_factor:
+           #RAO_Tp = np.interp(2.0*np.pi/self.waves.T,self.waves._w,np.abs(self._RAO[:,DOFtoCalc]))
+            RAO_Tp = scipy.interpolate.pchip_interpolate(self.waves._w,
+                                                         np.abs(self._RAO[:,DOFtoCalc]),
+                                                         2.0*np.pi/self.waves.T)
+            response_desired = np.abs(RAO_Tp) * safety_factor*self.waves.H/2
+            print 'Target wave elevation         :',safety_factor*self.waves.H/2
+            print 'Interpolated RAO(Tp)          :',RAO_Tp
+            print 'Desired response (calculated) :',response_desired
+        self.desiredRespAmp = response_desired
+
         S_R             = np.zeros(self.waves.numFreq)  # [RAO units] * [m]
         self._S         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
         self._A         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
@@ -172,17 +183,19 @@ class mler(object):
         # note: self.A == 2*self.S  (EWQ)
         #   i.e. S_tmp is 4 * RAO * calculatedeWaveSpectrum
        #S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
+
+        # Note: waves.A is "S" in Quon2016; 'waves' naming convention matches WEC-Sim conventions (EWQ)
         S_R[:] = np.abs(self._RAO[:,DOFtoCalc])**2 * self.waves._A  # Response spectrum -- Quon2016 Eqn. 3
 
         # calculate spectral moments and other important spectral values.
         self._Spect = spectrum.stats( S_R, self.waves._w, self.waves._dw )
        
-        # calculate coefficient A_{R,n}
+        # calculate coefficient A_{R,n} -- Quon2016 Eqn. 8
         self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
                 * ( (self._Spect.M2 - self.waves._w*self._Spect.M1) \
                     + self._Spect.wBar*(self.waves._w*self._Spect.M0 - self._Spect.M1) ) \
                 / (self._Spect.M0*self._Spect.M2 - self._Spect.M1**2) # Drummen version.  Dietz has negative of this.
-        
+
         # save the new spectral info to pass out
         self._phase[:] = -np.unwrap( np.angle(self._RAO[:,DOFtoCalc]) ) # Phase delay should be a positive number in this convention (AP)
         
@@ -267,7 +280,9 @@ class mler(object):
         print 'MLER coefficients written to',FileNameCoeff
 
     def MLERexportWaveAmpTime(self,FileNameWaveAmpTime,DOFexport):
-        """ Export the wave amplitude timeseries at X0 to a file
+        """Export the wave amplitude timeseries at X0 to a file and the
+        response for a specified DOF.
+
         DOFexport: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
         """
