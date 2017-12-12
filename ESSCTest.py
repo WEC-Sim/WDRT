@@ -123,17 +123,8 @@ def compareLoadMethods(buoy):
 	errCount = 0;
 	h5Buoy = ESSC.Buoy('46022', 'NDBC')
 	h5Buoy.loadFromH5()
-
-	print sum(txtBuoy.dateList[0])
-	print sum(buoy.dateList[0])
-
-	print "error: ", errCount
 	if(sum(buoy.Hs - txtBuoy.Hs) > tol and sum(buoy.T - txtBuoy.T) > tol):
 		print "TEST FAILED = .txt Files"
-		print sum(buoy.Hs - txtBuoy.Hs)
-		for i in range(len(buoy.Hs)):
-			if buoy.Hs[i] - txtBuoy.Hs[i] != 0:
-				print buoy.Hs[i] - txtBuoy.Hs[i]
 	else:
 		print "TEST PASSED - .txt Files"
 	if(sum(buoy.Hs - h5Buoy.Hs) > tol and sum(buoy.T - h5Buoy.T) > tol):
