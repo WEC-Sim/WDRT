@@ -120,16 +120,24 @@ def compareLoadMethods(buoy):
 	buoy.saveAsH5()
 	txtBuoy = ESSC.Buoy('46022', 'NDBC')
 	txtBuoy.loadFromText('.\TestTxt\NDBC46022\\')
-	errCount = 0;
 	h5Buoy = ESSC.Buoy('46022', 'NDBC')
 	h5Buoy.loadFromH5()
-	if(sum(buoy.Hs - txtBuoy.Hs) > tol and sum(buoy.T - txtBuoy.T) > tol):
-		print "TEST FAILED = .txt Files"
-	else:
+
+	error = False
+	for i in range(len(buoy.Hs)):
+		if buoy.Hs[i] - txtBuoy.Hs[i] > tol:
+			error = True
+			print "TEST FAILED = .txt Files"
+			break
+	if not error:
 		print "TEST PASSED - .txt Files"
-	if(sum(buoy.Hs - h5Buoy.Hs) > tol and sum(buoy.T - h5Buoy.T) > tol):
-		print "TEST FAILED = .h5 Files"
-	else:
+	error = False
+	for i in range(len(buoy.Hs)):
+		if buoy.Hs[i] - h5Buoy.Hs[i] > tol:
+			error = True
+			print "TEST FAILED = .h5 Files"
+			break
+	if not error:
 		print "TEST PASSED - .h5 Files"
 
 test()
