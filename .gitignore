@@ -1,7 +1,0 @@
-.*
-
-*.pyc
-_build
-*.sublime*
-WDRT/MLER_toolbox/build/
-
