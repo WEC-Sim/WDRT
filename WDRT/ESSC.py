@@ -3098,6 +3098,7 @@ class Buoy(object):
             buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.loadFromText()
         '''
+
         dateVals = []
         spectralVals = []
         numLines = 0
@@ -3263,7 +3264,7 @@ class Buoy(object):
             
             freqLine = "YYYY MM DD hh"
             for j in range(len(self.freqList[i])):
-                freqLine += ("   " + "%2.3f" % self.freqList[i][j])
+                freqLine += ("   " + "%2.4f" % self.freqList[i][j])
             freqLine += "\n"
             swdFile.write(freqLine)
             for j in range(len(self.dateList)):
@@ -3280,7 +3281,7 @@ class Buoy(object):
                     bFile = True
                     break            
                 swdLine = ' '.join("%0*d" % (2,dateVal) for dateVal in self.dateList[j + dateIndexDiff]) + "   "
-                swdLine += "   ".join("%5s" % val for val in self.swdList[i][j]) + "\n"
+                swdLine += "   ".join("%6s" % val for val in self.swdList[i][j]) + "\n"
                 swdFile.write(swdLine)
                 
 
