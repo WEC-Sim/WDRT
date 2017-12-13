@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>{{ title }} - Enter Buoy Number </title>
+  </head>
+  <h2> Enter NDBC Buoy Number: </h2>
+  <form action="{{ url_for('ESSC_Results')}}" method="post" name="ESSC">
+    <p>
+      Please enter the buoy number for the NDBC site you wish to use: <br>
+        {{form.buoyNum(size=10)}}
+    </p>
+    <p><input type="submit" value="Submit"></p>
+  </form>  
+</html>
