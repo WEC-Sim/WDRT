@@ -138,10 +138,11 @@ class mler(object):
         basename = os.path.basename( self._RAOdataFileName[DOFtoPlot-1] )
         plt.title( 'RAO for dimension {:d} from file {:s}'.format(DOFtoPlot,basename) )
         plt.xlabel('Frequency (rad/s)')
-        if DOFtoPlot <=3:
-            plt.ylabel('Response amplitude (m/m) / Response phase (rad)')
-        else:
-            plt.ylabel('Response amplitude (rad/m) / Response phase (rad)')
+        #if DOFtoPlot <=3:
+        #    plt.ylabel('Response amplitude (m/m), Response phase (rad)')
+        #else:
+        #    plt.ylabel('Response amplitude (rad/m), Response phase (rad)')
+        plt.ylabel('Response amplitude (*/m), Response phase (rad)')
         plt.legend()
         if show is True: plt.show()
         
@@ -341,8 +342,10 @@ class mler(object):
             f.write('#   WaveElev = sum( sqrt(2*SpectAmp * dw) * cos( -k*(x-X0) + w*(t-T0) + Phase) ) \n')
             f.write('#\n')
             f.write('#\n')
-            f.write('#   time      WaveHeight      LinearResp ({:s})\n'.format(self.sim.DOFnames[DOFexport-1]))
-            f.write('#   (s)          (m)             {:s}\n'.format(self.sim.DOFunits[DOFexport-1]))
+            #f.write('#   time      WaveHeight      LinearResp ({:s})\n'.format(self.sim.DOFnames[DOFexport-1]))
+            #f.write('#   (s)          (m)             {:s}\n'.format(self.sim.DOFunits[DOFexport-1]))
+            f.write('#   time      WaveHeight      LinearResp\n'.format(self.sim.DOFnames[DOFexport-1]))
+            f.write('#   (s)          (m)             (*)\n'.format(self.sim.DOFunits[DOFexport-1]))
 
             for i,ti in enumerate(self.sim.T):
                 f.write('{:12.8f}   {:12.8f}   {:12.8f}\n'.format(ti,waveAmpTime[i,0],waveAmpTime[i,1]))
