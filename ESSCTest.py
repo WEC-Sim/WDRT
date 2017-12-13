@@ -119,7 +119,7 @@ def compareLoadMethods(buoy):
 	buoy.saveAsTxt('.\TestTxt')
 	buoy.saveAsH5()
 	txtBuoy = ESSC.Buoy('46022', 'NDBC')
-	txtBuoy.loadFromText('.\TestTxt\NDBC46022\\')
+	txtBuoy.loadFromTxt('.\TestTxt\NDBC46022\\')
 	h5Buoy = ESSC.Buoy('46022', 'NDBC')
 	h5Buoy.loadFromH5()
 

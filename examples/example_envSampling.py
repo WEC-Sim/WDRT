@@ -13,7 +13,7 @@ buoy46022.saveAsTxt(savePath = ".\Data")
 buoy46022.saveAsH5()
 
 # Load data from .txt file if avilable
-# buoy46022.loadFromText()
+# buoy46022.loadFromTxt()
 
 # Load data from .h5 file if available
 # buoy46022.loadFromH5('./data/NDBC46022.h5')

@@ -3076,7 +3076,7 @@ class Buoy(object):
         self._prepData()
 
 
-    def loadFromText(self, dirPath = None):
+    def loadFromTxt(self, dirPath = None):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
