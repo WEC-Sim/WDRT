@@ -147,12 +147,17 @@ class mler(object):
         if show is True: plt.show()
         
     def MLERcoeffsGen(self,DOFtoCalc,response_desired=None,safety_factor=None):
-        """ This function calculates MLER (most likely extreme response) coefficients given a spectrum and RAO
+        """ This function calculates MLER (most likely extreme response)
+        coefficients given a spectrum and RAO
+
         DOFtoCalc: 1 - 3 (translational DOFs)
                    4 - 6 (rotational DOFs)
         response_desired: desired response, units should correspond to DOFtoCalc
-        safety_factor: alternative to specifying response_desired; non-dimensional scaling factor applied to
-                half the significant wave height
+            for a motion RAO or units of force for a force RAO
+        safety_factor: alternative to specifying response_desired;
+            non-dimensional scaling factor applied to half the significant wave
+            height
+
         Sets self._S, self._A, self._CoeffA_Rn, self._phase
         Sets self._Spect containing spectral information
         """
@@ -172,10 +177,10 @@ class mler(object):
             print 'Desired response (calculated) :',response_desired
         self.desiredRespAmp = response_desired
 
-        S_R             = np.zeros(self.waves.numFreq)  # [RAO units] * [m]
-        self._S         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
-        self._A         = np.zeros(self.waves.numFreq)  # [(RAO units)^2] * [s] * [(desiredRespAmp units)^2]
-        self._CoeffA_Rn = np.zeros(self.waves.numFreq)  # [RAO units] * [1/m]
+        S_R             = np.zeros(self.waves.numFreq)  # [(response units)^2-s/rad]
+        self._S         = np.zeros(self.waves.numFreq)  # [m^2-s/rad]
+        self._A         = np.zeros(self.waves.numFreq)  # [m^2-s/rad]
+        self._CoeffA_Rn = np.zeros(self.waves.numFreq)  # [1/(response units)]
         self._phase     = np.zeros(self.waves.numFreq)
         
         # calculate the RAO times sqrt of spectrum
@@ -186,12 +191,12 @@ class mler(object):
        #S_tmp[:] = 2.0*np.abs(self._RAO[:,DOFtoCalc])*self.waves._A     # Response spectrum.
 
         # Note: waves.A is "S" in Quon2016; 'waves' naming convention matches WEC-Sim conventions (EWQ)
-        S_R[:] = np.abs(self._RAO[:,DOFtoCalc])**2 * self.waves._A  # Response spectrum -- Quon2016 Eqn. 3
+        S_R[:] = np.abs(self._RAO[:,DOFtoCalc])**2 * self.waves._A  # Response spectrum [(response units)^2-s/rad] -- Quon2016 Eqn. 3 
 
         # calculate spectral moments and other important spectral values.
         self._Spect = spectrum.stats( S_R, self.waves._w, self.waves._dw )
        
-        # calculate coefficient A_{R,n} -- Quon2016 Eqn. 8
+        # calculate coefficient A_{R,n} [(response units)^-1] -- Quon2016 Eqn. 8
         self._CoeffA_Rn[:] = np.abs(self._RAO[:,DOFtoCalc]) * np.sqrt(self.waves._A*self.waves._dw) \
                 * ( (self._Spect.M2 - self.waves._w*self._Spect.M1) \
                     + self._Spect.wBar*(self.waves._w*self._Spect.M0 - self._Spect.M1) ) \
@@ -204,6 +209,7 @@ class mler(object):
         self._phase[self._CoeffA_Rn < 0]     -= np.pi # for negative amplitudes, add a pi phase shift
         self._CoeffA_Rn[self._CoeffA_Rn < 0] *= -1    # then flip sign on negative Amplitudes
         
+        # calculate the conditioned spectrum [m^2-s/rad]
         self._S[:] = self.waves._S * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2
         self._A[:] = self.waves._A * self._CoeffA_Rn[:]**2 * self.desiredRespAmp**2 # self.A == 2*self.S
         

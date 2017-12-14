@@ -27,11 +27,11 @@ class wave(object):
         self.g               = 9.801                # [m/s^2]   Gravitational constant
 
         # calculated variables
-        self._w              = None                 # [rad/s]   Wave frequency vector
-        self._dw             = None                 # [rad/s]   Frequency step size
-        self._S              = None                 # [m^2]     Wave spectrum vector
-        self._A              = None                 # [m^2]     2*(wave spectrum vector)
-        self._k              = None                 # [rad^2/m] Wavenumber array
+        self._w              = None                 # [rad/s]       Wave frequency vector
+        self._dw             = None                 # [rad/s]       Frequency step size
+        self._S              = None                 # [m^2-s/rad]   Wave spectrum vector
+        self._A              = None                 # [m^2-s/rad]   2*(wave spectrum vector)
+        self._k              = None                 # [rad^2/m]     Wavenumber array
 
     @property
     def w(self): return self._w
