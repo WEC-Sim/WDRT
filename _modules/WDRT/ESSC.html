@@ -604,7 +604,8 @@
         
         <span class="c1"># Nonparametric PDF for T</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">nonparametric</span><span class="o">.</span><span class="n">KDEUnivariate</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-        <span class="n">temp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">bw</span> <span class="o">=</span> <span class="n">bwT</span><span class="p">)</span>
+
+        <span class="n">temp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">bw</span> <span class="o">=</span> <span class="n">bwT</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">))</span>
         <span class="n">f_t</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">pts_t</span><span class="p">)</span>
         
         <span class="c1"># Nonparametric CDF for Hs</span>
@@ -2627,10 +2628,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;p1/&quot;</span> <span class="o">+</span> \
                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span><span class="s2">&quot;p1_historic.nc&quot;</span>            
+        <span class="k">print</span> <span class="s2">&quot;Downloading data from: &quot;</span> <span class="o">+</span> <span class="n">url</span>
         <span class="n">filePath</span> <span class="o">=</span> <span class="n">savePath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-CDIP.nc&quot;</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filePath</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__loadCDIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Buoy.loadCDIP"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.loadCDIP">[docs]</a>    <span class="k">def</span> <span class="nf">loadCDIP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filePath</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads the Hs and T values of the given site from the .nc file downloaded from </span>
 <span class="sd">        http://cdip.ucsd.edu/</span>
@@ -2641,7 +2644,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filePath</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">filePath</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span> <span class="o">+</span> <span class="s2">&quot;-CDIP.nc&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__averageValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2667,8 +2670,8 @@
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not find data for CDIP site: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span>
             
-        <span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveHs&quot;</span><span class="p">][:]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveTa&quot;</span><span class="p">][:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveHs&quot;</span><span class="p">][:],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;waveTa&quot;</span><span class="p">][:],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1">#Some CDIP buoys record data every half hour rather than every hour</span>
@@ -2690,20 +2693,25 @@
             <span class="n">Hs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp1</span><span class="p">)</span>
             <span class="n">T</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tmp2</span><span class="p">)</span>
             <span class="n">dateNum</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_getDateNums</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dateList</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+
+        <span class="n">dateList</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dateList</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">year</span><span class="p">]</span>
         <span class="n">Hs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Hs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         <span class="n">dateNum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dateNum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">dateList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dateList</span><span class="p">)</span>
 
         <span class="c1"># Removing NaN data, assigning T label depending on input (Te or Tp)</span>
         <span class="n">Nanrem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Hs</span><span class="p">))</span>
         <span class="c1"># Find NaN data in Hs or T</span>
         <span class="n">dateNum</span> <span class="o">=</span> <span class="n">dateNum</span><span class="p">[</span><span class="n">Nanrem</span><span class="p">]</span>  <span class="c1"># Remove any NaN data from DateNum</span>
+        <span class="n">dateList</span> <span class="o">=</span> <span class="n">dateList</span><span class="p">[</span><span class="n">Nanrem</span><span class="p">]</span>
         <span class="n">Hs</span> <span class="o">=</span> <span class="n">Hs</span><span class="p">[</span><span class="n">Nanrem</span><span class="p">]</span>  <span class="c1"># Remove any NaN data from Hs</span>
         <span class="n">T</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">Nanrem</span><span class="p">]</span>  <span class="c1"># Remove any NaN data from T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Hs</span> <span class="o">=</span> <span class="n">Hs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dateNum</span> <span class="o">=</span> <span class="n">dateNum</span>
-        <span class="k">return</span> <span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">dateNum</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dateList</span> <span class="o">=</span> <span class="n">dateList</span>
+        <span class="k">return</span> <span class="n">Hs</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">dateNum</span><span class="p">,</span> <span class="n">dateList</span></div>
 
 <span class="k">def</span> <span class="nf">_getDateNums</span><span class="p">(</span><span class="n">dateArr</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;datetime objects</span>
