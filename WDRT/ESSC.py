@@ -1029,7 +1029,7 @@ class EA:
                 nextT = max(nextBinTs)
                 nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
                 
-                if nextHs not in hsBin4:
+                if nextHs not in hsBin4 and nextHs not in hsBin1:
                 
                     hsBin3.append(nextHs)
                     tBin3.append(nextT)
@@ -1055,7 +1055,7 @@ class EA:
                 nextT = max(nextBinTs)
                 nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
             
-                if nextHs not in hsBin1:
+                if nextHs not in hsBin1 and nextHs not in hsBin4:
             
                     hsBin2.append(nextHs)
                     tBin2.append(nextT)
