@@ -3322,7 +3322,8 @@ class Buoy(object):
         
         subsetBuoy = copy.deepcopy(self)
     
-        sortedIndex = sorted(range(len(self.dateList)),key=lambda x:self.dateList[x][0])
+        sortedIndex = sorted(range(len(self.dateNum)),key=lambda x:self.dateNum[x])
+        self.dateNum = self.dateNum[sortedIndex]        
         self.dateList = self.dateList[sortedIndex]
         self.Hs = self.Hs[sortedIndex]
         self.T = self.T[sortedIndex]
