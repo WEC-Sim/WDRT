@@ -3194,6 +3194,7 @@ class Buoy(object):
         self.Hs = np.array(f['buoy_Data/Hs'][:])
         self.T = np.array(f['buoy_Data/Te'][:])
         self.dateNum = np.array(f['buoy_Data/dateNum'][:])
+        self.dateList = np.array(f['buoy_Data/dateList'][:])
         print "----> SUCCESS"
 
     def saveAsH5(self, fileName=None):
