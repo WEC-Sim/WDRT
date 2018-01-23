@@ -2804,7 +2804,11 @@ class NonParaGumbelCopula(EA):
 class BivariateKDE(EA):
 
     def __init__(self, buoy, bw, NData = 100, logTransform = True):
-        self.method = "Bivariate KDE"
+        
+        if logTransform:        
+            self.method = "Bivariate KDE, Log Transform"
+        else:
+            self.method = "Bivariate KDE"
         self.buoy = buoy
 
         self.Hs_ReturnContours = None
