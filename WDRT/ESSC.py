@@ -449,14 +449,18 @@ class EA:
         
         
         '''
-        
-        
-        
-        
-        path_contour = matplotlib.path.Path(np.column_stack((self.T_ReturnContours,self.Hs_ReturnContours)))
-        contains_test = path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
-        out_inds = np.where(~contains_test)
-        outsideHs = self.buoy.Hs[out_inds]
+        if isinstance(self.T_ReturnContours,list): # For KDE contours
+            contains_test = np.zeros(len(self.buoy.T),dtype=bool)
+            for t,hs in zip(self.T_ReturnContours,self.Hs_ReturnContours):        
+                path_contour = []        
+                path_contour = matplotlib.path.Path(np.column_stack((t,hs)))
+                contains_test = contains_test+path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
+            out_inds = np.where(~contains_test)
+        else: # For all other methdods
+            path_contour = matplotlib.path.Path(np.column_stack((self.T_ReturnContours,self.Hs_ReturnContours)))
+            contains_test = path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
+            out_inds = np.where(~contains_test)
+        outsideHs =self.buoy.Hs[out_inds]
         outsideT = self.buoy.T[out_inds]
         
         return(outsideT, outsideHs)
@@ -2818,6 +2822,8 @@ class BivariateKDE(EA):
         self.logTransform = logTransform
 
     def getContours(self, time_ss, time_r):
+        '''Note that this function currently returns a list of arrays for 
+        Hs and T and may not work with subsequent contour functions'''        
         p_f = 1 / (365 * (24 / time_ss) * time_r)
 
         if self.logTransform: 
@@ -2853,10 +2859,10 @@ class BivariateKDE(EA):
 
         # Create grid of points
         Ndata = 100
-        min_limit_1 = min(self.buoy.T) - 2
-        max_limit_1 = max(self.buoy.T) + 10
-        min_limit_2 = 0
-        max_limit_2 = max(self.buoy.Hs) + 10
+        min_limit_1 = min(self.buoy.T) - 2.
+        max_limit_1 = max(self.buoy.T) + 10.
+        min_limit_2 = 0.01
+        max_limit_2 = max(self.buoy.Hs) + 10.
         pts_tp = np.linspace(min_limit_1, max_limit_1, Ndata) 
         pts_hs = np.linspace(min_limit_2, max_limit_2, Ndata)
         pt1,pt2 = np.meshgrid(pts_tp, pts_hs)
@@ -2894,9 +2900,16 @@ class BivariateKDE(EA):
         fhat = f.reshape(100,100)
         vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
         plt.clf()
-        contourVals = vals.allsegs[0][0]
-        self.Hs_ReturnContours = contourVals[:,1]
-        self.T_ReturnContours = contourVals[:,0]
+        self.Hs_ReturnContours = []
+        self.T_ReturnContours = []
+        for i,seg in enumerate(vals.allsegs[0]):
+            self.Hs_ReturnContours.append(seg[:,1])
+            self.T_ReturnContours.append(seg[:,0])
+#        contourVals = np.empty((0,2))
+#        for seg in vals.allsegs[0]:
+#            contourVals = np.append(contourVals,seg, axis = 0)
+#        self.Hs_ReturnContours = contourVals[:,1]
+#        self.T_ReturnContours = contourVals[:,0]
 
         return self.Hs_ReturnContours, self.T_ReturnContours
 
