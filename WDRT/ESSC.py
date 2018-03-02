@@ -1100,12 +1100,17 @@ class EA:
         # Binning
         ind = np.array([])
         ind = np.append(ind,sum(Hs_val <= bin_1_limit for Hs_val in Hs))
+        # Make sure first bin isn't empty or too small to avoid errors        
+        while ind == 0 or ind < n_size:         
+            ind = np.array([])    
+            bin_1_limit = bin_1_limit + bin_step
+            ind = np.append(ind,sum(Hs_val <= bin_1_limit for Hs_val in Hs))        
         for i in range(1,200):
             bin_i_limit = bin_1_limit+bin_step*(i)
             ind = np.append(ind,sum(Hs_val <= bin_i_limit for Hs_val in Hs))
             if (ind[i-0]-ind[i-1]) < n_size:
                 break
-
+    
         # Parameters for conditional distribution of T|Hs for each bin
         num=len(ind) # num+1: number of bins
         para_dist_cond = []
@@ -1948,7 +1953,7 @@ class Rosenblatt(EA):
             self.bin_1_limit = max(buoy.Hs)*.25
             print round(max(buoy.Hs)*.25,2),'is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.'
         else:
-                self.bin_1_limit = bin_1_limit           
+            self.bin_1_limit = bin_1_limit           
         
         
 
