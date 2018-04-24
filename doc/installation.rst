@@ -105,6 +105,8 @@ These packages can easily be installed using using `pip <https://pypi.python.org
 	* `requests <http://docs.python-requests.org/en/master/>`_
 	* `BeautifulSoup4 <https://www.crummy.com/software/BeautifulSoup/>`_
 	* `netCDF4  <http://unidata.github.io/netcdf4-python/>`_
+	* `statsmodels <http://www.statsmodels.org/>`_
+	* `lxml <http://lxml.de/>`_
 
 .. Note::
 
