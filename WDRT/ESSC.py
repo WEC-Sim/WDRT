@@ -283,7 +283,7 @@ class EA:
         return SteepH
     def __fetchDepth(self):
         if self.buoy.buoyType == "NDBC":
-            url = "http://www.ndbc.noaa.gov/station_page.php?station=%s" % (46022)
+            url = "https://www.ndbc.noaa.gov/station_page.php?station=%s" % (46022)
             ndbcURL = requests.get(url)
             ndbcURL.raise_for_status()
             ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
@@ -3025,7 +3025,7 @@ class Buoy(object):
         dateVals = []
         spectralVals = []
 
-        url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
+        url = "https://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
         if proxy == None:
             ndbcURL = requests.get(url)
         else:
@@ -3046,7 +3046,7 @@ class Buoy(object):
         links = [a["href"] for a in headers.find_next_siblings("a", href=True)]
 
         for link in links:
-            dataLink = "http://ndbc.noaa.gov" + link
+            dataLink = "https://ndbc.noaa.gov" + link
 
             fileName = dataLink.replace('download_data', 'view_text_file')
             data = urllib2.urlopen(fileName)
