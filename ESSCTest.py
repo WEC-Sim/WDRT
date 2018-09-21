@@ -25,22 +25,22 @@ def test():
 
 
 def getDiffereces(testFiles, testData):
-	differencePairs = [("PCA-HS" , np.sum(testFiles["PCA-Hs"] - testData["PCA-Hs"])),
-				   ("PCA-T" , np.sum(testFiles["PCA-T"] - testData["PCA-T"])),
-				   ("Gumbel-Hs" , np.sum(testFiles["Gumbel-Hs"] - testData["Gumbel-Hs"])),
-				   ("Gumbel-T" , np.sum(testFiles["Gumbel-T"] - testData["Gumbel-T"])),
-				   ("Gauss-Hs" , np.sum(testFiles["Gauss-Hs"] - testData["Gauss-Hs"])),
-				   ("Gauss-T" , np.sum(testFiles["Gauss-T"] - testData["Gauss-T"])),
-				   ("CC-Hs" , np.sum(testFiles["CC-Hs"] - testData["CC-Hs"])),
-				   ("CC-T" , np.sum(testFiles["CC-T"] - testData["CC-T"])),
-				   ("NanaParaGauss-Hs", np.sum(testFiles["NonParaGauss-Hs"] - testData["NonParaGauss-Hs"])),
-				   ("NanaParaGauss-T", np.sum(testFiles["NonParaGauss-T"] - testData["NonParaGauss-T"])),
-				   ("NanaParaGum-Hs", np.sum(testFiles["NonParaGum-Hs"] - testData["NonParaGum-Hs"])),
-				   ("NanaParaGum-T", np.sum(testFiles["NonParaGum-T"] - testData["NonParaGum-T"])),
-				   ("NanaParaCC-Hs", np.sum(testFiles["NonParaCC-Hs"] - testData["NonParaCC-Hs"])),				   
-				   ("NanaParaCC-T", np.sum(testFiles["NonParaCC-T"] - testData["NonParaCC-T"])),
-				   ("Rosen-Hs" , np.sum(testFiles["Rosen-Hs"] - testData["Rosen-Hs"])),
-				   ("Rosen-T" , np.sum(testFiles["Rosen-T"] - testData["Rosen-T"]))]
+	differencePairs = [("PCA-HS" , np.sum(np.abs(testFiles["PCA-Hs"] - testData["PCA-Hs"]))),
+				   ("PCA-T" , np.sum(np.abs(testFiles["PCA-T"] - testData["PCA-T"]))),
+				   ("Gumbel-Hs" , np.sum(np.abs(testFiles["Gumbel-Hs"] - testData["Gumbel-Hs"]))),
+				   ("Gumbel-T" , np.sum(np.abs(testFiles["Gumbel-T"] - testData["Gumbel-T"]))),
+				   ("Gauss-Hs" , np.sum(np.abs(testFiles["Gauss-Hs"] - testData["Gauss-Hs"]))),
+				   ("Gauss-T" , np.sum(np.abs(testFiles["Gauss-T"] - testData["Gauss-T"]))),
+				   ("CC-Hs" , np.sum(np.abs(testFiles["CC-Hs"] - testData["CC-Hs"]))),
+				   ("CC-T" , np.sum(np.abs(testFiles["CC-T"] - testData["CC-T"]))),
+				   ("NanaParaGauss-Hs", np.sum(np.abs(testFiles["NonParaGauss-Hs"] - testData["NonParaGauss-Hs"]))),
+				   ("NanaParaGauss-T", np.sum(np.abs(testFiles["NonParaGauss-T"] - testData["NonParaGauss-T"]))),
+				   ("NanaParaGum-Hs", np.sum(np.abs(testFiles["NonParaGum-Hs"] - testData["NonParaGum-Hs"]))),
+				   ("NanaParaGum-T", np.sum(np.abs(testFiles["NonParaGum-T"] - testData["NonParaGum-T"]))),
+				   ("NanaParaCC-Hs", np.sum(np.abs(testFiles["NonParaCC-Hs"] - testData["NonParaCC-Hs"]))),				   
+				   ("NanaParaCC-T", np.sum(np.abs(testFiles["NonParaCC-T"] - testData["NonParaCC-T"]))),
+				   ("Rosen-Hs" , np.sum(np.abs(testFiles["Rosen-Hs"] - testData["Rosen-Hs"]))),
+				   ("Rosen-T" , np.sum(np.abs(testFiles["Rosen-T"] - testData["Rosen-T"])))]
 
 	return collections.OrderedDict(differencePairs)
 
@@ -73,9 +73,10 @@ def loadTestData():
 def generateTestData():
 	buoy46022 = ESSC.Buoy('46022','NDBC')
 
-	buoy46022.fetchFromWeb()
+	buoy46022.fetchFromWeb(proxy = {"https":"https://wwwproxy.sandia.gov:80"})
+     
 	compareLoadMethods(buoy46022)
-
+ 
 	pca46022 = ESSC.PCA(buoy46022)
 	Gauss46022 = ESSC.GaussianCopula(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
 	Gumbel46022 = ESSC.GumbelCopula(buoy46022, n_size = n_size, bin_1_limit = bin_1_limit, bin_step = bin_step)
@@ -122,6 +123,10 @@ def compareLoadMethods(buoy):
 	txtBuoy.loadFromTxt('.\TestTxt\NDBC46022\\')
 	h5Buoy = ESSC.Buoy('46022', 'NDBC')
 	h5Buoy.loadFromH5()
+ 
+     # Only keep data from 2016 and before
+	#txtBuoy = txtBuoy.createSubsetBuoy(trainingSize = 20)
+	#h5Buoy = h5Buoy.createSubsetBuoy(trainingSize = 20)
 
 	error = False
 	for i in range(len(buoy.Hs)):
