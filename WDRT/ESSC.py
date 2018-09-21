@@ -168,9 +168,10 @@ class EA:
                 T_sampleCA = np.arange(12, 26, 2)
                 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
         '''
+        #finds minimum and maximum energy period values
         amin = np.argmin(self.T_ReturnContours)
         amax = np.argmax(self.T_ReturnContours)
-
+        #finds points along the contour
         w1 = self.Hs_ReturnContours[amin:amax]
         w2 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
         if (np.max(w1) > np.max(w2)):
@@ -179,13 +180,13 @@ class EA:
         else:
             x1 = np.concatenate((self.T_ReturnContours[amax:], self.T_ReturnContours[:amin]))
             y1 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
-
+        #sorts data based on the max and min energy period values
         ms = np.argsort(x1)
         x = x1[ms]
         y = y1[ms]
-
+        #interpolates the sorted data
         si = interp.interp1d(x, y)
-
+        #finds the wave height based on the user specified energy period values
         Hs_SampleCA = si(T_Sample)
 
         self.T_SampleCA = T_Sample
@@ -351,11 +352,12 @@ class EA:
             # Calculate boostrap confidence interval
             contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)
         '''
+        #preallocates arrays
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
         T_Return_Boot = np.zeros([self.nb_steps,boot_size])
         buoycopy = copy.deepcopy(self.buoy);
-
+        #creates copies of the data based on how it was modeled.
         for i in range(boot_size):
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
@@ -379,6 +381,7 @@ class EA:
                 essccopy = NonParaGumbelCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
+        #finds 95% CI values for wave height and energy
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
         contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
         contourmean_Hs = np.mean(Hs_Return_Boot, axis=1)
@@ -389,7 +392,7 @@ class EA:
 
         self.contourMean_Hs = contourmean_Hs
         self.contourMean_T = contourmean_T
-
+        #plotting function
         def plotResults():
             plt.figure()
             plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
