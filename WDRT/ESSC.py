@@ -281,7 +281,9 @@ class EA:
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
         return SteepH
+    
     def __fetchDepth(self):
+        '''Obtains the depth from the website for a buoy (either NDBC or CDIP)'''
         if self.buoy.buoyType == "NDBC":
             url = "https://www.ndbc.noaa.gov/station_page.php?station=%s" % (46022)
             ndbcURL = requests.get(url)
@@ -449,14 +451,15 @@ class EA:
         
         
         '''
-        if isinstance(self.T_ReturnContours,list): # For KDE contours
+        #checks if the contour type is a KDE contour - if so, finds the outside points for the KDE contour.
+        if isinstance(self.T_ReturnContours,list): 
             contains_test = np.zeros(len(self.buoy.T),dtype=bool)
             for t,hs in zip(self.T_ReturnContours,self.Hs_ReturnContours):        
                 path_contour = []        
                 path_contour = matplotlib.path.Path(np.column_stack((t,hs)))
                 contains_test = contains_test+path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
             out_inds = np.where(~contains_test)
-        else: # For all other methdods
+        else: # For non-KDE methods (copulas, etc.)
             path_contour = matplotlib.path.Path(np.column_stack((self.T_ReturnContours,self.Hs_ReturnContours)))
             contains_test = path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
             out_inds = np.where(~contains_test)
@@ -464,182 +467,11 @@ class EA:
         outsideT = self.buoy.T[out_inds]
         
         return(outsideT, outsideHs)
-
-    def outsidePoints_OLD(self):
-        
-        '''Determines which buoy observations are outside of a given contour.
-        
-        Parameters
-        ----------
-            None
-            
-        Returns
-        -------
-            testBuoy.Hs : nparray
-                The Hs values of the observations that are outside of the contour
-        
-            testBuoy.T : nparray
-                The T values of the observations that are outside of the contour
-        
-        Example
-        -------
-        
-        To get correseponding T and Hs arrays of observations that are outside
-        of a given contour:
-            
-            import WDRT.ESSC as ESSC
-            
-            # Pull spectral data from NDBC website
-            buoy46022 = ESSC.Buoy('46022','NDBC')
-            buoy46022.fetchFromWeb()
-            
-            # Create PCA EA object for buoy
-            rosen46022 = ESSC.Rosenblatt(buoy46022)
-            
-            # Declare required parameters
-            Time_SS = 1.  # Sea state duration (hrs)
-            Time_r = 100  # Return periods (yrs) of interest
-            
-            # Generate contour
-            Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
-            
-            # Return the outside point Hs/T combinations
-            outsideHs, outsideT = rosen46022.outsidePoints()
-        
-        
-        '''
-        
-        testBuoy = self.buoy
-        trainingT = self.T_ReturnContours
-        trainingHs = self.Hs_ReturnContours
-        
-        rightEdge = max(trainingT)
-        leftEdge = min(trainingT)
-        
-        for i in range(len(trainingT)):
-            if trainingT[i] == rightEdge:
-               rightIndex = i
-            if trainingT[i] == leftEdge:
-               leftIndex = i
-            
-        if trainingT[1] < trainingT[2]:
-            indexDirection = "L2R"    
-        else: 
-            indexDirection = "R2L"     
-            
-        m = (trainingHs[leftIndex] - trainingHs[rightIndex]) / (trainingT[leftIndex] - trainingT[rightIndex])
-        b = trainingHs[leftIndex] - m*trainingT[leftIndex]    
-            
-        if indexDirection == "L2R":    
-            if leftIndex < rightIndex:    
-                upperTs = trainingT[leftIndex:rightIndex]
-                upperHs = trainingHs[leftIndex:rightIndex]
-                lowerTs = trainingT[rightIndex:len(trainingT)]
-                lowerTs = np.append(lowerTs,trainingT[0:leftIndex])
-                lowerHs = trainingHs[rightIndex:len(trainingT)]
-                lowerHs = np.append(lowerHs,trainingHs[0:leftIndex])
-            if leftIndex > rightIndex:    
-                lowerTs = trainingT[rightIndex:leftIndex]
-                lowerHs = trainingHs[rightIndex:leftIndex]
-                upperTs = trainingT[leftIndex:len(trainingT)]
-                upperTs = np.append(upperTs,trainingT[0:rightIndex]) 
-                upperHs = trainingHs[leftIndex:len(trainingT)]
-                upperHs = np.append(upperHs,trainingHs[0:rightIndex]) 
-                
-            upperMs = []
-            upperBs = []
-            lowerMs = []
-            lowerBs = []
-            for i in range(len(lowerHs)-1):
-                lowerMs.append((lowerHs[i+1] - lowerHs[i]) / (lowerTs[i+1] - lowerTs[i]))
-                lowerBs.append(lowerHs[i] - lowerMs[i]*lowerTs[i])    
-            for i in range(len(upperHs)-1):
-                upperMs.append((upperHs[i+1] - upperHs[i]) / (upperTs[i+1] - upperTs[i]))
-                upperBs.append(upperHs[i] - upperMs[i]*upperTs[i])     
-                
-            outsides = 0
-            outsideIndex = []
-            
-            for i in range(len(testBuoy.T)):
-                yhat = m * testBuoy.T[i] + b
-                if testBuoy.Hs[i] > yhat:
-                   for j in range(len(upperTs)-1):
-                       if(testBuoy.T[i] > upperTs[j] and testBuoy.T[i] < upperTs[j+1]):
-                           contourHs = upperMs[j] * testBuoy.T[i] + upperBs[j]
-                           if(testBuoy.Hs[i] > contourHs):
-                               outsides += 1
-                               outsideIndex.append(i)
-            
-                if testBuoy.Hs[i] < yhat:
-                   for j in range(len(lowerTs)-1):
-                       if(testBuoy.T[i] < lowerTs[j] and testBuoy.T[i] > lowerTs[j+1]):
-                           contourHs = lowerMs[j] * testBuoy.T[i] + lowerBs[j]
-                           if(testBuoy.Hs[i] < contourHs):
-                               outsides += 1
-                               outsideIndex.append(i)
-                
-        if indexDirection == "R2L":    
-            if leftIndex < rightIndex:    
-                lowerTs = trainingT[leftIndex:rightIndex]
-                lowerHs = trainingHs[leftIndex:rightIndex]
-                upperTs = trainingT[rightIndex:len(trainingT)]
-                upperTs = np.append(upperTs,trainingT[0:leftIndex])
-                upperHs = trainingHs[rightIndex:len(trainingT)]
-                upperHs = np.append(upperHs,trainingHs[0:leftIndex])
-            if leftIndex > rightIndex:    
-                upperTs = trainingT[rightIndex:leftIndex]
-                upperHs = trainingHs[rightIndex:leftIndex]
-                lowerTs = trainingT[leftIndex:len(trainingT)]
-                lowerTs = np.append(lowerTs,trainingT[0:rightIndex]) 
-                lowerHs = trainingHs[leftIndex:len(trainingT)]
-                lowerHs = np.append(lowerHs,trainingHs[0:rightIndex]) 
-            
-            upperMs = []
-            upperBs = []
-            lowerMs = []
-            lowerBs = []
-            for i in range(len(lowerHs)-1):
-                lowerMs.append((lowerHs[i] - lowerHs[i+1]) / (lowerTs[i] - lowerTs[i+1]))
-                lowerBs.append(lowerHs[i] - lowerMs[i]*lowerTs[i])    
-            for i in range(len(upperHs)-1):
-                upperMs.append((upperHs[i] - upperHs[i+1]) / (upperTs[i] - upperTs[i+1]))
-                upperBs.append(upperHs[i] - upperMs[i]*upperTs[i])     
-                
-            outsides = 0
-            outsideIndex = []
-            
-            
-            
-            for i in range(len(testBuoy.T)):
-                yhat = m * testBuoy.T[i] + b
-                if testBuoy.Hs[i] > yhat:
-                   for j in range(len(upperTs)-1):
-                       if(testBuoy.T[i] < upperTs[j] and testBuoy.T[i] > upperTs[j+1]):
-                           contourHs = upperMs[j] * testBuoy.T[i] + upperBs[j]
-                           if(testBuoy.Hs[i] > contourHs):
-                               outsides += 1
-                               outsideIndex.append(i)
-            
-                if testBuoy.Hs[i] < yhat:
-                   for j in range(len(lowerTs)-1):
-                       if(testBuoy.T[i] < lowerTs[j] and testBuoy.T[i] > lowerTs[j+1]):
-                           contourHs = lowerMs[j] * testBuoy.T[i] + lowerBs[j]
-                           if(testBuoy.Hs[i] < contourHs):
-                               outsides += 1
-                               outsideIndex.append(i)    
-            
-        for i in range(len(testBuoy.T)):
-            if testBuoy.T[i] > max(trainingT):
-                outsideIndex.append(i)
-            if testBuoy.T[i] < min(trainingT):
-                outsideIndex.append(i)
-            
-        return(testBuoy.Hs[outsideIndex], testBuoy.T[outsideIndex])
     
     def contourIntegrator(self):    
              
-        '''Calculates the "area" of the contour. Even though the units are different, the metric will
-        still give a good representation of how conservative (large) a contour is.
+        '''Calculates the area of the contour over the two-dimensional input
+        space of interest. 
         
         Parameters
         ----------
@@ -653,8 +485,7 @@ class EA:
         Example
         -------
         
-        To get correseponding T and Hs arrays of observations that are outside
-        of a given contour:
+        To obtain the area of the contour:
             
             import WDRT.ESSC as ESSC
             
@@ -686,224 +517,13 @@ class EA:
         area = 0.5*np.abs(np.dot(contourTs,np.roll(contourHs,1))-np.dot(contourHs,np.roll(contourTs,1))) 
     
         return area
-
-    def contourIntegrator_OLD(self):    
-             
-        '''Calculates the "area" of the contour. Even though the units are different, the metric will
-        still give a good representation of how conservative (large) a contour is.
-        
-        Parameters
-        ----------
-            None
-            
-        Returns
-        -------
-            area : float
-                The area of the contour in TxHs units. 
-        
-        Example
-        -------
-        
-            To get correseponding T and Hs arrays of observations that are outside
-            of a given contour:
-                
-                import WDRT.ESSC as ESSC
-                import numpy as np
-                
-                # Pull spectral data from NDBC website
-                buoy46022 = ESSC.Buoy('46022','NDBC')
-                buoy46022.fetchFromWeb()
-                
-                # Create PCA EA object for buoy
-                rosen46022 = ESSC.Rosenblatt(buoy46022)
-                
-                # Declare required parameters
-                Time_SS = 1.  # Sea state duration (hrs)
-                Time_r = 100  # Return periods (yrs) of interest
-                
-                # Generate contour
-                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
-                
-                # Return the area of the contour
-                rosenArea = rosen46022.contourIntegrator()
-        
-        
-        '''        
-        
-        
-        
-        contourTs = self.T_ReturnContours
-        contourHs = self.Hs_ReturnContours
-        
-        rightEdge = max(contourTs)
-        leftEdge = min(contourTs)
-        
-        for i in range(len(contourTs)):
-            if contourTs[i] == rightEdge:
-               rightIndex = i
-            if contourTs[i] == leftEdge:
-               leftIndex = i
-            
-        if contourTs[1] < contourTs[2]:
-            indexDirection = "L2R"    
-        else: 
-             indexDirection = "R2L"     
-            
-        m = (contourHs[leftIndex] - contourHs[rightIndex]) / (contourTs[leftIndex] - contourTs[rightIndex])
-        b = contourHs[leftIndex] - m*contourTs[leftIndex]    
-           
-        area = 0
-         
-        if indexDirection == "L2R":    
-            if leftIndex < rightIndex:    
-                upperTs = contourTs[leftIndex:rightIndex]
-                upperHs = contourHs[leftIndex:rightIndex]
-                lowerTs = contourTs[rightIndex:len(contourTs)]
-                lowerTs = np.append(lowerTs,contourTs[0:leftIndex])
-                lowerHs = contourHs[rightIndex:len(contourTs)]
-                lowerHs = np.append(lowerHs,contourHs[0:leftIndex])
-            if leftIndex > rightIndex:    
-                lowerTs = contourTs[rightIndex:leftIndex]
-                lowerHs = contourHs[rightIndex:leftIndex]
-                upperTs = contourTs[leftIndex:len(contourTs)]
-                upperTs = np.append(upperTs,contourTs[0:rightIndex]) 
-                upperHs = contourHs[leftIndex:len(contourTs)]
-                upperHs = np.append(upperHs,contourHs[0:rightIndex]) 
-        
-            if m > 0:        
-                for i in range(len(upperTs)-1):
-                    if upperHs[i] < upperHs[i+1]:
-                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
-                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
-                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if upperHs[i] >= upperHs[i+1]:
-                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
-                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
-                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea           
-                for i in range(len(lowerTs)-1):
-                    if lowerHs[i] < lowerHs[i+1]:
-                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
-                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if lowerHs[i] >= lowerHs[i+1]:
-                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - lowerHs[i])
-                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
-                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-            
-            if m < 0:        
-                for i in range(len(upperTs)-1):
-                    if upperHs[i] < upperHs[i+1]:
-                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i] - (m * upperTs[i] + b)) 
-                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
-                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if upperHs[i] > upperHs[i+1]:
-                        rect = (upperTs[i+1] - upperTs[i]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
-                        lowerTri = 0.5 * (upperTs[i+1] - upperTs[i]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
-                        upperTri = 0.5 * (upperTs[i+1] - upperTs[i]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea           
-                for i in range(len(lowerTs)-1):
-                    if lowerHs[i] < lowerHs[i+1]:
-                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i+1] - lowerHs[i])
-                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if lowerHs[i] > lowerHs[i+1]:
-                        rect = (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * (lowerHs[i] - lowerHs[i+1])
-                        upperTri = 0.5 * (lowerTs[i] - lowerTs[i+1]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                        
-        if indexDirection == "R2L":    
-            if leftIndex < rightIndex:    
-                lowerTs = contourTs[leftIndex:rightIndex]
-                lowerHs = contourHs[leftIndex:rightIndex]
-                upperTs = contourTs[rightIndex:len(contourTs)]
-                upperTs = np.append(upperTs,contourTs[0:leftIndex])
-                upperHs = contourHs[rightIndex:len(contourTs)]
-                upperHs = np.append(upperHs,contourHs[0:leftIndex])
-            if leftIndex > rightIndex:    
-                upperTs = contourTs[rightIndex:leftIndex]
-                upperHs = contourHs[rightIndex:leftIndex]
-                lowerTs = contourTs[leftIndex:len(contourTs)]
-                lowerTs = np.append(lowerTs,contourTs[0:rightIndex]) 
-                lowerHs = contourHs[leftIndex:len(contourTs)]
-                lowerHs = np.append(lowerHs,contourHs[0:rightIndex]) 
-                
-            if m > 0:        
-                for i in range(len(upperTs)-1):
-                    if upperHs[i] < upperHs[i+1]:
-                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i] + b)) 
-                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
-                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if upperHs[i] >= upperHs[i+1]:
-                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i] + b)) 
-                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i] + b) - (m * upperTs[i+1] + b))
-                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea           
-                for i in range(len(lowerTs)-1):
-                    if lowerHs[i] < lowerHs[i+1]:
-                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
-                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if lowerHs[i] >= lowerHs[i+1]:
-                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
-                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - (m * lowerTs[i] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-            
-            if m < 0:        
-                for i in range(len(upperTs)-1):
-                    if upperHs[i] < upperHs[i+1]:
-                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i] - (m * upperTs[i+1] + b)) 
-                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
-                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - upperHs[i])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if upperHs[i] >= upperHs[i+1]:
-                        rect = (upperTs[i] - upperTs[i+1]) * (upperHs[i+1] - (m * upperTs[i+1] + b)) 
-                        lowerTri = 0.5 * (upperTs[i] - upperTs[i+1]) * ((m * upperTs[i+1] + b) - (m * upperTs[i] + b))
-                        upperTri = 0.5 * (upperTs[i] - upperTs[i+1]) * (upperHs[i] - upperHs[i+1])
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea           
-                for i in range(len(lowerTs)-1):
-                    if lowerHs[i] < lowerHs[i+1]:
-                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i] - lowerHs[i+1])
-                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                    if lowerHs[i] >= lowerHs[i+1]:
-                        rect = (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i+1] + b) - lowerHs[i+1])
-                        lowerTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * (lowerHs[i+1] - lowerHs[i])
-                        upperTri = 0.5 * (lowerTs[i+1] - lowerTs[i]) * ((m * lowerTs[i] + b) - (m * lowerTs[i+1] + b))
-                        sectionArea = abs(rect + lowerTri + upperTri)
-                        area += sectionArea
-                        
-        return(area)
     
     def dataContour(self, tStepSize = 1, hsStepSize = .5):
     
         '''Creates a contour around the ordered pairs of buoy observations. How tightly
            the contour fits around the data will be determined by step size parameters.
+           Please note that this function currently is in beta; it needs further work to be
+           optimized for use.
         
         Parameters
         ----------
@@ -926,8 +546,7 @@ class EA:
         Example
         -------
         
-        To get correseponding T and Hs arrays of observations that are outside
-        of a given contour:
+        To get the corresponding data contour:
             
             import WDRT.ESSC as ESSC
             
@@ -1526,6 +1145,29 @@ class PCA(EA):
         """
         Calculates radius, angle, and weight for each sample point
         """
+        
+        ''' Data generating function that calculates the radius, angle, and
+        weight for each sample point.
+        Parameters
+        ----------
+        beta_lines: np.array
+               Array of mu fitting function parameters.
+        Rho_zeroline: np.array
+               array of radii
+        Theta_zeroline: np.array
+        num_contour_points: np.array
+        contour_probs: np.array
+        random_seed: int
+            seed for generating random data.
+        Returns
+        -------
+        Sample_alpha: np.array
+                Array of fitted sample angle values.
+        Sample_beta: np.array
+                Array of fitted sample radius values.
+        Weight_points: np.array
+                Array of weights for each point.
+        '''
         np.random.seed(random_seed)
 
         num_samples = (len(beta_lines) - 1) * num_contour_points
@@ -3018,13 +2660,13 @@ class Buoy(object):
             Relative path to place directory with data files.
         '''
         maxRecordedDateValues = 4
-
+        #preallocates data
         numLines = 0
         numCols = 0
         numDates = 0
         dateVals = []
         spectralVals = []
-
+        #prepares to pull the data from the NDBC website
         url = "https://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
         if proxy == None:
             ndbcURL = requests.get(url)
@@ -3033,7 +2675,7 @@ class Buoy(object):
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
-
+        #checks for headers in differently formatted webpages
         if len(headers) == 0:
             raise Exception("Spectral wave density data for buoy #%s not found" % self.buoyNum)
 
@@ -3044,7 +2686,7 @@ class Buoy(object):
             headers = headers[0]
 
         links = [a["href"] for a in headers.find_next_siblings("a", href=True)]
-
+        #downloads files
         for link in links:
             dataLink = "https://ndbc.noaa.gov" + link
 
@@ -3062,7 +2704,7 @@ class Buoy(object):
 
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
 
-
+            #splits and organizes data into arrays.
             for line in data:
                 currentLine = line.split()
                 numCols = len(currentLine)
@@ -3120,12 +2762,12 @@ class Buoy(object):
             buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.loadFromText()
         '''
-
+        #preallocates arrays
         dateVals = []
         spectralVals = []
         numLines = 0
         maxRecordedDateValues = 4
-
+        #finds the text files (if they exist on the machine)
         if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
                 for dirs in subdirs:
@@ -3139,7 +2781,7 @@ class Buoy(object):
 
         if len(fileList) == 0:
             raise IOError("No NDBC data files found in " + dirPath)
-
+        #reads in the files
         for fileName in fileList:
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
@@ -3180,6 +2822,7 @@ class Buoy(object):
         self._prepData()
 
     def loadFile(self, dirPath = None):
+        '''Loads file depending on whether it's NDBC or CDIP.'''
         if self.buoyType == "NDBC":
             self.loadFromText(dirPath)
         if self.buoyType == "CDIP":
@@ -3328,8 +2971,7 @@ class Buoy(object):
         Example
         -------
         
-        To get correseponding T and Hs arrays of observations that are outside
-        of a given contour:
+        To get a corresponding subset of a buoy with a given number of years:
             
             import WDRT.ESSC as ESSC
             
@@ -3366,6 +3008,7 @@ class Buoy(object):
         return(subsetBuoy)    
 
     def _saveData(self, fileObj):
+        '''Organizes and saves wave height, energy period, and date data.'''
         if(self.Hs is not None):
             gbd = fileObj.create_group('buoy_Data')
             f_Hs = gbd.create_dataset('Hs', data=self.Hs)
@@ -3421,7 +3064,6 @@ class Buoy(object):
         self.T = np.mean(self.T.reshape(-1,2), axis = 1)
 
 
-    #TODO Delete existing .nc file and create new one with just the Hs and T values
     def __processCDIPData(self,filePath):
         """
         Loads the Hs and T values from the .nc file downloaded from http://cdip.ucsd.edu/
@@ -3448,7 +3090,8 @@ class Buoy(object):
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any
-        NaNs.
+        NaNs. This cleans and prepares the data for use. Returns wave height, 
+        energy period, and dates.
         '''
         n = len(self.swdList)
         Hs = []
