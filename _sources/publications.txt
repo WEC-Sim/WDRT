@@ -4,25 +4,16 @@ This page summarizes papers and reports related to the `WDRT`.
 
 Citation
 --------
-If you desire to cite `WDRT` in a publication, please use:
+If you desire to cite `WDRT` in a publication, please use the following bibtex key:
 
 .. code-block:: none
 
-	R.G. Coe, C. Michelen, A. Eckert-Gallup, Y. Yu and J. van Rij, “WDRT: A toolbox for design-response analysis of wave energy converters,” Proceedings of the 4th Marine Energy Technology Symposium (METS), Washington, D.C., 2016.
-..
-
-BibTex key
-----------
-
-.. code-block:: none
-
-	@InProceedings{,
-	    author    = {Ryan G. Coe and Carlos Michelen and Aubrey C. Eckert-Gallup and Yi-Hsiang Yu and Jennifer van Rij},
-	    title     = {A toolbox for extreme response and fatigue analysis of WECs},
-	    booktitle = {METS2016},
-	    Address   = {Washington, D.C.},
-	    year      = {2016},
-	  }
+	@WWW{WDRT,
+	  author = {Ryan G. Coe and Carlos Michelen and Aubrey Eckert-Gallup and Nevin Martin and Yi-Hsiang Yu and Jennifer van Rij and Eliot W. Quon and Lance Manuel and Phong Nguyen and Tyler Esterly and Bibiana Seng and Zacharia Stuart and Jarred Canning},
+	  title  = {{WEC} {Design Response Toolbox} ({WDRT})},
+	  year   = {2018},
+	  url    = {http://wec-sim.github.io/WDRT},
+	}
 
 .. _pubs:
 
