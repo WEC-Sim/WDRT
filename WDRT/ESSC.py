@@ -2456,15 +2456,42 @@ class NonParaGumbelCopula(EA):
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
 
 class BivariateKDE(EA):
-
-    def __init__(self, buoy, bw, NData = 100, logTransform = True):
+    '''Create a BivariateKDE EA class for a buoy object. Contours
+    generated under this class will use a non-parametric KDE to fit the joint distribution.'''
+    def __init__(self, buoy, bw, NData = 100, logTransform = False, max_T=None, max_Hs=None):
+        '''
+        Parameters
+        ----------
+            buoy : NDBCData
+                ESSC.Buoy Object
+            bw: np.array
+                Array containing KDE bandwidth for Hs and T
+            NData: int
+                Discretization resolution used in KDE construction
+            logTransform: Boolean
+                Logical. True if log transformation should be taken prior to 
+                KDE construction. Default value is False. 
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
         
         if logTransform:        
             self.method = "Bivariate KDE, Log Transform"
         else:
             self.method = "Bivariate KDE"
         self.buoy = buoy
+        
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
 
+        self.max_T = max_T
+        self.max_Hs = max_Hs
         self.Hs_ReturnContours = None
         self.T_ReturnContours = None
         self.NData = NData
@@ -2480,39 +2507,17 @@ class BivariateKDE(EA):
             # Take log of both variables
             logTp = np.log(self.buoy.T)
             logHs = np.log(self.buoy.Hs)
-            # Get rid of weird data points close to 0
-            idx = np.where(logHs > -1) 
-            logTp = logTp[idx,][0]
-            logHs = logHs[idx,][0]
             ty = [logTp, logHs]
         else: 
             ty = [self.buoy.T, self.buoy.Hs]
-        # Calculate optimal bandwidth for log(Tp) and log(Hs) or Tp and Hs
-        #if self.logTransform: 
-        #    sig = robust.scale.mad(logTp)
-        #    num = float(len(logTp))
-        #    bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-        #    
-        #    sig = robust.scale.mad(logHs)
-        #    num = float(len(logHs))
-        #    bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
-       # else: 
-       #     sig = robust.scale.mad(self.buoy.T)
-       #     num = float(len(self.buoy.T))
-       #     bwTp = sig*(4.0/(4.0*num))**(1.0/6.0)
-       #     
-       #     sig = robust.scale.mad(self.buoy.Hs)
-       #    num = float(len(self.buoy.Hs))
-       #     bwHs = sig*(4.0/(4.0*num))**(1.0/6.0)
-
-       # bw = [bwTp, bwHs]
+      
 
         # Create grid of points
-        Ndata = 100
-        min_limit_1 = min(self.buoy.T) - 2.
-        max_limit_1 = max(self.buoy.T) + 10.
+        Ndata = self.NData
+        min_limit_1 = 0.01
+        max_limit_1 = self.max_T
         min_limit_2 = 0.01
-        max_limit_2 = max(self.buoy.Hs) + 10.
+        max_limit_2 = self.max_Hs
         pts_tp = np.linspace(min_limit_1, max_limit_1, Ndata) 
         pts_hs = np.linspace(min_limit_2, max_limit_2, Ndata)
         pt1,pt2 = np.meshgrid(pts_tp, pts_hs)
