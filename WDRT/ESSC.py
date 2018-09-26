@@ -36,7 +36,6 @@ import copy
 import statsmodels.api as sm
 from statsmodels import robust
 import urllib
-import sys
 import matplotlib
 
 
@@ -511,8 +510,6 @@ class EA:
         
         
         '''        
-        
-        
         
         contourTs = self.T_ReturnContours
         contourHs = self.Hs_ReturnContours
@@ -2499,8 +2496,50 @@ class BivariateKDE(EA):
         self.logTransform = logTransform
 
     def getContours(self, time_ss, time_r):
-        '''Note that this function currently returns a list of arrays for 
-        Hs and T and may not work with subsequent contour functions'''        
+        '''WDRT Extreme Sea State non-parameteric bivariate KDE Contour
+        function. This function calculates environmental contours of extreme
+        sea states using a bivariate KDE to estimate the joint distribution. 
+        The contour is then calculcated directly from the joint distribution.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environmental Analysis object using above parameters
+            BivariateKDE46022 = ESSC.BivariateKDE(buoy46022, bw = [0.23,0.19], logTransform = False)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            
+            # KDE contour generation example
+            Hs_Return, T_Return = BivariateKDE46022.getContours(Time_SS, Time_r)
+        '''       
         p_f = 1 / (365 * (24 / time_ss) * time_r)
 
         if self.logTransform: 
@@ -2560,6 +2599,10 @@ class BivariateKDE(EA):
         for i,seg in enumerate(vals.allsegs[0]):
             self.Hs_ReturnContours.append(seg[:,1])
             self.T_ReturnContours.append(seg[:,0])
+        
+        self.Hs_ReturnContours = np.transpose(np.asarray(self.Hs_ReturnContours)[0])
+        self.T_ReturnContours = np.transpose(np.asarray(self.T_ReturnContours)[0])
+            
 #        contourVals = np.empty((0,2))
 #        for seg in vals.allsegs[0]:
 #            contourVals = np.append(contourVals,seg, axis = 0)
