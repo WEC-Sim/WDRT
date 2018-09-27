@@ -38,9 +38,11 @@ def getDiffereces(testFiles, testData):
 				   ("NanaParaGum-Hs", np.sum(np.abs(testFiles["NonParaGum-Hs"] - testData["NonParaGum-Hs"]))),
 				   ("NanaParaGum-T", np.sum(np.abs(testFiles["NonParaGum-T"] - testData["NonParaGum-T"]))),
 				   ("NanaParaCC-Hs", np.sum(np.abs(testFiles["NonParaCC-Hs"] - testData["NonParaCC-Hs"]))),				   
-				   ("NanaParaCC-T", np.sum(np.abs(testFiles["NonParaCC-T"] - testData["NonParaCC-T"]))),
-				   ("Rosen-Hs" , np.sum(np.abs(testFiles["Rosen-Hs"] - testData["Rosen-Hs"]))),
-				   ("Rosen-T" , np.sum(np.abs(testFiles["Rosen-T"] - testData["Rosen-T"])))]
+                          ("NanaParaCC-T", np.sum(np.abs(testFiles["NonParaCC-T"] - testData["NonParaCC-T"]))),
+                          ("Rosen-Hs" , np.sum(np.abs(testFiles["Rosen-Hs"] - testData["Rosen-Hs"]))),
+                          ("Rosen-T" , np.sum(np.abs(testFiles["Rosen-T"] - testData["Rosen-T"]))),
+                          ("BivariateKDE-Hs", np.sum(np.abs(testFiles["BivariateKDE-Hs"] - testData["BivariateKDE-Hs"]))), 
+                          ("BivariateKDE-T", np.sum(np.abs(testFiles["BivariateKDE-T"] - testData["BivariateKDE-T"])))] 
 
 	return collections.OrderedDict(differencePairs)
 
@@ -49,31 +51,33 @@ def getDiffereces(testFiles, testData):
 
 
 def loadTestData():
-	testFiles = {}
-	testFiles["PCA-Hs"] = np.load("TestFiles/pca46022-Hs.npy")
-	testFiles["PCA-T"] = np.load("TestFiles/pca46022-T.npy")
-	testFiles["Gauss-Hs"] = np.load("TestFiles/gauss46022-Hs.npy")
-	testFiles["Gauss-T"] = np.load("TestFiles/gauss46022-T.npy")
-	testFiles["Gumbel-Hs"] = np.load("TestFiles/gumbel46022-Hs.npy")
-	testFiles["Gumbel-T"] = np.load("TestFiles/gumbel46022-T.npy")
-	testFiles["CC-Hs"] = np.load("TestFiles/cc46022-Hs.npy")
-	testFiles["CC-T"] = np.load("TestFiles/cc46022-T.npy")	
-	testFiles["NonParaGauss-Hs"] = np.load("TestFiles/Gauss-NonPara46022-Hs.npy")
-	testFiles["NonParaGauss-T"] = np.load("TestFiles/Gauss-NonPara46022-T.npy")
-	testFiles["NonParaGum-Hs"] = np.load("TestFiles/Gum-NonPara46022-Hs.npy")
-	testFiles["NonParaGum-T"] = np.load("TestFiles/Gum-NonPara46022-T.npy")
-	testFiles["NonParaCC-Hs"] = np.load("TestFiles/CC-NonPara46022-Hs.npy")
-	testFiles["NonParaCC-T"] = np.load("TestFiles/CC-NonPara46022-T.npy")
-	testFiles["Rosen-Hs"] = np.load("TestFiles/rosen46022-Hs.npy")
-	testFiles["Rosen-T"] = np.load("TestFiles/rosen46022-T.npy")
-	print "--> Test Data loaded"
-	return testFiles
+      testFiles = {}
+      testFiles["PCA-Hs"] = np.load("TestFiles/pca46022-Hs.npy")
+      testFiles["PCA-T"] = np.load("TestFiles/pca46022-T.npy")
+      testFiles["Gauss-Hs"] = np.load("TestFiles/gauss46022-Hs.npy")
+      testFiles["Gauss-T"] = np.load("TestFiles/gauss46022-T.npy")
+      testFiles["Gumbel-Hs"] = np.load("TestFiles/gumbel46022-Hs.npy")
+      testFiles["Gumbel-T"] = np.load("TestFiles/gumbel46022-T.npy")
+      testFiles["CC-Hs"] = np.load("TestFiles/cc46022-Hs.npy")
+      testFiles["CC-T"] = np.load("TestFiles/cc46022-T.npy")	
+      testFiles["NonParaGauss-Hs"] = np.load("TestFiles/Gauss-NonPara46022-Hs.npy")
+      testFiles["NonParaGauss-T"] = np.load("TestFiles/Gauss-NonPara46022-T.npy")
+      testFiles["NonParaGum-Hs"] = np.load("TestFiles/Gum-NonPara46022-Hs.npy")
+      testFiles["NonParaGum-T"] = np.load("TestFiles/Gum-NonPara46022-T.npy")
+      testFiles["NonParaCC-Hs"] = np.load("TestFiles/CC-NonPara46022-Hs.npy")
+      testFiles["NonParaCC-T"] = np.load("TestFiles/CC-NonPara46022-T.npy")
+      testFiles["Rosen-Hs"] = np.load("TestFiles/rosen46022-Hs.npy")
+      testFiles["Rosen-T"] = np.load("TestFiles/rosen46022-T.npy")
+      testFiles["BivariateKDE-Hs"] = np.load("TestFiles/KDE46022-Hs.npy")
+      testFiles["BivariateKDE-T"] = np.load("TestFiles/KDE46022-T.npy")
+      print "--> Test Data loaded"
+      return testFiles
 
 
 def generateTestData():
 	buoy46022 = ESSC.Buoy('46022','NDBC')
 
-	buoy46022.fetchFromWeb(proxy = {"https":"https://wwwproxy.sandia.gov:80"})
+	buoy46022.fetchFromWeb()
      
 	compareLoadMethods(buoy46022)
  
@@ -85,6 +89,7 @@ def generateTestData():
 	NonParaGauss46022 = ESSC.NonParaGaussianCopula(buoy46022)
 	NonParaClay46022 = ESSC.NonParaClaytonCopula(buoy46022)
 	NonParaGum46022 = ESSC.NonParaGumbelCopula(buoy46022)
+	BivariateKDE46022 = ESSC.BivariateKDE(buoy46022, bw = [0.23, 0.19], logTransform = False)
 
 
 	pca_Hs_Return, pca_T_Return = pca46022.getContours(Time_SS, Time_R)
@@ -95,6 +100,7 @@ def generateTestData():
 	NonParaGau_Hs_Return, NonParaGau_T_Return = NonParaGauss46022.getContours(Time_SS, Time_R)
 	NonParaClay_Hs_Return, NonParaClay_T_Return = NonParaClay46022.getContours(Time_SS, Time_R)
 	NonParaGum_Hs_Return, NonParaGum_T_Return = NonParaGum46022.getContours(Time_SS, Time_R)
+	BivariateKDE_Hs_Return, BivariateKDE_T_Return = BivariateKDE46022.getContours(Time_SS, Time_R)
 
 
 	testData = {"PCA-Hs" : pca_Hs_Return,
@@ -112,15 +118,17 @@ def generateTestData():
 				"NonParaCC-Hs" : NonParaClay_Hs_Return,
 				"NonParaCC-T" : NonParaClay_T_Return,
 				"Rosen-Hs" : rosen_Hs_Return,
-				"Rosen-T" :rosen_T_Return}
+				"Rosen-T" :rosen_T_Return,
+                       "BivariateKDE-Hs" : BivariateKDE_Hs_Return, 
+                       "BivariateKDE-T"  : BivariateKDE_T_Return}
 	return testData
 
 
 def compareLoadMethods(buoy):
-	buoy.saveAsTxt('.\TestTxt')
+	buoy.saveAsTxt('.//TestTxt')
 	buoy.saveAsH5()
 	txtBuoy = ESSC.Buoy('46022', 'NDBC')
-	txtBuoy.loadFromTxt('.\TestTxt\NDBC46022\\')
+	txtBuoy.loadFromTxt('.//TestTxt//NDBC46022//')
 	h5Buoy = ESSC.Buoy('46022', 'NDBC')
 	h5Buoy.loadFromH5()
  

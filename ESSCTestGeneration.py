@@ -11,7 +11,7 @@ import WDRT.ESSC as ESSC
 
 # Proxy information
 import urllib2
-proxy_support = urllib2.ProxyHandler({"https":"https://wwwproxy.sandia.gov:80"})
+proxy_support = urllib2.ProxyHandler()
 opener = urllib2.build_opener(proxy_support)
 urllib2.install_opener(opener)
 
@@ -19,13 +19,13 @@ urllib2.install_opener(opener)
 
 # Load in data from NDBC 
 buoy46022 = ESSC.Buoy('46022','NDBC')
-#buoy46022.fetchFromWeb(proxy = {"https":"https://wwwproxy.sandia.gov:80"})
+#buoy46022.fetchFromWeb()
      
 # Save as h5 
 #buoy46022.saveAsH5('TestFiles/')
 
 # Load from h5
-buoy46022.loadFromH5('NDBC46022.h5')
+buoy46022.loadFromH5('TestFiles/NDBC46022.h5')
 
 # Calculate contours 
 # Declare required parameters
@@ -41,6 +41,7 @@ rosen46022 = ESSC.Rosenblatt(buoy46022)
 NonParaGauss46022 = ESSC.NonParaGaussianCopula(buoy46022)
 NonParaClay46022 = ESSC.NonParaClaytonCopula(buoy46022)
 NonParaGum46022 = ESSC.NonParaGumbelCopula(buoy46022)
+BivariateKDE46022 = ESSC.BivariateKDE(buoy46022, bw =[0.23,0.19], logTransform = False)
 
 # Calculate contours for all contour methods
 pca_Hs_Return, pca_T_Return = pca46022.getContours(Time_SS, Time_R)
@@ -51,6 +52,7 @@ rosen_Hs_Return, rosen_T_Return = rosen46022.getContours(Time_SS, Time_R)
 NonParaGau_Hs_Return, NonParaGau_T_Return = NonParaGauss46022.getContours(Time_SS, Time_R)
 NonParaClay_Hs_Return, NonParaClay_T_Return = NonParaClay46022.getContours(Time_SS, Time_R)
 NonParaGum_Hs_Return, NonParaGum_T_Return = NonParaGum46022.getContours(Time_SS, Time_R)
+BivariateKDE_Hs_Return, BivariateKDE_T_Return = BivariateKDE46022.getContours(Time_SS, Time_R)
 
 # Save results 
 np.save("TestFiles/pca46022-Hs.npy", pca_Hs_Return)
@@ -69,3 +71,5 @@ np.save("TestFiles/CC-NonPara46022-Hs.npy", NonParaClay_Hs_Return)
 np.save("TestFiles/CC-NonPara46022-T.npy", NonParaClay_T_Return)
 np.save("TestFiles/rosen46022-Hs.npy", rosen_Hs_Return)
 np.save("TestFiles/rosen46022-T.npy", rosen_T_Return)
+np.save("TestFiles/KDE46022-Hs.npy", BivariateKDE_Hs_Return)
+np.save("TestFiles/KDE46022-T.npy", BivariateKDE_T_Return)
