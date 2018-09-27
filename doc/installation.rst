@@ -62,7 +62,7 @@ The following installation procedure allows for easier updating of the code with
 
 **Step 1:** Clone or download a copy of `WDRT`::
 
-	git clone http://wec-sim.github.io/WDRT $WDRT_SOURCE
+	git clone https://github.com/WEC-Sim/WDRT $WDRT_SOURCE
 
 **Step 2:** Add the ``$WDRT_SOURCE`` directory to your `PYTHONPATH <https://docs.python.org/2/using/cmdline.html#environment-variables>`_ environment variable (`Windows <https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables>`_, `Mac OSX <https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration>`_, `Linux <https://wiki.archlinux.org/index.php/Environment_variables>`_). 
 
