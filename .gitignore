@@ -4,4 +4,4 @@
 _build
 *.sublime*
 WDRT/MLER_toolbox/build/
-
+doc/*
