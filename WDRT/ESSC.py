@@ -36,7 +36,7 @@ import copy
 import statsmodels.api as sm
 from statsmodels import robust
 import urllib
-import sys
+import matplotlib
 
 
 class EA:
@@ -57,8 +57,8 @@ class EA:
         additional contour methods planned for future release.'''
         return
 
-    def saveData(self, fileName=None):
-        '''Saves all available data obtained via the EA module to
+    def saveContour(self, fileName=None):
+        '''Saves all available contour data obtained via the EA module to
         a .h5 file
 
         Parameters
@@ -78,9 +78,6 @@ class EA:
             f.create_dataset('method', data=self.method)
             gp = f.create_group('parameters')
             self._saveParams(gp)
-
-            if(self.buoy.Hs is not None):
-                self.buoy._saveData(fileObj=f)
 
             if(self.Hs_ReturnContours is not None):
                 grc = f.create_group('ReturnContours')
@@ -170,9 +167,10 @@ class EA:
                 T_sampleCA = np.arange(12, 26, 2)
                 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
         '''
+        #finds minimum and maximum energy period values
         amin = np.argmin(self.T_ReturnContours)
         amax = np.argmax(self.T_ReturnContours)
-
+        #finds points along the contour
         w1 = self.Hs_ReturnContours[amin:amax]
         w2 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
         if (np.max(w1) > np.max(w2)):
@@ -181,20 +179,20 @@ class EA:
         else:
             x1 = np.concatenate((self.T_ReturnContours[amax:], self.T_ReturnContours[:amin]))
             y1 = np.concatenate((self.Hs_ReturnContours[amax:], self.Hs_ReturnContours[:amin]))
-
+        #sorts data based on the max and min energy period values
         ms = np.argsort(x1)
         x = x1[ms]
         y = y1[ms]
-
+        #interpolates the sorted data
         si = interp.interp1d(x, y)
-
+        #finds the wave height based on the user specified energy period values
         Hs_SampleCA = si(T_Sample)
 
         self.T_SampleCA = T_Sample
         self.Hs_SampleCA = Hs_SampleCA
         return Hs_SampleCA
 
-    def steepness(self, depth, SteepMax, T_vals):
+    def steepness(self, SteepMax, T_vals, depth = None):
         '''This function calculates a steepness curve to be plotted on an H vs. T
         diagram.  First, the function calculates the wavelength based on the
         depth and T. The T vector can be the input data vector, or will be
@@ -212,12 +210,14 @@ class EA:
 
         Parameters
         ----------
-        depth: float
-            Depth at site
         SteepMax: float
             Wave breaking steepness estimate (e.g., 0.07).
         T_vals :np.array
             Array of T values [sec] at which to calculate the breaking height.
+        depth: float
+            Depth at site
+            Note: if not inputted, the depth will tried to be grabbed from the respective
+            buoy type's website.
 
         Returns
         -------
@@ -243,7 +243,7 @@ class EA:
             pca46022 = ESSC.PCA(buoy46022)
             
             T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
-            SteepMax = 0.07  # Optional: enter estimate of breaking steepness
+            SteepMax = 0.07  # Enter estimate of breaking steepness
             
             # Declare required parameters
             depth = 391.4  # Depth at measurement point (m)
@@ -252,6 +252,9 @@ class EA:
         '''
 
         # Calculate the wavelength at a given depth at each value of T
+
+        if depth == None:
+            depth = self.__fetchDepth()
         lambdaT = []
 
         g = 9.81  # [m/s^2]
@@ -278,6 +281,27 @@ class EA:
         lambdaT = np.array(lambdaT, dtype=np.float)
         SteepH = lambdaT * SteepMax
         return SteepH
+    
+    def __fetchDepth(self):
+        '''Obtains the depth from the website for a buoy (either NDBC or CDIP)'''
+        if self.buoy.buoyType == "NDBC":
+            url = "https://www.ndbc.noaa.gov/station_page.php?station=%s" % (46022)
+            ndbcURL = requests.get(url)
+            ndbcURL.raise_for_status()
+            ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
+            header = ndbcHTML.find("b", text="Water depth:")
+            return float(str(header.nextSibling).split()[0])
+        elif self.buoy.buoyType == "CDIP":
+            url = "http://cdip.ucsd.edu/cgi-bin/wnc_metadata?ARCHIVE/%sp1/%sp1_historic" % (self.buoy.buoyNum, self.buoy.buoyNum)
+            cdipURL = requests.get(url)
+            cdipURL.raise_for_status()
+            cdipHTML = bs4.BeautifulSoup(cdipURL.text, "lxml")
+            #Parse the table for the depth value
+            depthString = str(cdipHTML.findChildren("td", {"class" : "plus"})[0])
+            depthString = depthString.split("<br/>")[2]
+            return float(re.findall(r"[-+]?\d*\.\d+|\d+", depthString)[0])
+
+
 
     def bootStrap(self, boot_size=1000, plotResults=True):
         '''Get 95% confidence bounds about a contour using the bootstrap
@@ -327,11 +351,12 @@ class EA:
             # Calculate boostrap confidence interval
             contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)
         '''
+        #preallocates arrays
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
         T_Return_Boot = np.zeros([self.nb_steps,boot_size])
         buoycopy = copy.deepcopy(self.buoy);
-
+        #creates copies of the data based on how it was modeled.
         for i in range(boot_size):
             boot_inds = np.random.randint(0, high=n, size=n)
             buoycopy.Hs = copy.deepcopy(self.buoy.Hs[boot_inds])
@@ -355,6 +380,7 @@ class EA:
                 essccopy = NonParaGumbelCopula(buoycopy, self.Ndata, self.max_T, self.max_Hs)
             Hs_Return_Boot[:,i],T_Return_Boot[:,i] = essccopy.getContours(self.time_ss, self.time_r, self.nb_steps)
 
+        #finds 95% CI values for wave height and energy
         contour97_5_Hs = np.percentile(Hs_Return_Boot,97.5,axis=1)
         contour2_5_Hs = np.percentile(Hs_Return_Boot,2.5,axis=1)
         contourmean_Hs = np.mean(Hs_Return_Boot, axis=1)
@@ -365,7 +391,7 @@ class EA:
 
         self.contourMean_Hs = contourmean_Hs
         self.contourMean_T = contourmean_T
-
+        #plotting function
         def plotResults():
             plt.figure()
             plt.plot(self.buoy.T, self.buoy.Hs, 'bo', alpha=0.1, label='NDBC data')
@@ -383,6 +409,303 @@ class EA:
 
         return contourmean_Hs, contourmean_T
 
+    def outsidePoints(self):
+        
+        '''Determines which buoy observations are outside of a given contour.
+        
+        Parameters
+        ----------
+            None
+            
+        Returns
+        -------
+            outsideHs : nparray
+                The Hs values of the observations that are outside of the contour
+        
+            outsideT : nparray
+                The T values of the observations that are outside of the contour
+        
+        Example
+        -------
+        
+            To get correseponding T and Hs arrays of observations that are outside
+            of a given contour:
+                
+                import WDRT.ESSC as ESSC
+                import numpy as np
+                
+                # Pull spectral data from NDBC website
+                buoy46022 = ESSC.Buoy('46022','NDBC')
+                buoy46022.fetchFromWeb()
+                
+                # Create PCA EA object for buoy
+                rosen46022 = ESSC.Rosenblatt(buoy46022)
+                
+                # Declare required parameters
+                Time_SS = 1.  # Sea state duration (hrs)
+                Time_r = 100  # Return periods (yrs) of interest
+                
+                # Generate contour
+                Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+                
+                # Return the outside point Hs/T combinations
+                outsideT, outsideHs = rosen46022.outsidePoints()
+        
+        
+        '''
+        #checks if the contour type is a KDE contour - if so, finds the outside points for the KDE contour.
+        if isinstance(self.T_ReturnContours,list): 
+            contains_test = np.zeros(len(self.buoy.T),dtype=bool)
+            for t,hs in zip(self.T_ReturnContours,self.Hs_ReturnContours):        
+                path_contour = []        
+                path_contour = matplotlib.path.Path(np.column_stack((t,hs)))
+                contains_test = contains_test+path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
+            out_inds = np.where(~contains_test)
+        else: # For non-KDE methods (copulas, etc.)
+            path_contour = matplotlib.path.Path(np.column_stack((self.T_ReturnContours,self.Hs_ReturnContours)))
+            contains_test = path_contour.contains_points(np.column_stack((self.buoy.T,self.buoy.Hs)))
+            out_inds = np.where(~contains_test)
+        outsideHs =self.buoy.Hs[out_inds]
+        outsideT = self.buoy.T[out_inds]
+        
+        return(outsideT, outsideHs)
+    
+    def contourIntegrator(self):    
+             
+        '''Calculates the area of the contour over the two-dimensional input
+        space of interest. 
+        
+        Parameters
+        ----------
+            None
+            
+        Returns
+        -------
+            area : float
+                The area of the contour in TxHs units. 
+        
+        Example
+        -------
+        
+        To obtain the area of the contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            
+            # Generate contour
+            Hs_Return, T_Return = rosen46022.getContours(Time_SS, Time_r)
+            
+            # Return the area of the contour
+            rosenArea = rosen46022.contourIntegrator()
+        
+        
+        '''        
+        
+        contourTs = self.T_ReturnContours
+        contourHs = self.Hs_ReturnContours
+    
+        area = 0.5*np.abs(np.dot(contourTs,np.roll(contourHs,1))-np.dot(contourHs,np.roll(contourTs,1))) 
+    
+        return area
+    
+    def dataContour(self, tStepSize = 1, hsStepSize = .5):
+    
+        '''Creates a contour around the ordered pairs of buoy observations. How tightly
+           the contour fits around the data will be determined by step size parameters.
+           Please note that this function currently is in beta; it needs further work to be
+           optimized for use.
+        
+        Parameters
+        ----------
+            tStepSize : float
+                Determines how far to search for the next point in the T direction. 
+                Smaller values will produce contours that follow the data more closely.
+    
+            hsStepSize : float
+                Determines how far to search for the next point in the Hs direction. 
+                Smaller values will produce contours that follow the data more closely.
+                
+        Returns
+        -------
+            dataBoundryHs : nparray
+                The Hs values of the boundry observations
+        
+            dataBoundryT : nparray
+                The Hs values of the boundry observations
+        
+        Example
+        -------
+        
+        To get the corresponding data contour:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create PCA EA object for buoy
+            rosen46022 = ESSC.Rosenblatt(buoy46022)
+            
+            # Calculate the data contour
+            dataHs, dataT = rosen46022.dataContour(tStepSize = 1, hsStepSize = .5)
+        
+        
+        '''    
+    
+        
+        
+        maxHs = max(self.buoy.Hs)
+        minHs = min(self.buoy.Hs)
+        
+        sortedHsBuoy = copy.deepcopy(self.buoy)
+        sortedTBuoy = copy.deepcopy(self.buoy)
+        
+        sortedTIndex = sorted(range(len(self.buoy.T)),key=lambda x:self.buoy.T[x])
+        sortedHsIndex = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
+        
+        sortedHsBuoy.Hs = self.buoy.Hs[sortedHsIndex]
+        sortedHsBuoy.T = self.buoy.T[sortedHsIndex]
+        sortedTBuoy.Hs = self.buoy.Hs[sortedTIndex]
+        sortedTBuoy.T = self.buoy.T[sortedTIndex]
+        
+        hsBin1 = []
+        hsBin2 = []
+        hsBin3 = []
+        hsBin4 = []
+        tBin1 = []
+        tBin2 = []
+        tBin3 = []
+        tBin4 = []
+    
+        
+        startingPoint = sortedTBuoy.T[0]
+        hsBin4.append(sortedTBuoy.Hs[0])
+        tBin4.append(sortedTBuoy.T[0])
+        while True:
+            tempNextBinTs = sortedTBuoy.T[sortedTBuoy.T < startingPoint + tStepSize]    
+            tempNextBinHs = sortedTBuoy.Hs[sortedTBuoy.T < startingPoint + tStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinTs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinTs > startingPoint]
+            
+            try:
+                nextHs = max(nextBinHs)
+                nextT = nextBinTs[nextBinHs.argmax(axis=0)]
+                
+                hsBin4.append(nextHs)
+                tBin4.append(nextT)
+            
+                startingPoint = nextT
+            except ValueError:
+                startingPoint += tStepSize
+                break
+     
+            if nextHs == maxHs:
+                break
+        
+        startingPoint = sortedTBuoy.T[0]
+        hsBin1.append(sortedTBuoy.Hs[0])
+        tBin1.append(sortedTBuoy.T[0])
+        while True:
+            tempNextBinTs = sortedTBuoy.T[sortedTBuoy.T < startingPoint + tStepSize]    
+            tempNextBinHs = sortedTBuoy.Hs[sortedTBuoy.T < startingPoint + tStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinTs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinTs > startingPoint]
+            
+            try:
+                nextHs = min(nextBinHs)
+                nextT = nextBinTs[nextBinHs.argmin(axis=0)]
+                
+                hsBin1.append(nextHs)
+                tBin1.append(nextT)
+            
+                startingPoint = nextT
+            except ValueError:
+                startingPoint += tStepSize
+                break
+            
+            
+            if nextHs == minHs:
+                break
+        
+        
+        startingPoint = sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)]
+        hsBin3.append(sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)])
+        tBin3.append(sortedHsBuoy.T[sortedHsBuoy.T.argmax(axis=0)])
+        while True:
+            tempNextBinTs = sortedHsBuoy.T[sortedHsBuoy.Hs < startingPoint + hsStepSize]    
+            tempNextBinHs = sortedHsBuoy.Hs[sortedHsBuoy.Hs < startingPoint + hsStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinHs > startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinHs > startingPoint]
+        
+            try:
+                nextT = max(nextBinTs)
+                nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
+                
+                if nextHs not in hsBin4 and nextHs not in hsBin1:
+                
+                    hsBin3.append(nextHs)
+                    tBin3.append(nextT)
+        
+                startingPoint = nextHs
+            
+            except ValueError:
+                startingPoint += hsStepSize
+                break
+    
+            if nextHs == maxHs:
+                break
+     
+        
+        startingPoint = sortedHsBuoy.Hs[sortedHsBuoy.T.argmax(axis=0)]
+        while True:
+            tempNextBinTs = sortedHsBuoy.T[sortedHsBuoy.Hs > startingPoint - hsStepSize]    
+            tempNextBinHs = sortedHsBuoy.Hs[sortedHsBuoy.Hs > startingPoint - hsStepSize]
+            nextBinTs = tempNextBinTs[tempNextBinHs < startingPoint]
+            nextBinHs = tempNextBinHs[tempNextBinHs < startingPoint]
+        
+            try:    
+                nextT = max(nextBinTs)
+                nextHs = nextBinHs[nextBinTs.argmax(axis=0)]
+            
+                if nextHs not in hsBin1 and nextHs not in hsBin4:
+            
+                    hsBin2.append(nextHs)
+                    tBin2.append(nextT)
+        
+                startingPoint = nextHs
+            except ValueError:
+                startingPoint = startingPoint - hsStepSize
+                break
+    
+            
+            if nextHs == minHs:
+                break
+        
+        hsBin2 = hsBin2[::-1] # Reverses the order of the array
+        tBin2 = tBin2[::-1]
+        hsBin4 = hsBin4[::-1] # Reverses the order of the array
+        tBin4 = tBin4[::-1]
+        
+        dataBoundryHs = np.concatenate((hsBin1,hsBin2,hsBin3,hsBin4),axis = 0)
+        dataBoundryT = np.concatenate((tBin1,tBin2,tBin3,tBin4),axis = 0)
+        dataBoundryHs = dataBoundryHs[::-1]
+        dataBoundryT = dataBoundryT[::-1]
+        
+        return(dataBoundryHs, dataBoundryT)
+    
+
+
     def __getCopulaParams(self,n_size,bin_1_limit,bin_step):
         sorted_idx = sorted(range(len(self.buoy.Hs)),key=lambda x:self.buoy.Hs[x])
         Hs = self.buoy.Hs[sorted_idx]
@@ -396,12 +719,17 @@ class EA:
         # Binning
         ind = np.array([])
         ind = np.append(ind,sum(Hs_val <= bin_1_limit for Hs_val in Hs))
+        # Make sure first bin isn't empty or too small to avoid errors        
+        while ind == 0 or ind < n_size:         
+            ind = np.array([])    
+            bin_1_limit = bin_1_limit + bin_step
+            ind = np.append(ind,sum(Hs_val <= bin_1_limit for Hs_val in Hs))        
         for i in range(1,200):
             bin_i_limit = bin_1_limit+bin_step*(i)
             ind = np.append(ind,sum(Hs_val <= bin_i_limit for Hs_val in Hs))
             if (ind[i-0]-ind[i-1]) < n_size:
                 break
-
+    
         # Parameters for conditional distribution of T|Hs for each bin
         num=len(ind) # num+1: number of bins
         para_dist_cond = []
@@ -459,8 +787,7 @@ class EA:
         
         # Nonparametric PDF for T
         temp = sm.nonparametric.KDEUnivariate(T)
-
-        temp.fit(bw = bwT.astype(np.double))
+        temp.fit(bw = bwT)
         f_t = temp.evaluate(pts_t)
         
         # Nonparametric CDF for Hs
@@ -522,8 +849,12 @@ class PCA(EA):
         '''
         self.method = "Principle component analysis"
         self.buoy = buoy
-        self.size_bin = size_bin
-
+        if size_bin > len(buoy.Hs)*0.25:
+            self.size_bin = len(buoy.Hs)*0.25
+            print round(len(buoy.Hs)*0.25,2),'is the max bin size for this buoy. The bin size has been set to this amount.'
+        else:
+            self.size_bin = size_bin
+            
         self.Hs_ReturnContours = None
         self.Hs_SampleCA = None
         self.Hs_SampleFSS = None
@@ -534,7 +865,7 @@ class PCA(EA):
 
         self.Weight_points = None
 
-        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
+        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(self.size_bin)
 
     def __generateParams(self, size_bin=250.0):
         pca = skPCA(n_components=2)
@@ -814,6 +1145,29 @@ class PCA(EA):
         """
         Calculates radius, angle, and weight for each sample point
         """
+        
+        ''' Data generating function that calculates the radius, angle, and
+        weight for each sample point.
+        Parameters
+        ----------
+        beta_lines: np.array
+               Array of mu fitting function parameters.
+        Rho_zeroline: np.array
+               array of radii
+        Theta_zeroline: np.array
+        num_contour_points: np.array
+        contour_probs: np.array
+        random_seed: int
+            seed for generating random data.
+        Returns
+        -------
+        Sample_alpha: np.array
+                Array of fitted sample angle values.
+        Sample_beta: np.array
+                Array of fitted sample radius values.
+        Weight_points: np.array
+                Array of weights for each point.
+        '''
         np.random.seed(random_seed)
 
         num_samples = (len(beta_lines) - 1) * num_contour_points
@@ -1209,7 +1563,7 @@ class GaussianCopula(EA):
 class Rosenblatt(EA):
     '''Create a Rosenblatt EA class for a buoy object. Contours generated 
     under this class will use a Rosenblatt transformation and the I-FORM.'''    
-    def __init__(self, buoy, n_size=40., bin_1_limit=1., bin_step=0.25):
+    def __init__(self, buoy, n_size=50., bin_1_limit= .5, bin_step=0.25):
         '''
         Parameters
         ----------
@@ -1224,9 +1578,26 @@ class Rosenblatt(EA):
         '''
         self.method = "Rosenblatt"
         self.buoy = buoy
-        self.n_size = n_size
-        self.bin_1_limit = bin_1_limit
-        self.bin_step = bin_step
+        
+        if n_size > 100:
+            self.n_size = 100
+            print 100,'is the maximum "minimum bin size" for this buoy. The minimum bin size has been set to this amount.'
+        else:
+            self.n_size = n_size
+        
+        if bin_step > max(buoy.Hs)*.1:
+            self.bin_step = max(buoy.Hs)*.1
+            print round(max(buoy.Hs)*.1,2),'is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.'
+        else:
+            self.bin_step = bin_step
+
+        if bin_1_limit  > max(buoy.Hs)*.25:
+            self.bin_1_limit = max(buoy.Hs)*.25
+            print round(max(buoy.Hs)*.25,2),'is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.'
+        else:
+            self.bin_1_limit = bin_1_limit           
+        
+        
 
         self.Hs_ReturnContours = None
 #        self.Hs_SampleCA = None
@@ -1239,7 +1610,7 @@ class Rosenblatt(EA):
 #        self.Weight_points = None
 
 #        self.coeff, self.shift, self.comp1_params, self.sigma_param, self.mu_param = self.__generateParams(size_bin)
-        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(n_size,bin_1_limit,bin_step)
+        self.para_dist_1,self.para_dist_2,self.mean_cond,self.std_cond = self._EA__getCopulaParams(self.n_size,self.bin_1_limit,self.bin_step)
 
     def getContours(self, time_ss, time_r, nb_steps = 1000):
         '''WDRT Extreme Sea State Rosenblatt Copula Contour function.
@@ -2080,6 +2451,166 @@ class NonParaGumbelCopula(EA):
     def _saveParams(self, groupObj):
         groupObj.create_dataset('nonpara_dist_1', data=self.nonpara_dist_1)
         groupObj.create_dataset('nonpara_dist_2', data=self.nonpara_dist_2)
+
+class BivariateKDE(EA):
+    '''Create a BivariateKDE EA class for a buoy object. Contours
+    generated under this class will use a non-parametric KDE to fit the joint distribution.'''
+    def __init__(self, buoy, bw, NData = 100, logTransform = False, max_T=None, max_Hs=None):
+        '''
+        Parameters
+        ----------
+            buoy : NDBCData
+                ESSC.Buoy Object
+            bw: np.array
+                Array containing KDE bandwidth for Hs and T
+            NData: int
+                Discretization resolution used in KDE construction
+            logTransform: Boolean
+                Logical. True if log transformation should be taken prior to 
+                KDE construction. Default value is False. 
+            max_T:float
+                Maximum T value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(T)
+            max_Hs:float
+                Maximum Hs value for KDE contstruction, must include possible 
+                range of contour. Default value is 2*max(Hs)    
+        '''
+        
+        if logTransform:        
+            self.method = "Bivariate KDE, Log Transform"
+        else:
+            self.method = "Bivariate KDE"
+        self.buoy = buoy
+        
+        if max_T == None:
+            max_T = max(self.buoy.T)*2.
+        if max_Hs == None:
+            max_Hs = max(self.buoy.Hs)*2.
+
+        self.max_T = max_T
+        self.max_Hs = max_Hs
+        self.Hs_ReturnContours = None
+        self.T_ReturnContours = None
+        self.NData = NData
+        self.bw = bw
+        self.logTransform = logTransform
+
+    def getContours(self, time_ss, time_r):
+        '''WDRT Extreme Sea State non-parameteric bivariate KDE Contour
+        function. This function calculates environmental contours of extreme
+        sea states using a bivariate KDE to estimate the joint distribution. 
+        The contour is then calculcated directly from the joint distribution.
+
+        Parameters
+        ___________
+        time_ss : float
+            Sea state duration (hours) of measurements in input.
+        time_r : np.array
+            Desired return period (years) for calculation of environmental
+            contour, can be a scalar or a vector.
+
+
+        Returns
+        -------
+        Hs_Return : np.array
+            Calculated Hs values along the contour boundary following
+            return to original input orientation.
+        T_Return : np.array
+           Calculated T values along the contour boundary following
+           return to original input orientation.
+
+
+        Example
+        -------
+        To obtain the contours for a NDBC buoy::
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create Environmental Analysis object using above parameters
+            BivariateKDE46022 = ESSC.BivariateKDE(buoy46022, bw = [0.23,0.19], logTransform = False)
+            
+            # Declare required parameters
+            Time_SS = 1.  # Sea state duration (hrs)
+            Time_r = 100  # Return periods (yrs) of interest
+            
+            # KDE contour generation example
+            Hs_Return, T_Return = BivariateKDE46022.getContours(Time_SS, Time_r)
+        '''       
+        p_f = 1 / (365 * (24 / time_ss) * time_r)
+
+        if self.logTransform: 
+            # Take log of both variables
+            logTp = np.log(self.buoy.T)
+            logHs = np.log(self.buoy.Hs)
+            ty = [logTp, logHs]
+        else: 
+            ty = [self.buoy.T, self.buoy.Hs]
+      
+
+        # Create grid of points
+        Ndata = self.NData
+        min_limit_1 = 0.01
+        max_limit_1 = self.max_T
+        min_limit_2 = 0.01
+        max_limit_2 = self.max_Hs
+        pts_tp = np.linspace(min_limit_1, max_limit_1, Ndata) 
+        pts_hs = np.linspace(min_limit_2, max_limit_2, Ndata)
+        pt1,pt2 = np.meshgrid(pts_tp, pts_hs)
+        pts_tp = pt1.flatten()
+        pts_hs = pt2.flatten()
+
+        # Transform gridded points using log
+        xi = [pts_tp, pts_hs]
+        if self.logTransform: 
+            txi = [np.log(pts_tp), np.log(pts_hs)]
+        else: 
+            txi = xi
+
+        m = len(txi[0])
+        n = len(ty[0])
+        d = 2
+
+        # Create contour
+        f = np.zeros((1,m))
+        weight = np.ones((1,n))
+        for i in range(0,m):
+            ftemp = np.ones((n,1))
+            for j in range(0,d):
+                z = (txi[j][i] - ty[j])/self.bw[j]
+                fk = stats.norm.pdf(z)
+                if self.logTransform:     
+                    fnew = fk*(1/np.transpose(xi[j][i]))
+                else: 
+                    fnew = fk
+                fnew = np.reshape(fnew, (n,1))
+                ftemp = np.multiply(ftemp,fnew)
+            f[:,i] = np.dot(weight,ftemp)
+
+
+        fhat = f.reshape(100,100)
+        vals = plt.contour(pt1,pt2,fhat, levels = [p_f])
+        plt.clf()
+        self.Hs_ReturnContours = []
+        self.T_ReturnContours = []
+        for i,seg in enumerate(vals.allsegs[0]):
+            self.Hs_ReturnContours.append(seg[:,1])
+            self.T_ReturnContours.append(seg[:,0])
+        
+        self.Hs_ReturnContours = np.transpose(np.asarray(self.Hs_ReturnContours)[0])
+        self.T_ReturnContours = np.transpose(np.asarray(self.T_ReturnContours)[0])
+            
+#        contourVals = np.empty((0,2))
+#        for seg in vals.allsegs[0]:
+#            contourVals = np.append(contourVals,seg, axis = 0)
+#        self.Hs_ReturnContours = contourVals[:,1]
+#        self.T_ReturnContours = contourVals[:,0]
+
+        return self.Hs_ReturnContours, self.T_ReturnContours
+
         
 class Buoy(object):
     '''
@@ -2107,7 +2638,7 @@ class Buoy(object):
 
 
 
-    def __init__(self, buoyNum, buoyType, savePath = './Data/'):
+    def __init__(self, buoyNum, buoyType):
 
         '''
         Parameters
@@ -2130,16 +2661,10 @@ class Buoy(object):
 
         self.buoyNum = buoyNum
         self.buoyType = buoyType.upper()
-        self.savePath = savePath
-
-
-        if not os.path.exists(savePath):
-          os.makedirs(savePath)
 
 
 
-
-    def fetchFromWeb(self, saveType="txt", savePath = "./Data/",proxy=None):
+    def fetchFromWeb(self, savePath = "./Data/",proxy=None):
         '''
         Calls either __fetchCDIP() or __fetchNDBC() depending on the given
         buoy's type and fetches the necessary data from its respective website.
@@ -2163,11 +2688,11 @@ class Buoy(object):
         >>> buoy.fetchFromWeb()
         '''
         if self.buoyType == "NDBC":
-            self.__fetchNDBC(saveType,savePath,proxy)
+            self.__fetchNDBC(proxy)
         elif self.buoyType == "CDIP":
             self.__fetchCDIP(savePath,proxy)
 
-    def __fetchNDBC(self, saveType, savePath, proxy):
+    def __fetchNDBC(self, proxy):
         '''
         Searches ndbc.noaa.gov for the historical spectral wave density
         data of a given device and writes the annual files from the website
@@ -2185,15 +2710,15 @@ class Buoy(object):
         savePath : string
             Relative path to place directory with data files.
         '''
+        maxRecordedDateValues = 4
+        #preallocates data
         numLines = 0
         numCols = 0
         numDates = 0
         dateVals = []
         spectralVals = []
-        if savePath == None:
-            savePath = self.savePath
-
-        url = "http://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
+        #prepares to pull the data from the NDBC website
+        url = "https://www.ndbc.noaa.gov/station_history.php?station=%s" % (self.buoyNum)
         if proxy == None:
             ndbcURL = requests.get(url)
         else:
@@ -2201,7 +2726,7 @@ class Buoy(object):
         ndbcURL.raise_for_status()
         ndbcHTML = bs4.BeautifulSoup(ndbcURL.text, "lxml")
         headers = ndbcHTML.findAll("b", text="Spectral wave density data: ")
-
+        #checks for headers in differently formatted webpages
         if len(headers) == 0:
             raise Exception("Spectral wave density data for buoy #%s not found" % self.buoyNum)
 
@@ -2212,45 +2737,13 @@ class Buoy(object):
             headers = headers[0]
 
         links = [a["href"] for a in headers.find_next_siblings("a", href=True)]
-
-        if(saveType is 'txt'):
-            # Grab the device number so the filename is more specific
-            saveDir = os.path.join(self.savePath, 'NDBC%s' % (self.buoyNum))
-            print "Saving in :", saveDir
-            if not os.path.exists(saveDir):
-                os.makedirs(saveDir)
-
-        if(saveType is "h5"):
-            saveDir = os.path.join(self.savePath, 'NDBC%s-raw.h5' %(self.buoyNum))
-            print "Saving in :", saveDir
-            f = h5py.File(saveDir, 'w')
-
+        #downloads files
         for link in links:
-            dataLink = "http://ndbc.noaa.gov" + link
-            year = int(re.findall("[0-9]+", link)[1])
-            if(saveType is 'txt'):
-            #certain years have multiple files marked with the letter 'b'
-                if ('b' + str(year)) not in link:
-                    swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
-                                   (self.buoyNum, year)), 'w')
-                else:
-                    swdFile = open(os.path.join(saveDir, "SWD-%s-%s.txt" %
-                                   (self.buoyNum, str(year) + 'b')), 'w')
-
-            if(saveType is 'h5'):
-                if ('b' + str(year)) not in link:
-                    dataSetName = str(("SWD-%s-%d" %
-                                   (self.buoyNum, year)))
-                else:
-                    dataSetName = str(("SWD-%s-%s" %
-                                   (self.buoyNum, str(year) + 'b')))
-
+            dataLink = "https://ndbc.noaa.gov" + link
 
             fileName = dataLink.replace('download_data', 'view_text_file')
             data = urllib2.urlopen(fileName)
             print "Reading from:", data.geturl()
-
-
 
             #First Line of every file contains the frequency data
             frequency = data.readline()
@@ -2260,27 +2753,21 @@ class Buoy(object):
             else:
                 numDates = 4
 
-            if (saveType is "txt"):
-                swdFile.write(frequency)
             frequency = np.array(frequency.split()[numDates:], dtype = np.float)
 
-
+            #splits and organizes data into arrays.
             for line in data:
-                if (saveType is "txt"):
-                    swdFile.write(line)
                 currentLine = line.split()
                 numCols = len(currentLine)
                 if numCols - numDates != len(frequency):
                     print "NDBC File is corrupted - Skipping and deleting data"
-                    swdFile.close()
-                    os.remove(swdFile.name)
                     spectralVals = []
                     dateVals = []
                     break
 
                 if float(currentLine[numDates+1]) < 999:
                     numLines += 1
-                    for j in range(numDates):
+                    for j in range(maxRecordedDateValues):
                         dateVals.append(currentLine[j])
                     for j in range(numCols - numDates):
                         spectralVals.append(currentLine[j + numDates])
@@ -2289,29 +2776,22 @@ class Buoy(object):
                 dateValues = np.array(dateVals, dtype=np.int)
                 spectralValues = np.array(spectralVals, dtype=np.float)
 
-                dateValues = np.reshape(dateValues, (numLines, numDates))
+                dateValues = np.reshape(dateValues, (numLines, maxRecordedDateValues))
                 spectralValues = np.reshape(spectralValues, (numLines,
                                                              (numCols - numDates)))
             numLines = 0
             numCols = 0
 
             if len(spectralVals) != 0:
-                if(saveType is "h5"):
-                    f.create_dataset(str(dataSetName) + "-date_values", data = dateValues,compression = "gzip")
-                    f.create_dataset(str(dataSetName + "-frequency"),data=frequency,compression = "gzip")
-                    f.create_dataset(dataSetName,data=spectralValues,compression = "gzip")
                 del dateVals[:]
                 del spectralVals[:]
                 self.swdList.append(spectralValues)
                 self.freqList.append(frequency)
                 self.dateList.append(dateValues)
-
-                if(saveType is "txt"):
-                    swdFile.close()
         self._prepData()
 
 
-    def loadFromText(self, dirPath):
+    def loadFromTxt(self, dirPath = None):
         '''Loads NDBC data previously downloaded to a series of text files in the
         specified directory.
 
@@ -2333,10 +2813,12 @@ class Buoy(object):
             buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.loadFromText()
         '''
+        #preallocates arrays
         dateVals = []
         spectralVals = []
         numLines = 0
-
+        maxRecordedDateValues = 4
+        #finds the text files (if they exist on the machine)
         if dirPath is None:
             for dirpath, subdirs, files in os.walk('.'):
                 for dirs in subdirs:
@@ -2350,12 +2832,13 @@ class Buoy(object):
 
         if len(fileList) == 0:
             raise IOError("No NDBC data files found in " + dirPath)
-
+        #reads in the files
         for fileName in fileList:
             print 'Reading from: %s' % (fileName)
             f = open(fileName, 'r')
             frequency = f.readline().split()
             numCols = len(frequency)
+
             if frequency[4] == 'mm':
                 frequency = np.array(frequency[5:], dtype=np.float)
                 numTimeVals = 5
@@ -2368,14 +2851,14 @@ class Buoy(object):
                 currentLine = line.split()
                 if float(currentLine[numTimeVals + 1]) < 999:
                     numLines += 1
-                    for i in range(numTimeVals):
+                    for i in range(maxRecordedDateValues):
                         dateVals.append(currentLine[i])
                     for i in range(numCols - numTimeVals):
                         spectralVals.append(currentLine[i + numTimeVals])
 
             dateValues = np.array(dateVals, dtype=np.int)
             spectralValues = np.array(spectralVals, dtype=np.double)
-            dateValues = np.reshape(dateValues, (numLines, numTimeVals))
+            dateValues = np.reshape(dateValues, (numLines, maxRecordedDateValues))
             spectralValues = np.reshape(
                 spectralValues, (numLines, (numCols - numTimeVals)))
 
@@ -2390,12 +2873,13 @@ class Buoy(object):
         self._prepData()
 
     def loadFile(self, dirPath = None):
+        '''Loads file depending on whether it's NDBC or CDIP.'''
         if self.buoyType == "NDBC":
             self.loadFromText(dirPath)
         if self.buoyType == "CDIP":
             self.loadCDIP(dirPath)
 
-    def loadFromH5(self, fileName):
+    def loadFromH5(self, fileName = None):
         """
         Loads NDBC data previously saved in a .h5 file
 
@@ -2413,6 +2897,8 @@ class Buoy(object):
             buoy46022.saveData()
             buoy46022.loadFromH5('NDBC46022.h5')
         """
+        if fileName == None:
+            fileName = self.buoyType + self.buoyNum + ".h5"
         _, file_extension = os.path.splitext(fileName)
         if not file_extension:
             fileName = fileName + '.h5'
@@ -2424,9 +2910,10 @@ class Buoy(object):
         self.Hs = np.array(f['buoy_Data/Hs'][:])
         self.T = np.array(f['buoy_Data/Te'][:])
         self.dateNum = np.array(f['buoy_Data/dateNum'][:])
+        self.dateList = np.array(f['buoy_Data/dateList'][:])
         print "----> SUCCESS"
 
-    def saveData(self, fileName=None):
+    def saveAsH5(self, fileName=None):
         '''
         Saves NDBC buoy data to h5 file after fetchFromWeb() or loadFromText(). 
         This data can later be used to create a buoy object using the 
@@ -2446,9 +2933,9 @@ class Buoy(object):
             import WDRT.ESSC as ESSC
             buoy46022 = ESSC.Buoy('46022','NDBC')
             buoy46022.fetchFromWeb()
-            buoy46022.saveData()
+            buoy46022.saveAsH5()
         '''
-        if (fileName is None):
+        if (fileName == None):
             fileName = 'NDBC' + str(self.buoyNum) + '.h5'
         else:
             _, file_extension = os.path.splitext(fileName)
@@ -2456,8 +2943,123 @@ class Buoy(object):
                 fileName = fileName + '.h5'
         f = h5py.File(fileName, 'w')
         self._saveData(f)
+     
+    def saveAsTxt(self, savePath = "./Data/"):
+        """
+        Saves spectral wave density data to a .txt file in the same format as the files 
+        found on NDBC's website.
+
+        Parameters
+        ----------
+            savePath : string
+                Relative file path where the .txt files will be saved. 
+                
+        Example
+        -------
+        To save data to h5 file after fetchFromWeb or loadFromText:
+            
+            import WDRT.ESSC as ESSC
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            buoy46022.saveAsTxt()
+        """
+        curYear = self.dateList[0][0]
+        dateIndexDiff = 0
+        bFile = False #NDBC sometimes splits years into two files, the second one titled "YYYYb"
+        saveDir = os.path.join(savePath, 'NDBC%s' % (self.buoyNum))
+        print "Saving in :", saveDir
+        if not os.path.exists(saveDir):
+            os.makedirs(saveDir)
+        for i in range(len(self.swdList)):
+            if not bFile:
+                swdFile = open(os.path.join(saveDir, "SWD-%s-%d.txt" %
+                                   (self.buoyNum, curYear)), 'w')
+            else:
+                swdFile = open(os.path.join(saveDir, "SWD-%s-%db.txt" %
+                                   (self.buoyNum, curYear)), 'w')
+                bFile = False
+            
+            freqLine = "YYYY MM DD hh"
+            for j in range(len(self.freqList[i])):
+                freqLine += ("   " + "%2.4f" % self.freqList[i][j])
+            freqLine += "\n"
+            swdFile.write(freqLine)
+            for j in range(len(self.dateList)):
+                if (j + dateIndexDiff + 1) > len(self.dateList):
+                    break
+
+                newYear = self.dateList[j + dateIndexDiff][0]
+                if curYear != newYear:
+                    dateIndexDiff += (j)
+                    curYear = newYear
+                    break
+                if (j+1) > len(self.swdList[i]):
+                    dateIndexDiff += (j)
+                    bFile = True
+                    break            
+                swdLine = ' '.join("%0*d" % (2,dateVal) for dateVal in self.dateList[j + dateIndexDiff]) + "   "
+                swdLine += "   ".join("%6s" % val for val in self.swdList[i][j]) + "\n"
+                swdFile.write(swdLine)
+                
+
+        
+
+
+    def createSubsetBuoy(self, trainingSize):
+        
+        '''Takes a given buoy and creates a subset buoy of a given length in years.
+        
+        Parameters
+        ----------
+            trainingSize : int
+                The size in years of the subset buoy you would like to create
+            
+        Returns
+        -------
+            # subsetBuoy : ESSC.Buoy object
+                A buoy (with Hs, T, and dateList values) that is a subset of the given buoy 
+        
+        Example
+        -------
+        
+        To get a corresponding subset of a buoy with a given number of years:
+            
+            import WDRT.ESSC as ESSC
+            
+            # Pull spectral data from NDBC website
+            buoy46022 = ESSC.Buoy('46022','NDBC')
+            buoy46022.fetchFromWeb()
+            
+            # Create a subset of buoy 46022 consisting of the first 10 years
+            subsetBuoy = buoy46022.createSubsetBuoy(10)
+        
+        
+        '''  
+        
+        subsetBuoy = copy.deepcopy(self)
+    
+        sortedIndex = sorted(range(len(self.dateNum)),key=lambda x:self.dateNum[x])
+        self.dateNum = self.dateNum[sortedIndex]        
+        self.dateList = self.dateList[sortedIndex]
+        self.Hs = self.Hs[sortedIndex]
+        self.T = self.T[sortedIndex]
+        
+        years = [0] * len(self.dateList)
+        for i in range(len(self.dateList)):
+            years[i] = self.dateList[i][0]
+            
+        trainingYear = self.dateList[0][0] + trainingSize
+        cond = years <= trainingYear  
+        
+        subsetBuoy.Hs = self.Hs[cond]
+        subsetBuoy.T = self.T[cond]
+        subsetBuoy.dateList = self.dateList[cond]
+    
+    
+        return(subsetBuoy)    
 
     def _saveData(self, fileObj):
+        '''Organizes and saves wave height, energy period, and date data.'''
         if(self.Hs is not None):
             gbd = fileObj.create_group('buoy_Data')
             f_Hs = gbd.create_dataset('Hs', data=self.Hs)
@@ -2468,6 +3070,8 @@ class Buoy(object):
             f_T.attrs['description'] = 'energy period'
             f_dateNum = gbd.create_dataset('dateNum', data=self.dateNum)
             f_dateNum.attrs['description'] = 'datenum'
+            f_dateList = gbd.create_dataset('dateList', data=self.dateList)
+            f_dateList.attrs['description'] = 'date list'
         else:
             RuntimeError('Buoy object contains no data')
 
@@ -2482,10 +3086,11 @@ class Buoy(object):
             Relative path to place directory with data files.
         """
         url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
-               str(self.buoyNum) +"p1_historic.nc"            
-        print "Downloading data from: " + url
+               str(self.buoyNum) +"p1_historic.nc"        
+        print "Downloading data from: " + url    
         filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
         urllib.urlretrieve (url, filePath)
+
         self.__processCDIPData(filePath)
 
     def loadCDIP(self, filePath = None):
@@ -2510,7 +3115,6 @@ class Buoy(object):
         self.T = np.mean(self.T.reshape(-1,2), axis = 1)
 
 
-    #TODO Delete existing .nc file and create new one with just the Hs and T values
     def __processCDIPData(self,filePath):
         """
         Loads the Hs and T values from the .nc file downloaded from http://cdip.ucsd.edu/
@@ -2526,7 +3130,7 @@ class Buoy(object):
             raise IOError("Could not find data for CDIP site: " + self.buoyNum)
             
         self.Hs = np.array(data["waveHs"][:], dtype = np.double)
-        self.T = np.array(data["waveTa"][:], dtype = np.double)
+        self.T = np.array(data["waveTa"][:],  dtype = np.double)
         data.close()
 
         #Some CDIP buoys record data every half hour rather than every hour
@@ -2537,7 +3141,8 @@ class Buoy(object):
 
     def _prepData(self):
         '''Runs _getStats and _getDataNums for full set of data, then removes any
-        NaNs.
+        NaNs. This cleans and prepares the data for use. Returns wave height, 
+        energy period, and dates.
         '''
         n = len(self.swdList)
         Hs = []
@@ -2559,13 +3164,13 @@ class Buoy(object):
         Nanrem = np.logical_not(np.isnan(T) | np.isnan(Hs))
         # Find NaN data in Hs or T
         dateNum = dateNum[Nanrem]  # Remove any NaN data from DateNum
-        dateList = dateList[Nanrem]
         Hs = Hs[Nanrem]  # Remove any NaN data from Hs
         T = T[Nanrem]  # Remove any NaN data from T
         self.Hs = Hs
         self.T = T
         self.dateNum = dateNum
         self.dateList = dateList
+
         return Hs, T, dateNum, dateList
 
 def _getDateNums(dateArr):
@@ -2585,13 +3190,9 @@ def _getDateNums(dateArr):
     for times in dateArr:
         if  times[0] < 1900:
             times[0] = 1900 + times[0]
-        if times[0] < 2005:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3])))
-        else:
-            dateNum.append(date.toordinal(datetime(times[0], times[1],
-                                                   times[2], times[3],
-                                                   times[4])))
+        dateNum.append(date.toordinal(datetime(times[0], times[1],
+                                               times[2], times[3])))
+
     return dateNum
 
 def _getStats(swdArr, freqArr):
