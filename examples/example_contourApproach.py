@@ -12,8 +12,6 @@ import os
 
 # Load data from example_envSampling.py
 envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
-Hs = np.array(envFile['buoy_Data/Hs'])
-T = np.array(envFile['buoy_Data/Te'])
 Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
 T_Return = np.array(envFile['ReturnContours/T_Return'])
 Hs_sample = np.array(envFile['Samples_ContourApproach/Hs_SampleCA'])
@@ -56,7 +54,6 @@ print 'extreme value: %e' % (r95)
 
 # Plot data
 plt.figure()
-plt.plot(T, Hs, 'bo', alpha=0.1, label='NDBC data')
 plt.plot(T_Return, Hs_Return, 'k-', label='100 year contour')
 plt.plot(T_sample, Hs_sample, 'y^', label='full sea state samples')
 plt.legend(loc='lower right', fontsize='small')

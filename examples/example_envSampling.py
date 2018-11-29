@@ -4,16 +4,15 @@ import copy
 import matplotlib.pyplot as plt
 
 # Create buoy object, in this case for Station #46022
-buoy46022 = ESSC.Buoy('46022','NDBC')
+buoy46022 = ESSC.Buoy('46022', 'NDBC')
 
 # Read data from ndbc.noaa.gov
 buoy46022.fetchFromWeb()
-#buoy46022.loadFromH5('./data/NDBC46022.h5')
-buoy46022.saveAsTxt(savePath = ".\Data")
-buoy46022.saveAsH5()
+# buoy46022.saveAsTxt(savePath = "./Data")
+buoy46022.saveAsH5('NDBC46022.h5')
 
 # Load data from .txt file if avilable
-#buoy46022.loadFromTxt()
+# buoy46022.loadFromTxt()
 
 # Load data from .h5 file if available
 # buoy46022.loadFromH5('./data/NDBC46022.h5')
@@ -30,9 +29,6 @@ pca_Hs_Return, pca_T_Return = pca46022.getContours(Time_SS, Time_R)
 
 # Show a plot of the data
 pca46022.plotData()
-
-# Save data in h5 file
-pca46022.saveContour('./data/NDBC%s' % (pca46022.buoy.buoyNum))
 
 # Create EA objects for remaining contour methods
 Gauss46022 = ESSC.GaussianCopula(buoy46022)
@@ -56,7 +52,7 @@ NonParaGum_Hs_Return, NonParaGum_T_Return = NonParaGum46022.getContours(Time_SS,
 KDE_Hs_Return, KDE_T_Return = BivariateKDE46022.getContours(Time_SS, Time_R)
 logKDE_Hs_Return, logKDE_T_Return = BivariateLogKDE46022.getContours(Time_SS, Time_R)
 
-# Plot all contour results for comparison 
+# Plot all contour results for comparison
 f = plt.figure()
 f.canvas.set_window_title('NDBC%s, %i-year contours' % (buoy46022.buoyNum, Time_R))
 plt.plot(buoy46022.T, buoy46022.Hs, 'bo', alpha=0.1, label='Data')
@@ -90,6 +86,9 @@ Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_po
 T_sampleCA = np.arange(12, 26, 2)
 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 
+# Save data in h5 file
+pca46022.saveContour('./data/NDBC%s' % (pca46022.buoy.buoyNum))
+
 # Modify contour by steepness curve if they intersect
 # Declare required parameters
 depth = 391.4  # Depth at measurement point (m)
@@ -107,7 +106,7 @@ Hs_Return_Steep[Steep_correction] = SteepH_Return[Steep_correction]
 pca46022.plotSampleData()
 
 # Take a subset of 10 years of data and calculate a 20-year contour using the subset
-Time_R = 20 
+Time_R = 20
 subsetBuoy = buoy46022.createSubsetBuoy(10)
 subsetPCA = ESSC.PCA(subsetBuoy)
 Subset_Hs_Return, Subset_T_Return = subsetPCA.getContours(Time_SS, Time_R)
