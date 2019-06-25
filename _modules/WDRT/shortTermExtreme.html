@@ -24,39 +24,48 @@
 
   
   
+  
+  
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-    <link rel="top" title="WDRT 1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -91,7 +100,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">Toolbox Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
@@ -109,34 +121,52 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">WDRT</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">WDRT</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>WDRT.shortTermExtreme</li>
+        
+      <li>WDRT.shortTermExtreme</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -165,11 +195,11 @@
 
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="kn">as</span> <span class="nn">interp</span>
-<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stats</span>
-<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">optim</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
 <div class="viewcode-block" id="ecmDist"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist">[docs]</a><span class="k">class</span> <span class="nc">ecmDist</span><span class="p">():</span>
@@ -195,7 +225,7 @@
 <span class="sd">            Rth percentile value of distribution</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Class initialization function</span>
 
 <span class="sd">        Parameters</span>
@@ -218,24 +248,24 @@
 <span class="sd">        &gt;&gt;&gt; myDist2 = ste.ecmDist(x=my_x, cdf=my_CDF)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># if only CDF is entered</span>
-        <span class="k">if</span> <span class="n">pdf</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">cdf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pdf</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">cdf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">pdf</span> <span class="o">=</span> <span class="n">cdf2pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># if only PDF is entered</span>
-        <span class="k">elif</span> <span class="n">cdf</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">pdf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cdf</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">pdf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">cdf</span> <span class="o">=</span> <span class="n">pdf2cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># if both CDF and PDF are entered</span>
-        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pdf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">]):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">pdf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;pdf and/or cdf arguments must not be None&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ccdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ccdf</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ecmDist.getExpVal"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.ecmDist.getExpVal">[docs]</a>    <span class="k">def</span> <span class="nf">getExpVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Expected value from ecmDist.</span>
@@ -305,7 +335,7 @@
 <span class="sd">        pdf : np.array</span>
 <span class="sd">            PDF values at x_pdf</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">pdf</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">m</span>
     <span class="n">area</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="mf">1.</span><span class="o">*</span><span class="n">m</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">N</span><span class="p">)</span>
     <span class="n">pdf</span> <span class="o">=</span> <span class="n">pdf</span> <span class="o">*</span> <span class="n">area</span>
@@ -539,7 +569,7 @@
     <span class="k">return</span> <span class="n">stextreme_dist</span><span class="p">,</span> <span class="n">peaks_dist</span><span class="p">,</span> <span class="n">peaks_params</span></div>
 
 
-<div class="viewcode-block" id="extremeDistribution_WeibullTailFit"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">avg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="extremeDistribution_WeibullTailFit"><a class="viewcode-back" href="../../modules.html#WDRT.shortTermExtreme.extremeDistribution_WeibullTailFit">[docs]</a><span class="k">def</span> <span class="nf">extremeDistribution_WeibullTailFit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_e</span><span class="p">,</span> <span class="n">t_x</span><span class="p">,</span> <span class="n">t_st</span><span class="p">,</span> <span class="n">avg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Approximates the short-term extreme distribution using the Weibull tail</span>
 <span class="sd">    fit method.</span>
 
@@ -583,7 +613,7 @@
         <span class="n">loc</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="p">((</span><span class="n">yy</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span><span class="o">**</span><span class="n">shape</span><span class="p">)</span>
     <span class="c1"># Initial guess for Weibull parameters</span>
-    <span class="k">if</span> <span class="n">p0</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">p0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">p0_tmp</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">exponweib</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">floc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">p0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0_tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -772,10 +802,10 @@
 <span class="sd">            Figure containing the four goodness of fit subplots.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># nan instead of error if out-of-range</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span>
     <span class="c1"># figure</span>
     <span class="n">fgof</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">ax1</span> <span class="o">=</span> <span class="n">fgof</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -846,10 +876,10 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="c1"># revert to error instead of nan if out-of-range</span>
-    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
-        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">True</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">prob_func</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;WDRT.shortTermExtreme.ecmDist&#39;</span><span class="p">:</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">pdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">cdf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">prob_func</span><span class="o">.</span><span class="n">ppf</span><span class="o">.</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">True</span>
     <span class="c1"># return</span>
     <span class="k">return</span> <span class="n">fgof</span></div>
 
@@ -926,7 +956,7 @@
     <span class="c1"># plot peaks distribution</span>
     <span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
@@ -938,13 +968,13 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$PDF(x)$&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Peaks Distribution&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;peaks_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
@@ -957,13 +987,13 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CDF(x)$&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="c1"># plot short-term extreme distribution</span>
     <span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
@@ -984,13 +1014,13 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$PDF(x)$&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Short-Term Extreme Distribution&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">hold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_e</span><span class="p">,</span> <span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x_e</span><span class="p">),</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Peaks Weibull&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">],</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;stextreme_dist&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">m1</span><span class="p">[</span><span class="s1">&#39;ev&#39;</span><span class="p">]),</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
@@ -1012,17 +1042,18 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Response, $x$&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$CDF(x)$&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="c1"># return</span>
-    <span class="k">print</span> <span class="s1">&#39;expected_value_of_short_term_extreme:&#39;</span>
-    <span class="k">print</span> <span class="n">expected_value_of_short_term_extreme</span>
+    <span class="nb">print</span> <span class="s1">&#39;expected_value_of_short_term_extreme:&#39;</span>
+    <span class="nb">print</span> <span class="n">expected_value_of_short_term_extreme</span>
     <span class="k">return</span> <span class="n">fig1</span><span class="p">,</span> <span class="n">fig2</span><span class="p">,</span> <span class="n">expected_value_of_short_term_extreme</span></div>
 
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -1031,11 +1062,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1048,36 +1079,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

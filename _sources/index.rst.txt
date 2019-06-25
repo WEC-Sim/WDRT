@@ -5,13 +5,13 @@
 
 Introduction
 ------------
-The `WEC Design Response Toolbox (WDRT)` was developed by `Sandia National Laboratories <http://energy.sandia.gov/energy/renewable-energy/water-power/>`_ and the `National Renewable Energy Laboratory (NREL) <http://www.nrel.gov/water/>`_ to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs).
+The `WEC Design Response Toolbox (WDRT)` was developed by `Sandia National Laboratories <http://energy.sandia.gov/energy/renewable-energy/water-power/>`_ and the `National Renewable Energy Laboratory (NREL) <http://www.nrel.gov/water/>`_ to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs). The environmental characterization module of WDRT is based on earlier work on environmental contours: `Extreme Sea State Contour Code <https://energy.sandia.gov/energy/renewable-energy/water-power/resource-characterization/extreme-sea-state-contour/>`_
 
 Features
 --------
 The `WDRT` contains a number of code modules to assist in the major processes of WEC survival design analysis:
 
-* **environmental characterization** - metocean environmental analysis and statistics
+* **environmental characterization** - metocean environmental analysis and statistics. 
 * **short term extremes**  - analysis of short-term (sea-state specific) extreme responses
 * **long term extremes** - analysis of long-term (design life) extreme responses
 * **fatigue** - fatigue analysis
@@ -23,6 +23,8 @@ Contributors
 * Carlos Michelen, Sandia National Laboratories
 * Aubrey Eckert-Gallup, Sandia National Laboratories
 * Nevin Martin, Sandia National Laboratories
+* Vince Neary, Sandia National Laboratories
+* Annie Dallman, Sandia National Laboratories
 * Jennifer van Rij, National Renewable Energy Laboratory
 * Yi-Hsiang Yu, National Renewable Energy Laboratory
 * Eliot Quon, National Renewable Energy Laboratory

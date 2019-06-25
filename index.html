@@ -24,39 +24,49 @@
 
   
   
+  
+  
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-    <link rel="top" title="WDRT 1.0 documentation" href="#"/>
-        <link rel="next" title="Installation" href="installation.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -91,7 +101,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Toolbox Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
@@ -109,34 +122,54 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">WDRT</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">WDRT</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
-      
-    <li><cite>WDRT</cite> Documentation and Users Guide</li>
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li><cite>WDRT</cite> Documentation and Users Guide</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -146,13 +179,13 @@
 <span id="wdrt-doc"></span><h1><cite>WDRT</cite> Documentation and Users Guide<a class="headerlink" href="#wdrt-documentation-and-users-guide" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>The <cite>WEC Design Response Toolbox (WDRT)</cite> was developed by <a class="reference external" href="http://energy.sandia.gov/energy/renewable-energy/water-power/">Sandia National Laboratories</a> and the <a class="reference external" href="http://www.nrel.gov/water/">National Renewable Energy Laboratory (NREL)</a> to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs).</p>
+<p>The <cite>WEC Design Response Toolbox (WDRT)</cite> was developed by <a class="reference external" href="http://energy.sandia.gov/energy/renewable-energy/water-power/">Sandia National Laboratories</a> and the <a class="reference external" href="http://www.nrel.gov/water/">National Renewable Energy Laboratory (NREL)</a> to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs). The environmental characterization module of WDRT is based on earlier work on environmental contours: <a class="reference external" href="https://energy.sandia.gov/energy/renewable-energy/water-power/resource-characterization/extreme-sea-state-contour/">Extreme Sea State Contour Code</a></p>
 </div>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <p>The <cite>WDRT</cite> contains a number of code modules to assist in the major processes of WEC survival design analysis:</p>
 <ul class="simple">
-<li><strong>environmental characterization</strong> - metocean environmental analysis and statistics</li>
+<li><strong>environmental characterization</strong> - metocean environmental analysis and statistics.</li>
 <li><strong>short term extremes</strong>  - analysis of short-term (sea-state specific) extreme responses</li>
 <li><strong>long term extremes</strong> - analysis of long-term (design life) extreme responses</li>
 <li><strong>fatigue</strong> - fatigue analysis</li>
@@ -166,6 +199,8 @@
 <li>Carlos Michelen, Sandia National Laboratories</li>
 <li>Aubrey Eckert-Gallup, Sandia National Laboratories</li>
 <li>Nevin Martin, Sandia National Laboratories</li>
+<li>Vince Neary, Sandia National Laboratories</li>
+<li>Annie Dallman, Sandia National Laboratories</li>
 <li>Jennifer van Rij, National Renewable Energy Laboratory</li>
 <li>Yi-Hsiang Yu, National Renewable Energy Laboratory</li>
 <li>Eliot Quon, National Renewable Energy Laboratory</li>
@@ -194,7 +229,7 @@
 <li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.fatigue">WDRT.fatigue module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.shortTermExtreme">WDRT.shortTermExtreme module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.longTermExtreme">WDRT.longTermExtreme module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.html#module-WDRT.ESSC">WDRT.ESSC module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#wdrt-essc-module">WDRT.ESSC module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#wdrt-mler-module">WDRT.MLER module</a></li>
 </ul>
 </li>
@@ -219,12 +254,13 @@
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -234,11 +270,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory.
+        &copy; Copyright 2016, Sandia National Laboratories and The National Renewable Energy Laboratory
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -251,36 +287,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
