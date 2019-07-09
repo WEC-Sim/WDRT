@@ -1,0 +1,17 @@
+WDRT File Conversion Status
+
+WDRT
+ESSC.py - ???% complete.
+shortTermExtreme.py - ~80% complete
+longTermExtreme.py - 0% complete
+fatigue.py - 0% complete
+
+Examples
+example_ContourApproach.py - 100% complete
+example_envSampling.py - 40% complete
+example_fatigue.py - 0% complete
+example_longTermFullSeaState.py - 0% complete
+example_MLER_testrun.py - 0% complete
+example_shortTermExtreme.py - 0% complete
+example_shortTermExtreme2.py - 0% complete
+example_shortTermExtreme3.py - 0% complete
