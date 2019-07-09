@@ -27,7 +27,7 @@ import h5py
 from sklearn.decomposition import PCA as skPCA
 import requests
 import bs4
-import urllib2
+import urllib.request
 import re
 from datetime import datetime, date
 import os
@@ -851,7 +851,7 @@ class PCA(EA):
         self.buoy = buoy
         if size_bin > len(buoy.Hs)*0.25:
             self.size_bin = len(buoy.Hs)*0.25
-            print round(len(buoy.Hs)*0.25,2),'is the max bin size for this buoy. The bin size has been set to this amount.'
+            print(round(len(buoy.Hs)*0.25,2),'is the max bin size for this buoy. The bin size has been set to this amount.')
         else:
             self.size_bin = size_bin
             
@@ -1581,19 +1581,19 @@ class Rosenblatt(EA):
         
         if n_size > 100:
             self.n_size = 100
-            print 100,'is the maximum "minimum bin size" for this buoy. The minimum bin size has been set to this amount.'
+            print(100,'is the maximum "minimum bin size" for this buoy. The minimum bin size has been set to this amount.')
         else:
             self.n_size = n_size
         
         if bin_step > max(buoy.Hs)*.1:
             self.bin_step = max(buoy.Hs)*.1
-            print round(max(buoy.Hs)*.1,2),'is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.'
+            print(round(max(buoy.Hs)*.1,2),'is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.')
         else:
             self.bin_step = bin_step
 
         if bin_1_limit  > max(buoy.Hs)*.25:
             self.bin_1_limit = max(buoy.Hs)*.25
-            print round(max(buoy.Hs)*.25,2),'is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.'
+            print(round(max(buoy.Hs)*.25,2),'is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.')
         else:
             self.bin_1_limit = bin_1_limit           
         
@@ -2742,8 +2742,8 @@ class Buoy(object):
             dataLink = "https://ndbc.noaa.gov" + link
 
             fileName = dataLink.replace('download_data', 'view_text_file')
-            data = urllib2.urlopen(fileName)
-            print "Reading from:", data.geturl()
+            data = urllib.request.urlopen(fileName)
+            print("Reading from:", data.geturl())
 
             #First Line of every file contains the frequency data
             frequency = data.readline()
@@ -2760,7 +2760,7 @@ class Buoy(object):
                 currentLine = line.split()
                 numCols = len(currentLine)
                 if numCols - numDates != len(frequency):
-                    print "NDBC File is corrupted - Skipping and deleting data"
+                    print("NDBC File is corrupted - Skipping and deleting data")
                     spectralVals = []
                     dateVals = []
                     break
@@ -2834,7 +2834,7 @@ class Buoy(object):
             raise IOError("No NDBC data files found in " + dirPath)
         #reads in the files
         for fileName in fileList:
-            print 'Reading from: %s' % (fileName)
+            print('Reading from: %s' % (fileName))
             f = open(fileName, 'r')
             frequency = f.readline().split()
             numCols = len(frequency)
@@ -2902,7 +2902,7 @@ class Buoy(object):
         _, file_extension = os.path.splitext(fileName)
         if not file_extension:
             fileName = fileName + '.h5'
-        print "Reading from: ", fileName
+        print("Reading from: ", fileName)
         try:
             f = h5py.File(fileName, 'r')
         except IOError:
@@ -2911,7 +2911,7 @@ class Buoy(object):
         self.T = np.array(f['buoy_Data/Te'][:])
         self.dateNum = np.array(f['buoy_Data/dateNum'][:])
         self.dateList = np.array(f['buoy_Data/dateList'][:])
-        print "----> SUCCESS"
+        print("----> SUCCESS")
 
     def saveAsH5(self, fileName=None):
         '''
@@ -2967,7 +2967,7 @@ class Buoy(object):
         dateIndexDiff = 0
         bFile = False #NDBC sometimes splits years into two files, the second one titled "YYYYb"
         saveDir = os.path.join(savePath, 'NDBC%s' % (self.buoyNum))
-        print "Saving in :", saveDir
+        print("Saving in :", saveDir)
         if not os.path.exists(saveDir):
             os.makedirs(saveDir)
         for i in range(len(self.swdList)):
@@ -3087,7 +3087,7 @@ class Buoy(object):
         """
         url = "http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/" + str(self.buoyNum) + "p1/" + \
                str(self.buoyNum) +"p1_historic.nc"        
-        print "Downloading data from: " + url    
+        print("Downloading data from: " + url)    
         filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
         urllib.urlretrieve (url, filePath)
 

@@ -871,7 +871,7 @@ def compare_methods(x, t, t_st, methods=[1,2,3,4,5],colors=['g','b','r','k','k']
     plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
     # return
-    print 'expected_value_of_short_term_extreme:'
-    print expected_value_of_short_term_extreme
+    print('expected_value_of_short_term_extreme:')
+    print(expected_value_of_short_term_extreme)
     return fig1, fig2, expected_value_of_short_term_extreme
 

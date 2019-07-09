@@ -11,7 +11,7 @@ import os
 
 
 # Load data from example_envSampling.py
-envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
+envFile = h5py.File(os.path.join(r'C:\full\filepath\to\WDRT\examples\data', 'NDBC46022.h5'), 'r')
 Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
 T_Return = np.array(envFile['ReturnContours/T_Return'])
 Hs_sample = np.array(envFile['Samples_ContourApproach/Hs_SampleCA'])
@@ -19,7 +19,7 @@ T_sample = np.array(envFile['Samples_ContourApproach/T_SampleCA'])
 
 # Load data from modeling
 modResFile = h5py.File(os.path.join(
-    'data', 'longTerm_contourApproach.h5'), 'r')
+    r'C:\full\filepath\to\WDRT\examples\data', 'longTerm_contourApproach.h5'), 'r')
 t = np.array(modResFile['time'])
 tSim = t[-1]
 n = len(modResFile['x'])
@@ -49,8 +49,8 @@ x0 = edist[mi].getRthVal(0.00001)
 x1 = edist[mi].getRthVal(1 - 0.00001)
 x = np.linspace(x0, x1, 500)
 r95 = edist[mi].getRthVal(0.95)
-print 'design state (Hs, Te): (%.1f, %.1f)' % (Hs_sample[mi], T_sample[mi])
-print 'extreme value: %e' % (r95)
+print('design state (Hs, Te): (%.1f, %.1f)' % (Hs_sample[mi], T_sample[mi]))
+print('extreme value: %e' % (r95))
 
 # Plot data
 plt.figure()
