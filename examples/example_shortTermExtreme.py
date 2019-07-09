@@ -4,7 +4,7 @@ import WDRT.shortTermExtreme as ste
 
 
 # load response time series
-data = ste.loadtxt('data/data.csv', delimiter=',')
+data = ste.loadtxt(r'C:\Users\beseng\Documents\GitHub\WDRT\examples\data\data.csv', delimiter=',')
 t = data['t']
 response = data['data']
 
@@ -13,7 +13,6 @@ t_peaks, peaks = ste.globalPeaks(t, response)
 
 # plot
 plt.figure()
-plt.hold(True)
 plt.plot(t, response, 'k-')
 plt.plot(t_peaks, peaks, 'go')
 plt.plot([0, t[-1]], [0, 0], 'k--')
@@ -31,7 +30,6 @@ stextreme_dist, peaks_dist, _, _, _ = ste.extremeDistribution_WeibullTailFit(x=p
 # plot
 plt.figure()
 ax = plt.subplot(2, 1, 1)
-plt.hold(True)
 plt.plot(x_e, peaks_dist.pdf(x_e), 'g-', label='Peak distribution')
 plt.plot(x_e, stextreme_dist.pdf(x_e), 'r-', label='Extreme distribution')
 xlim = ax.get_xlim()
@@ -46,7 +44,6 @@ plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 plt.legend()
 
 ax = plt.subplot(2, 1, 2)
-plt.hold(True)
 plt.plot(x_e, peaks_dist.cdf(x_e), 'g-')
 plt.plot(x_e, stextreme_dist.cdf(x_e), 'r-')
 xlim = ax.get_xlim()

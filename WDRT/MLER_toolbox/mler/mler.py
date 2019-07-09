@@ -65,7 +65,7 @@ class mler(object):
             self._RAO = np.zeros( (self.waves.numFreq,6), dtype=complex ) # set the size of the RAO matrix
 
         if self._RAOdataReadIn[DOFread-1] is True:
-            print 'WARNING: RAO dof=',DOFread,'already read from',self._RAOdataFileName[DOFread-1]
+            print('WARNING: RAO dof=',DOFread,'already read from',self._RAOdataFileName[DOFread-1])
 
         # make sure we have setup the waves info first.
         if self.waves._w is None:
@@ -77,7 +77,7 @@ class mler(object):
         # Column 2:    response amplitude (m/m for DOF 1-3; or radians/m for DOF 4-6)
         # Column 3:    response phase (radians)
         #
-        print 'Reading RAO ( DOF=',DOFread,') from',RAO_File_Name
+        print('Reading RAO ( DOF=',DOFread,') from',RAO_File_Name)
         # - get total number of lines
         with open(RAO_File_Name,'r') as f:
             for i,_ in enumerate(f.readlines()): pass
@@ -172,9 +172,9 @@ class mler(object):
                                                          np.abs(self._RAO[:,DOFtoCalc]),
                                                          2.0*np.pi/self.waves.T)
             response_desired = np.abs(RAO_Tp) * safety_factor*self.waves.H/2
-            print 'Target wave elevation         :',safety_factor*self.waves.H/2
-            print 'Interpolated RAO(Tp)          :',RAO_Tp
-            print 'Desired response (calculated) :',response_desired
+            print('Target wave elevation         :',safety_factor*self.waves.H/2)
+            print('Interpolated RAO(Tp)          :',RAO_Tp)
+            print('Desired response (calculated) :',response_desired)
         self.desiredRespAmp = response_desired
 
         S_R             = np.zeros(self.waves.numFreq)  # [(response units)^2-s/rad]
@@ -233,7 +233,7 @@ class mler(object):
             raise ValueError('Wave height desired during renormalization must be positive.')
         self.waveHeightDesired = peakHeightDesired
 
-        print 'Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired)
+        print('Renormalizing wave peak height to {:f} m. May take some time depending on spatial and temporal resolution...'.format(peakHeightDesired))
         
         tmpMaxAmp = self._MLERpeakvalue()
 
@@ -241,7 +241,7 @@ class mler(object):
         self._rescaleFact = np.abs(peakHeightDesired) / np.abs(tmpMaxAmp)
         self._S = self._S * self._rescaleFact**2 # rescale the wave spectral amplitude coefficients
         self._A = self._A * self._rescaleFact**2 # rescale the wave amplitude coefficients
-        print 'Rescaled by {:f}'.format(self._rescaleFact)
+        print('Rescaled by {:f}'.format(self._rescaleFact))
         
     def MLERexportCoeffs(self,FileNameCoeff):
         """ Export coefficients to use as input for other codes (e.g. Star, ...)
@@ -284,7 +284,7 @@ class mler(object):
                 f.write('{:8.6f}   {:12.8g}   {:12.8f}   {:12.8f}\n'.format(
                         wi, self._S[i], Phase[i], self.waves._k[i] ) )
 
-        print 'MLER coefficients written to',FileNameCoeff
+        print('MLER coefficients written to',FileNameCoeff)
 
     def MLERexportWaveAmpTime(self,FileNameWaveAmpTime,DOFexport):
         """Export the wave amplitude timeseries at X0 to a file and the
@@ -312,7 +312,7 @@ class mler(object):
                         np.cos( self.waves._w*(ti-self.sim.T0) - self.waves._k*(xi-self.sim.X0) )
                     )
             
-        print 'Exporting wave amplitude time series for DOF =',DOFexport,'at X0.'
+        print('Exporting wave amplitude time series for DOF =',DOFexport,'at X0.')
         self._checkpath(FileNameWaveAmpTime)
         with open(FileNameWaveAmpTime,'w') as f:
             
@@ -356,7 +356,7 @@ class mler(object):
             for i,ti in enumerate(self.sim.T):
                 f.write('{:12.8f}   {:12.8f}   {:12.8f}\n'.format(ti,waveAmpTime[i,0],waveAmpTime[i,1]))
         
-        print 'MLER wave amplitude time series written to',FileNameWaveAmpTime
+        print('MLER wave amplitude time series written to',FileNameWaveAmpTime)
 
     def MLERexportWECSim(self,FileNameWEC):
         """ Export the coefficients to a file that WEC-Sim can read in
@@ -374,7 +374,7 @@ class mler(object):
             f.write(('{:8.6f}      '*self.waves.numFreq).format(*self._phase))
             f.write('\n')
         
-        print 'MLER coefficients for WEC-Sim written to',FileNameWEC
+        print('MLER coefficients for WEC-Sim written to',FileNameWEC)
 
     def MLERanimate(self,DOF=3,export=None,fps=25):
         """ Animate the MLER results so that I can see what is happening.
@@ -385,7 +385,7 @@ class mler(object):
         import matplotlib.pyplot as plt
         import matplotlib.patches as mpatches
         import matplotlib.animation as anim
-        print 'Generating animation of wave profile and response for DOF =',DOF
+        print('Generating animation of wave profile and response for DOF =',DOF)
 
         # create the 2D dataset
         waveAmpTime = np.zeros( (self.sim.maxIX, self.sim.maxIT, 2) )
@@ -484,7 +484,7 @@ class mler(object):
         else:
             self.MLERexportMovie(export)
 
-        print 'Simulated response extremes:',self._respExtremes,self.sim.DOFunits[DOF-1]
+        print('Simulated response extremes:',self._respExtremes,self.sim.DOFunits[DOF-1])
 
     def MLERanimate2D(self,export=None,fps=25):
         """ Animate 2D (heave + pitch) MLER results
@@ -595,7 +595,7 @@ class mler(object):
     def MLERexportMovie(self,exportName):
         if self.animation: # already run MLERanimate
             fname = exportName+'.mp4'
-            print 'Exporting animation to',fname
+            print('Exporting animation to',fname)
             self.animation.save(fname)
         else:
             raise UnboundLocalError('Need to run MLERanimate first')

@@ -1,5 +1,5 @@
-RAOdir      = './data/RAO_data/'
-outputDir   = './data/TestData/'
+RAOdir      = r'C:\full\filepath\to\WDRT\examples\data\RAO_data'
+outputDir   = r'C:\full\filepath\to\WDRT\examples\data\TestData'
 import mler
 
 # Create the object
@@ -8,7 +8,7 @@ Test.sim.setup()
 
 # Setup the wave information
 Test.waves.setup()
-print Test.waves
+print(Test.waves)
 Test.waves.plotSpectrum(show=False)
 
 # Setup the RAO information

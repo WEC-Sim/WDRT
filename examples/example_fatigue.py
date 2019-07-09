@@ -32,7 +32,7 @@ Feq_1y = 0
 for i in range(h):
     for j in range(t):
         # Read pre-calculated PTO force histories for each sea state
-        Fpto = np.loadtxt(os.path.join('data','FptoH') +
+        Fpto = np.loadtxt(os.path.join(r'C:\full\filepath\to\WDRT\examples\data','FptoH') +
                           str(int(Hs[i][j])) +
                           'T' + str(int(Te[i][j])) + '.txt')
         # Equivalent fatigue load for a 1 hour timeframe
@@ -41,7 +41,7 @@ for i in range(h):
 # Equivalent fatigue load for a 1 year timeframe
 Feq_1y = (Feq_1y / N1y)**(1 / m)
 
-print('1 hour equivalent fatigue loads:')
+print('1 hour equivalent fatigue loads: (in Newtons)')
 print(Feq_1h)
-print('1 year equivalent fatigue load:')
+print('1 year equivalent fatigue load: (in Newtons)')
 print(Feq_1y)
