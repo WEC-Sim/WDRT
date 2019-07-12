@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import WDRT.shortTermExtreme as ecm
 import WDRT.fatigue as fatigue
 
-method = 3
+method = 1
 	# 1 - All peaks Weibull
 	# 2 - Weibull tail fit
 	# 3 - Peaks over threshold
@@ -12,8 +12,8 @@ method = 3
 	# 5 - Block maxima Gumbel
 
 # load global peaks
-t_peaks = np.loadtxt(r'C:\full\filepath\to\WDRT\examples\data\t.dat')
-peaks = np.loadtxt(r'C:\full\filepath\to\WDRT\examples\data\peaks.dat')/1000.
+t_peaks = np.loadtxt(r'C:\Users\beseng\Documents\GitHub\WDRT\examples\data\t.dat')
+peaks = np.loadtxt(r'C:\Users\beseng\Documents\GitHub\WDRT\examples\data\peaks.dat')/1000.
 
 # get the 1-hour extreme distribution using the method selected above
 x_e = np.linspace(0, 2 * np.max(peaks), 10000)
@@ -46,7 +46,6 @@ if method==3:
 
 # plot
 plt.figure()
-plt.hold(True)
 if method==3:
 	plt.plot(t_peaks[peaks<thresh], peaks[peaks<thresh], 'ko', alpha=0.2)
 	plt.plot(t_peaks[peaks>thresh], peaks[peaks>thresh], 'go')
@@ -62,7 +61,6 @@ plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
 plt.figure()
 ax = plt.subplot(2, 1, 1)
-plt.hold(True)
 if method==1 or method==2:
 	plt.plot(x_e, peaks_dist.pdf(x_e), 'g-', label='Peak distribution')
 if not method==3:
@@ -84,7 +82,6 @@ plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 plt.legend()
 
 ax = plt.subplot(2, 1, 2)
-plt.hold(True)
 if method==1 or method==2:
 	plt.plot(x_e, peaks_dist.cdf(x_e), 'g-')
 if not method==3:

@@ -13,5 +13,5 @@ example_fatigue.py - 100% complete
 example_longTermFullSeaState.py - 0% complete (H5 file is not formatted correctly and doesn't match expected input)
 example_MLER_testrun.py - 0% complete
 example_shortTermExtreme.py - 100% complete
-example_shortTermExtreme2.py - ???% complete (Unsure if floating point division errors existed in original - 100% fix if they are.)
+example_shortTermExtreme2.py - 100% complete* (Issue with method 3: value errors in scipy.interpolate, but everything else works just fine. Could be issue with data, unsure.)
 example_shortTermExtreme3.py - 100% complete
