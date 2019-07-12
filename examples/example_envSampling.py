@@ -12,10 +12,10 @@ buoy46022 = ESSC.Buoy('46022', 'NDBC')
 #buoy46022.saveAsH5('NDBC46022.h5')
 
 # Load data from .txt file if avilable
-# buoy46022.loadFromTxt()
+buoy46022.loadFromTxt(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022')
 
 # Load data from .h5 file if available
-buoy46022.loadFromH5(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022.h5')
+#buoy46022.loadFromH5(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022.h5')
 
 # Declare required parameters
 Time_SS = 1.  # Sea state duration (hrs)
@@ -87,7 +87,7 @@ T_sampleCA = np.arange(12, 26, 2)
 Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 
 # Save data in h5 file
-pca46022.saveContour('./data/NDBC%s' % (pca46022.buoy.buoyNum))
+pca46022.saveContour(r'C:\full\filepath\to\WDRT\examples\data\NDBC%s' % (pca46022.buoy.buoyNum))
 
 # Modify contour by steepness curve if they intersect
 # Declare required parameters

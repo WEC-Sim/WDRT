@@ -7,7 +7,7 @@ import os
 
 
 # Load data from example_envSampling.py
-envFile = h5py.File(os.path.join('data', 'NDBC46022.h5'), 'r')
+envFile = h5py.File(os.path.join(r'C:\full\filepath\to\WDRT\examples\data', 'NDBC46022.h5'), 'r')
 Hs_sample = np.array(envFile['Samples_FullSeaState/Hs_SampleFSS'])
 T_sample = np.array(envFile['Samples_FullSeaState/T_SampleFSS'])
 Weight_sample = np.array(envFile['Samples_FullSeaState/Weight_SampleFSS'])
@@ -54,7 +54,6 @@ plt.xlabel('Energy period, $T_e$ [s]')
 plt.ylabel('Sig. wave height, $H_s$ [m]')
 
 plt.figure().canvas.set_window_title('Long-term response')
-plt.hold(True)
 plt.plot(x_t, LTS(x_t), 'k-', label='Full sea state survival')
 for ii in range(n):
     if ii == 0:

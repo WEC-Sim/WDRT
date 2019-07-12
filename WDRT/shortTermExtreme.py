@@ -781,7 +781,6 @@ def compare_methods(x, t, t_st, methods=[1,2,3,4,5],colors=['g','b','r','k','k']
     # plot peaks distribution
     fig1 = plt.figure()
     ax = plt.subplot(2, 1, 1)
-    plt.hold(True)
     if 1 in methods:
         plt.plot(x_e, m1['peaks_dist'].pdf(x_e), colors[0]+lines[0], label='All Peaks Weibull')
     if 2 in methods:
@@ -799,7 +798,6 @@ def compare_methods(x, t, t_st, methods=[1,2,3,4,5],colors=['g','b','r','k','k']
     plt.title('Peaks Distribution')
     plt.legend()
     ax = plt.subplot(2, 1, 2)
-    plt.hold(True)
     if 1 in methods:
         plt.plot(x_e, m1['peaks_dist'].cdf(x_e), colors[0]+lines[0], label='All Peaks Weibull')
     if 2 in methods:
@@ -818,7 +816,6 @@ def compare_methods(x, t, t_st, methods=[1,2,3,4,5],colors=['g','b','r','k','k']
     # plot short-term extreme distribution
     fig2 = plt.figure()
     ax = plt.subplot(2, 1, 1)
-    plt.hold(True)
     if 1 in methods:
         plt.plot(x_e, m1['stextreme_dist'].pdf(x_e), colors[0]+lines[0], label='All Peaks Weibull')
         plt.plot(m1['ev'],m1['stextreme_dist'].pdf(m1['ev']),colors[0]+'o')
@@ -845,7 +842,6 @@ def compare_methods(x, t, t_st, methods=[1,2,3,4,5],colors=['g','b','r','k','k']
     plt.title('Short-Term Extreme Distribution')
     plt.legend()
     ax = plt.subplot(2, 1, 2)
-    plt.hold(True)
     if 1 in methods:
         plt.plot(x_e, m1['stextreme_dist'].cdf(x_e), colors[0]+lines[0], label='All Peaks Weibull')
         plt.plot(m1['ev'],m1['stextreme_dist'].cdf(m1['ev']),colors[0]+'o')
