@@ -2747,7 +2747,7 @@ class Buoy(object):
 
             #First Line of every file contains the frequency data
             frequency = data.readline()
-            if frequency.split()[4] == 'mm':
+            if frequency.split()[4] == b'mm':
                 numDates = 5
 
             else:
