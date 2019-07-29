@@ -12,8 +12,8 @@ method = 1
 	# 5 - Block maxima Gumbel
 
 # load global peaks
-t_peaks = np.loadtxt(r'C:\Users\beseng\Documents\GitHub\WDRT\examples\data\t.dat')
-peaks = np.loadtxt(r'C:\Users\beseng\Documents\GitHub\WDRT\examples\data\peaks.dat')/1000.
+t_peaks = np.loadtxt(r'C:\full\filepath\to\WDRT\examples\data\t.dat')
+peaks = np.loadtxt(r'C:\full\filepath\to\WDRT_py3\WDRT\examples\data\peaks.dat')/1000.
 
 # get the 1-hour extreme distribution using the method selected above
 x_e = np.linspace(0, 2 * np.max(peaks), 10000)

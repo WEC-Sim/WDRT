@@ -73,40 +73,100 @@ class EA:
             _, file_extension = os.path.splitext(fileName)
             if not file_extension:
                 fileName = fileName + '.h5'
-        with h5py.File(fileName, 'w') as f:
 
-            f.create_dataset('method', data=self.method)
-            gp = f.create_group('parameters')
+        print(fileName);
+        with h5py.File(fileName, 'a') as f:
+            if('method' in f):
+                f['method'][...] = self.method
+            else:
+                f.create_dataset('method', data=self.method)
+            
+            if('parameters' in f):
+                gp = f['parameters']
+            else:
+                gp = f.create_group('parameters')
+            
             self._saveParams(gp)
 
             if(self.Hs_ReturnContours is not None):
-                grc = f.create_group('ReturnContours')
-                f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)
+                if('ReturnContours' in f):                
+                    grc = f['ReturnContours']
+                else:                   
+                    grc = f.create_group('ReturnContours')
+                
+                if('T_Return' in grc):
+                    f_T_Return = grc['T_Return']
+                    f_T_Return[...] = self.T_ReturnContours
+                else:
+                    f_T_Return = grc.create_dataset('T_Return', data=self.T_ReturnContours)                
+                
                 f_T_Return.attrs['units'] = 's'
                 f_T_Return.attrs['description'] = 'contour, energy period'
-                f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+                
+                if('Hs_Return' in grc):
+                    f_Hs_Return = grc['Hs_Return']
+                    f_Hs_Return[...] = self.Hs_ReturnContours
+                else:
+                    f_Hs_Return = grc.create_dataset('Hs_Return', data=self.Hs_ReturnContours)
+                
                 f_Hs_Return.attrs['units'] = 'm'
                 f_Hs_Return.attrs['description'] = 'contours, significant wave height'
 
             # Samples for full sea state long term analysis
             if(hasattr(self, 'Hs_SampleFSS') and self.Hs_SampleFSS is not None):
-                gfss = f.create_group('Samples_FullSeaState')
-                f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+                if('Samples_FullSeaState' in f):
+                    gfss = f['Samples_FullSeaState']
+                else:    
+                    gfss = f.create_group('Samples_FullSeaState')
+                
+                if('Hs_SampleFSS' in gfss):
+                    f_Hs_SampleFSS = gfss['Hs_SampleFSS']
+                    f_Hs_SampleFSS[...] = self.Hs_SampleFSS
+                else:
+                    f_Hs_SampleFSS = gfss.create_dataset('Hs_SampleFSS', data=self.Hs_SampleFSS)
+                
                 f_Hs_SampleFSS.attrs['units'] = 'm'
                 f_Hs_SampleFSS.attrs['description'] = 'full sea state significant wave height samples'
-                f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)
+                
+                if('T_SampleFSS' in gfss):
+                    f_T_SampleFSS = gfss['T_SampleFSS']
+                    f_T_SampleFSS[...] = self.T_SampleFSS
+                else:   
+                    f_T_SampleFSS = gfss.create_dataset('T_SampleFSS', data=self.T_SampleFSS)                
+                
                 f_T_SampleFSS.attrs['units'] = 's'
-                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'
-                f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                f_T_SampleFSS.attrs['description'] = 'full sea state energy period samples'                
+                
+                if('Weight_SampleFSS' in gfss):
+                    f_Weight_SampleFSS = gfss['Weight_SampleFSS']
+                    f_Weight_SampleFSS[...] = self.Weight_SampleFSS
+                else:
+                    f_Weight_SampleFSS = gfss.create_dataset('Weight_SampleFSS', data = self.Weight_SampleFSS)
+                
                 f_Weight_SampleFSS.attrs['description'] = 'full sea state relative weighting samples'
 
             # Samples for contour approach long term analysis
             if(hasattr(self, 'Hs_SampleCA') and self.Hs_SampleCA is not None):
-                gca = f.create_group('Samples_ContourApproach')
-                f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
+                if('Samples_ContourApproach' in f):
+                    gca = f['Samples_ContourApproach']
+                else:
+                    gca = f.create_group('Samples_ContourApproach')
+                
+                if('Hs_SampleCA' in gca):
+                    f_Hs_sampleCA = gca['Hs_SampleCA']
+                    f_Hs_sampleCA[...] = self.Hs_SampleCA
+                else:
+                    f_Hs_sampleCA = gca.create_dataset('Hs_SampleCA', data=self.Hs_SampleCA)
+                
                 f_Hs_sampleCA.attrs['units'] = 'm'
                 f_Hs_sampleCA.attrs['description'] = 'contour approach significant wave height samples'
-                f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
+                
+                if('T_SampleCA' in gca):
+                    f_T_sampleCA = gca['T_SampleCA']
+                    f_T_sampleCA[...] = self.T_SampleCA
+                else:
+                    f_T_sampleCA = gca.create_dataset('T_SampleCA', data=self.T_SampleCA)
+                
                 f_T_sampleCA.attrs['units'] = 's'
                 f_T_sampleCA.attrs['description'] = 'contour approach energy period samples'
 
@@ -913,14 +973,45 @@ class PCA(EA):
         return coeff, shift, comp1_params, sigma_param, mu_param
 
     def _saveParams(self, groupObj):
-        groupObj.create_dataset('nb_steps', data=self.nb_steps)
-        groupObj.create_dataset('time_r', data=self.time_r)
-        groupObj.create_dataset('time_ss', data=self.time_ss)
-        groupObj.create_dataset('coeff', data=self.coeff)
-        groupObj.create_dataset('shift', data=self.shift)
-        groupObj.create_dataset('comp1_params', data=self.comp1_params)
-        groupObj.create_dataset('sigma_param', data=self.sigma_param)
-        groupObj.create_dataset('mu_param', data=self.mu_param)
+        if('nb_steps' in groupObj):
+            groupObj['nb_steps'][...] = self.nb_steps
+        else:
+            groupObj.create_dataset('nb_steps', data=self.nb_steps)
+        
+        if('time_r' in groupObj):
+            groupObj['time_r'][...] = self.time_r
+        else:
+            groupObj.create_dataset('time_r', data=self.time_r)
+        
+        if('time_ss' in groupObj):
+            groupObj['time_ss'][...] = self.time_ss
+        else:       
+            groupObj.create_dataset('time_ss', data=self.time_ss)
+
+        if('coeff' in groupObj):
+            groupObj['coeff'][...] = self.coeff
+        else:
+            groupObj.create_dataset('coeff', data=self.coeff)
+        
+        if('shift' in groupObj):
+            groupObj['shift'][...] = self.shift
+        else:
+            groupObj.create_dataset('shift', data=self.shift)
+        
+        if('comp1_params' in groupObj):
+            groupObj['comp1_params'][...] = self.comp1_params
+        else:
+            groupObj.create_dataset('comp1_params', data=self.comp1_params)
+        
+        if('sigma_param' in groupObj):
+            groupObj['sigma_param'][...] = self.sigma_param
+        else:
+            groupObj.create_dataset('sigma_param', data=self.sigma_param)
+        
+        if('mu_param' in groupObj):
+            groupObj['mu_param'][...] = self.mu_param
+        else:
+            groupObj.create_dataset('mu_param', data=self.mu_param)
 
     def getContours(self, time_ss, time_r, nb_steps=1000):
         '''WDRT Extreme Sea State PCA Contour function
@@ -2943,6 +3034,8 @@ class Buoy(object):
                 fileName = fileName + '.h5'
         f = h5py.File(fileName, 'w')
         self._saveData(f)
+        f.close()
+        print("Saved buoy data");
      
     def saveAsTxt(self, savePath = "./Data/"):
         """
