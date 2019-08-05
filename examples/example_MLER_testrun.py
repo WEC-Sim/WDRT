@@ -1,6 +1,6 @@
 RAOdir      = r'C:\full\filepath\to\WDRT\examples\data\RAO_data'
 outputDir   = r'C:\full\filepath\to\WDRT\examples\data\TestData'
-import mler
+import WDRT.mler.mler as mler
 
 # Create the object
 Test = mler.mler(H=9.0, T=15.1, numFreq=500)
@@ -12,8 +12,8 @@ print(Test.waves)
 Test.waves.plotSpectrum(show=False)
 
 # Setup the RAO information
-Test.readRAO(3,RAOdir+'RAO_heave_RM3float.dat')
-Test.readRAO(5,RAOdir+'RAO_pitch_RM3float.dat')
+Test.readRAO(3,RAOdir+r'\RAO_heave_RM3float.dat')
+Test.readRAO(5,RAOdir+r'\RAO_pitch_RM3float.dat')
 
 # Check the input RAOs
 Test.plotRAO(3,show=False)
