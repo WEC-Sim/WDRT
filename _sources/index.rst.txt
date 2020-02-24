@@ -5,7 +5,7 @@
 
 Introduction
 ------------
-The `WEC Design Response Toolbox (WDRT)` was developed by `Sandia National Laboratories <http://energy.sandia.gov/energy/renewable-energy/water-power/>`_ and the `National Renewable Energy Laboratory (NREL) <http://www.nrel.gov/water/>`_ to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs). The environmental characterization module of WDRT is based on earlier work on environmental contours: `Extreme Sea State Contour Code <https://energy.sandia.gov/energy/renewable-energy/water-power/resource-characterization/extreme-sea-state-contour/>`_
+The `WEC Design Response Toolbox (WDRT)` was developed by `Sandia National Laboratories <http://energy.sandia.gov/energy/renewable-energy/water-power/>`_ and the `National Renewable Energy Laboratory (NREL) <http://www.nrel.gov/water/>`_ to provide extreme response and fatigue analysis tools, specifically for design analysis of ocean structures such as wave energy converters (WECs). The environmental characterization module of WDRT is based on earlier work on environmental contours: `Extreme Sea State Contour Code <https://github.com/SNL-WaterPower/SNL-ESSC>`_
 
 Features
 --------
