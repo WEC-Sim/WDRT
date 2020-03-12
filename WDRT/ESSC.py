@@ -3182,7 +3182,7 @@ class Buoy(object):
                str(self.buoyNum) +"p1_historic.nc"        
         print("Downloading data from: " + url)    
         filePath = savePath + "/" + str(self.buoyNum) + "-CDIP.nc"
-        urllib.urlretrieve (url, filePath)
+        urllib.request.urlretrieve (url, filePath)
 
         self.__processCDIPData(filePath)
 
