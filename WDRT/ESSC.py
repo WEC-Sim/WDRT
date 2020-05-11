@@ -303,7 +303,8 @@ class EA:
             pca46022 = ESSC.PCA(buoy46022)
             
             T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)
-            SteepMax = 0.07  # Enter estimate of breaking steepness
+            # Enter estimate of breaking steepness
+            SteepMax = 0.07  # Reference DNV-RP-C205
             
             # Declare required parameters
             depth = 391.4  # Depth at measurement point (m)
