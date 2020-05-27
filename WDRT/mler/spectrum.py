@@ -36,7 +36,7 @@ class stats(object):
         # compare bandwidth parameter with Dietz2004 eqn 3.41
         self.BandCoeff = np.sqrt(1.-self.M2**2/(self.M0*self.M4)) # from http://ocw.mit.edu/courses/mechanical-engineering/2-019-design-of-ocean-systems-spring-2011/lecture-notes/MIT2_019S11_OWE.pdf (AP)
         # Probability of amplitude exceeding some value
-        self.AmpToExceed = np.linspace(0,ampMax,ampMax/ampStep+1)
+        self.AmpToExceed = np.linspace(0,ampMax,(int) (np.ceil(ampMax/ampStep+1)))
         self.ProbExceed = 2.0*np.sqrt(1.0-self.BandCoeff**2) / ( 1.0 + np.sqrt(1.0-self.BandCoeff**2) ) \
             * np.exp( -self.AmpToExceed**2 / (2.0*self.M0) ) # from http://ocw.mit.edu/courses/mechanical-engineering/2-019-design-of-ocean-systems-spring-2011/lecture-notes/MIT2_019S11_OWE.pdf (AP)
         

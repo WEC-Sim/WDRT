@@ -18,7 +18,6 @@ This module contains tools used to calculate the fatigue load.
 '''
 
 import numpy as np
-from pylab import find
 
 
 def EqLoad(F, N, m):
