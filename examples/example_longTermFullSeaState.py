@@ -7,7 +7,7 @@ import os
 
 
 # Load data from example_envSampling.py
-envFile = h5py.File(os.path.join(r'C:\full\filepath\to\WDRT\examples\data', 'NDBC46022.h5'), 'r')
+envFile = h5py.File(os.path.join(r'data', 'NDBC46022.h5'), 'r')
 Hs_sample = np.array(envFile['Samples_FullSeaState/Hs_SampleFSS'])
 T_sample = np.array(envFile['Samples_FullSeaState/T_SampleFSS'])
 Weight_sample = np.array(envFile['Samples_FullSeaState/Weight_SampleFSS'])
@@ -16,7 +16,7 @@ T = np.array(envFile['buoy_Data/Te'])
 Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
 T_Return = np.array(envFile['ReturnContours/T_Return'])
 
-# Load data from modelingeda9c95c116521db7c301f24b7dad61e342b4f5b
+# Load data from modeling (if the cwd is not examples adjust the data path)
 modResFile = h5py.File(os.path.join('data', 'longTerm_FullSeaState.h5'), 'r')
 t = np.array(modResFile['time'])
 tSim = t[-1]
