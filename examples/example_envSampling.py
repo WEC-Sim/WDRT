@@ -48,7 +48,7 @@ Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 #pca46022.saveContour(r'C:\full\filepath\to\WDRT\examples\NDBC%s' % (pca46022.buoy.buoyNum))
 #pca46022.saveContour(r'testNDBC%s' % (pca46022.buoy.buoyNum))
 pca46022.saveContour(r'data\NDBC%s' % (pca46022.buoy.buoyNum))
-import ipdb; ipdb.set_trace()
+
 # Create EA objects for remaining contour methods
 Gauss46022 = ESSC.GaussianCopula(buoy46022)
 Gumbel46022 = ESSC.GumbelCopula(buoy46022)
