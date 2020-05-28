@@ -15,7 +15,7 @@ buoy46022 = ESSC.Buoy('46022', 'NDBC')
 #buoy46022.loadFromTxt(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022')
 
 # Load data from .h5 file if available
-buoy46022.loadFromH5(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022.h5')
+buoy46022.loadFromH5(r'data\NDBC46022.h5')
 
 # Declare required parameters
 Time_SS = 1.  # Sea state duration (hrs)
@@ -29,6 +29,24 @@ pca_Hs_Return, pca_T_Return = pca46022.getContours(Time_SS, Time_R)
 
 # Show a plot of the data
 pca46022.plotData()
+
+# Sample Generation Example
+num_contour_points = 20  # Number of points to be sampled for each
+# contour interval.
+contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])
+# Probabilities defining sampling contour bounds.
+random_seed = 2  # Random seed for sample generation
+
+# Get samples for a full sea state long term analysis
+Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,
+                                                     contour_returns, random_seed)
+# Get samples for a contour approach long term analysis
+T_sampleCA = np.arange(12, 26, 2)
+Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
+
+# Save data in h5 file
+#pca46022.saveContour(r'C:\full\filepath\to\WDRT\examples\NDBC%s' % (pca46022.buoy.buoyNum))
+pca46022.saveContour(r'testNDBC%s' % (pca46022.buoy.buoyNum))
 
 # Create EA objects for remaining contour methods
 Gauss46022 = ESSC.GaussianCopula(buoy46022)
@@ -72,22 +90,6 @@ plt.grid(True)
 plt.legend(loc='center right', bbox_to_anchor=(1.4,0.5),fontsize=10, fancybox=True)
 plt.show()
 
-# Sample Generation Example
-num_contour_points = 20  # Number of points to be sampled for each
-# contour interval.
-contour_returns = np.array([0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 50, 100])
-# Probabilities defining sampling contour bounds.
-random_seed = 2  # Random seed for sample generation
-
-# Get samples for a full sea state long term analysis
-Hs_sampleFSS, T_sampleFSS, Weight_sampleFSS = pca46022.getSamples(num_contour_points,
-                                                     contour_returns, random_seed)
-# Get samples for a contour approach long term analysis
-T_sampleCA = np.arange(12, 26, 2)
-Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
-
-# Save data in h5 file
-pca46022.saveContour(r'C:\full\filepath\to\WDRT\examples\NDBC%s' % (pca46022.buoy.buoyNum))
 
 # Modify contour by steepness curve if they intersect
 # Declare required parameters
