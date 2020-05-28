@@ -4,7 +4,7 @@ import WDRT.shortTermExtreme as ste
 
 
 # load response time series
-data = ste.loadtxt(r'C:\full\filepath\to\WDRT\examples\data\data.csv', delimiter=',')
+data = ste.loadtxt(r'data\data.csv', delimiter=',')
 t = data['t']
 response = data['data']
 

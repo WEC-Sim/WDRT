@@ -12,7 +12,7 @@ import os
 
 # Load data from example_envSampling.py
 #envFile = h5py.File(os.path.join(r'data', 'NDBC46022.h5'), 'r')
-envFile = h5py.File(os.path.join(r'testNDBC46022.h5'), 'r')
+envFile = h5py.File(os.path.join(r'data/NDBC46022.h5'), 'r')
 Hs_Return = np.array(envFile['ReturnContours/Hs_Return'])
 T_Return = np.array(envFile['ReturnContours/T_Return'])
 Hs_sample = np.array(envFile['Samples_ContourApproach/Hs_SampleCA'])
