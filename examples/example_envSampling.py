@@ -47,7 +47,7 @@ Hs_sampleCA = pca46022.getContourPoints(T_sampleCA)
 # Save data in h5 file
 #pca46022.saveContour(r'C:\full\filepath\to\WDRT\examples\NDBC%s' % (pca46022.buoy.buoyNum))
 #pca46022.saveContour(r'testNDBC%s' % (pca46022.buoy.buoyNum))
-pca46022.saveContour(r'data\NDBC%s' % (pca46022.buoy.buoyNum))
+pca46022.saveContour(r'data\example_envSampleNDBC%s' % (pca46022.buoy.buoyNum))
 
 # Create EA objects for remaining contour methods
 Gauss46022 = ESSC.GaussianCopula(buoy46022)
