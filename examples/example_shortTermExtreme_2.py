@@ -1,8 +1,8 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import WDRT.shortTermExtreme as ecm
 import WDRT.fatigue as fatigue
+import os
 
 method = 1
 	# 1 - All peaks Weibull
@@ -12,8 +12,10 @@ method = 1
 	# 5 - Block maxima Gumbel
 
 # load global peaks
-t_peaks = np.loadtxt(r'data\t.dat')
-peaks = np.loadtxt(r'data\peaks.dat')/1000.
+t_peaks_file = os.path.join('data', 't.dat')
+peaks_file   = os.path.join('data', 'peaks.dat')
+t_peaks = np.loadtxt(t_peaks_file)
+peaks = np.loadtxt(peaks_file)/1000.
 
 # get the 1-hour extreme distribution using the method selected above
 x_e = np.linspace(0, 2 * np.max(peaks), 10000)
