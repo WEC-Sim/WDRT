@@ -1,6 +1,7 @@
 import numpy as np
 import WDRT.ESSC as ESSC
 import copy
+import os 
 import matplotlib.pyplot as plt
 
 # Create buoy object, in this case for Station #46022
@@ -15,7 +16,8 @@ buoy46022 = ESSC.Buoy('46022', 'NDBC')
 #buoy46022.loadFromTxt(r'C:\full\filepath\to\WDRT\examples\data\NDBC46022')
 
 # Load data from .h5 file if available
-buoy46022.loadFromH5(r'data\NDBC46022.h5')
+dataPath = os.path.join('data', 'NDBC46022.h5')
+buoy46022.loadFromH5(dataPath)
 
 # Declare required parameters
 Time_SS = 1.  # Sea state duration (hrs)
