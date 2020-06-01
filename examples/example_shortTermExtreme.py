@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import WDRT.shortTermExtreme as ste
-
+import os
 
 # load response time series
-data = ste.loadtxt(r'data\data.csv', delimiter=',')
+responseData = os.path.join('data','data.csv')
+data = ste.loadtxt(responseData, delimiter=',')
 t = data['t']
 response = data['data']
 
