@@ -57,7 +57,7 @@ install:
     - python setup.py develop
 
 script:
-    - nosetests -v --with-coverage --cover-package=WDRT WDRT
+    - nosetests -v --with-coverage --cover-package=.
       
 after_success:
     coveralls
