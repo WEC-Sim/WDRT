@@ -10,11 +10,7 @@ class TestFatigue(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.diameter = 1
-        self.height = 2
-        self.width = 3
-        self.diameters = [1,2,3,4]
-
+        pass
     @classmethod
     def tearDownClass(self):
         pass
@@ -43,17 +39,15 @@ class TestFatigue(unittest.TestCase):
         
         # Assume an S-N curve slope (m) of 6 (representative of cast iron)
         m = 6.
-        Fequivalent1Hour = np.zeros((h, t))
-        Fequivalent1Year = 0
+        FEquivalent1Hour = np.zeros((h, t))
+        FEquivalent1Year = 0
        
         # Read pre-calculated PTO force histories for each sea state
-        timeseriesForcePTO="FPTO.json"
-        #json.dump(FPTO,
-        #          codecs.open(file_path, 'w', encoding='utf-8'),
-        #          separators=(',', ':'), sort_keys=True, indent=4)
-        obj_text = codecs.open(timeseriesForcePTO, 'r', encoding='utf-8').read()
-        FPTO = json.loads(obj_text)
-
+        timeseriesForcePTO=os.path.join("data","FPTO.json")
+        forcesFile = codecs.open(timeseriesForcePTO, 'r', encoding='utf-8')
+        forcesFileData = forcesFile.read()
+        FPTO = json.loads(forcesFileData)
+        forcesFile.close()
 
         for i in range(h):
             for j in range(t):
@@ -62,17 +56,21 @@ class TestFatigue(unittest.TestCase):
                 dictKey=f'H{Hval}T{Tval}'
                 Fpto = np.array(FPTO[dictKey])
                 # Equivalent fatigue load for a 1 hour timeframe
-                Fequivalent1Hour[i][j] = fatigue.EqLoad(Fpto, N1Hour, m)
-                Fequivalent1Year += (Fequivalent1Hour[i][j]**m) * N1Hour * P[i][j]
+                FEquivalent1Hour[i][j] = fatigue.EqLoad(Fpto, N1Hour, m)
+                FEquivalent1Year += (FEquivalent1Hour[i][j]**m) * N1Hour * P[i][j]
 
 
         # Equivalent fatigue load for a 1 year timeframe
-        Fequivalent1Year = (Fequivalent1Year / N1Year)**(1 / m)
-        
-        print('1 hour equivalent fatigue loads: (in Newtons)')
-        print(Fequivalent1Hour)
-        print('1 year equivalent fatigue load: (in Newtons)')
-        print(Fequivalent1Year)
+        FEquivalent1Year = (FEquivalent1Year / N1Year)**(1 / m)
+       
+
+        expected1HourSolution=[[ 846265.91946806, 2126737.82456905, 2129283.43688851],
+                               [1974807.39144152, 4315273.86105664, 5138299.64239418],
+                               [2961883.66545167, 5930901.74577105, 8090902.26582692]]
+        expected1YearSolution=1044099.6832087268
+
+        self.assertTrue(np.allclose(FEquivalent1Hour, np.array(expected1HourSolution)))
+        self.assertEqual(FEquivalent1Year, expected1YearSolution)
 
 
 
