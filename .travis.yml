@@ -57,7 +57,7 @@ install:
     - python setup.py develop
 
 script:
-    - nosetests -v --with-coverage --cover-package=mhkit mhkit
+    - nosetests -v --with-coverage --cover-package=WDRT WDRT
       
 after_success:
     coveralls
