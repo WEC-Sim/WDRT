@@ -1,3 +1,9 @@
+from WDRT import mler
+
+__version__ = 'v0.1.0'
+
+
+__copyright__ = """
 # Copyright 2016 Sandia Corporation and the National Renewable Energy
 # Laboratory
 #
@@ -11,4 +17,6 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
-# limitations under the License.
+# limitations under the License."""
+
+__license__ = "Apache 2.0"
