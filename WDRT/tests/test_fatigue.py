@@ -1,10 +1,12 @@
 import unittest
 from os.path import abspath, dirname, join, isfile
-import os
 import numpy as np
 import pandas as pd
 import WDRT.fatigue as fatigue
 import json, codecs
+
+testdir = dirname(abspath(__file__))
+datadir = join(testdir, 'data')
 
 class TestFatigue(unittest.TestCase):
 
@@ -43,7 +45,7 @@ class TestFatigue(unittest.TestCase):
         FEquivalent1Year = 0
        
         # Read pre-calculated PTO force histories for each sea state
-        timeseriesForcePTO=os.path.join("data","FPTO.json")
+        timeseriesForcePTO=join(datadir, "FPTO.json")
         forcesFile = codecs.open(timeseriesForcePTO, 'r', encoding='utf-8')
         forcesFileData = forcesFile.read()
         FPTO = json.loads(forcesFileData)
