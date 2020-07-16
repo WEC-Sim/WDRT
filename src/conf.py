@@ -30,10 +30,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.napoleon',
-    'sphinxcontrib.googleanalytics'
 ]
 
-googleanalytics_id = 'UA-97337554-1'
+#googleanalytics_id = 'UA-97337554-1'
 
 
 source_suffix = '.rst'
@@ -58,6 +57,9 @@ release = '1.0'
 pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
+
+# Added Google Analytics to theme based on https://github.com/readthedocs/sphinx_rtd_theme/pull/411
+html_theme_options = {'analytics_id': 'UA-97337554-1'}
 
 htmlhelp_basename = 'WDRTdoc'
 
