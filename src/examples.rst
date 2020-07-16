@@ -21,9 +21,11 @@ For this example (``$WDRT_SOURCE/examples/example_envSampling.py``), we will con
 
    Environmental characterization with NDBC data, 100-year return contour, full sea state samples and contour samples.
 
-.. literalinclude:: ../../examples/example_envSampling.py
-   :language: python
-   :linenos:
+..
+    .. literalinclude:: ../../examples/example_envSampling.py
+        :language: python
+       :linenos:
+
 
 Short-term extreme response analysis
 ------------------------------------
@@ -80,9 +82,11 @@ They show the quality of the agreement between the global peaks and the resultin
 
 This example is shown below and can found in ``$WDRT_SOURCE/examples/example_shortTermExtreme.py``.
 
-.. literalinclude:: ../../examples/example_shortTermExtreme.py
-   :language: python
-   :linenos:
+..
+    .. literalinclude:: ../../examples/example_shortTermExtreme.py
+       :language: python
+       :linenos:
+
 
 Long-term extreme response analysis
 -----------------------------------
@@ -110,10 +114,12 @@ These steps are also summarized in ``$WDRT_SOURCE/examples/example_contourApproa
 Following the `Environmental characterization`_ example, a the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modeling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
-.. literalinclude:: ../../examples/example_contourApproach.py
+..
+    .. literalinclude:: ../../examples/example_contourApproach.py
 	:language: python
    	:lines: 13-19
    	:linenos:
+
 
 2. Model device response
 ''''''''''''''''''''''''
@@ -124,7 +130,8 @@ However, experimental testing could be used as well.
 Whatever the approach, the process must supply sufficient time histories of the relevant responses at each of the selected sea states.
 For this example, we will simply load data that was previously produced with a simple Cummins equation model.
 
-.. literalinclude:: ../../examples/example_contourApproach.py
+..
+    .. literalinclude:: ../../examples/example_contourApproach.py
 	:language: python
    	:lines: 22-34
    	:linenos:
@@ -136,7 +143,8 @@ The percentile chosen here should ideally be based on some experience with simil
 Typical values for :math:`\alpha` used for marine structures range from 75 to 99\%. This approach has less variability than simply picking the maximum QOI observed in each sea state.
 Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
-.. literalinclude:: ../../examples/example_contourApproach.py
+..
+    .. literalinclude:: ../../examples/example_contourApproach.py
 	:language: python
    	:lines: 37-45
    	:linenos:
@@ -147,7 +155,8 @@ For the quantity of interest (QOI), find the sea state that represents the desig
 The DLC is defined as the scenario that gives the largest response.
 To define the DLC by statistically-supported process, it is best to use a short-term extreme response analysis process to examine the QOI in each of the considered sea states.
 
-.. literalinclude:: ../../examples/example_contourApproach.py
+..
+    .. literalinclude:: ../../examples/example_contourApproach.py
 	:language: python
    	:lines: 48-54
    	:linenos:
@@ -166,7 +175,8 @@ The following example is also located at ``$WDRT_SOURCE/examples/example_longTer
 Following the `Environmental characterization`_ example, the environmental conditions at a site can be characterized then sampled to provide a set of sea states for modelling analysis.
 For this example, we will work with the data produced in the `Environmental characterization`_ example.
 
-.. literalinclude:: ../../examples/example_longTermFullSeaState.py
+..
+    .. literalinclude:: ../../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 10-17
    	:linenos:
@@ -180,7 +190,8 @@ However, experimental testing could be used as well.
 Whatever the approach, the process must supply sufficient time histories of the relevant responses at each of the selected sea states.
 For this example, we will simply load data that was previously produced with a simple Cummins equation model.
 
-.. literalinclude:: ../../examples/example_longTermFullSeaState.py
+..
+    .. literalinclude:: ../../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 20-31
    	:linenos:
@@ -192,7 +203,8 @@ Typically 1 to 3 hour storms are considered.
 The following lines are used to obtain the short-term extreme responses distribution for the storm duration of interest, :math:`f_{x_{1\textrm{hr}}|H_s, T_e}(x)`.
 Here, we apply a Weibull tail fitting method as discussed further in the `Short-term extreme response analysis`_ example.
 
-.. literalinclude:: ../../examples/example_longTermFullSeaState.py
+..
+    .. literalinclude:: ../../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 34-41
    	:linenos:
@@ -207,8 +219,8 @@ When plotted on a log-y scale, the CCDF has the benefit of highlighting the *tai
 
 	\bar{F}_{LT}(x_T) 	&= f(x > x_T) \\
 						&= \int{ \int{ \bar{F}_{x_{1\textrm{hr}}|H_s, T_e}(x_T) f_{H_s,T_e}(h, t) dh} dt}
-
-.. literalinclude:: ../../examples/example_longTermFullSeaState.py
+..
+    .. literalinclude:: ../../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 44
    	:linenos:
@@ -223,7 +235,8 @@ The results can be plotted and used to determine the return level for a desired 
 
    Long term complementary cumulative distribution function (CCDF).
 
-.. literalinclude:: ../../examples/example_longTermFullSeaState.py
+..   
+    .. literalinclude:: ../../examples/example_longTermFullSeaState.py
 	:language: python
    	:lines: 47-77
    	:linenos:
@@ -261,7 +274,8 @@ The required inputs to the module are:
 
 This example is shown below and can found in ``$WDRT_SOURCE/examples/example_fatigue.py``.
 
-.. literalinclude:: ../../examples/example_fatigue.py
+..
+    .. literalinclude:: ../../examples/example_fatigue.py
 	:language: python
    	:linenos:
 
@@ -284,7 +298,8 @@ The MLER toolbox were developed to generate a focused wave profile that gives th
 
 An example can be found in ``$WDRT_SOURCE/examples/example_MLER_testrun.py``.
 
-.. literalinclude:: ../../examples/example_MLER_testrun.py
+..
+    .. literalinclude:: ../../examples/example_MLER_testrun.py
 	:language: python
    	:linenos:
 
