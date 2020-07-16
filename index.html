@@ -5,18 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-97337554-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>WDRT Documentation and Users Guide &mdash; WDRT 1.0 documentation</title>
@@ -31,21 +20,12 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'1.0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -185,31 +165,31 @@
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <p>The <cite>WDRT</cite> contains a number of code modules to assist in the major processes of WEC survival design analysis:</p>
 <ul class="simple">
-<li><strong>environmental characterization</strong> - metocean environmental analysis and statistics.</li>
-<li><strong>short term extremes</strong>  - analysis of short-term (sea-state specific) extreme responses</li>
-<li><strong>long term extremes</strong> - analysis of long-term (design life) extreme responses</li>
-<li><strong>fatigue</strong> - fatigue analysis</li>
-<li><strong>most-likely extreme response (MLER)</strong> - focused-wave construction for efficient high-fidelity modeling</li>
+<li><p><strong>environmental characterization</strong> - metocean environmental analysis and statistics.</p></li>
+<li><p><strong>short term extremes</strong>  - analysis of short-term (sea-state specific) extreme responses</p></li>
+<li><p><strong>long term extremes</strong> - analysis of long-term (design life) extreme responses</p></li>
+<li><p><strong>fatigue</strong> - fatigue analysis</p></li>
+<li><p><strong>most-likely extreme response (MLER)</strong> - focused-wave construction for efficient high-fidelity modeling</p></li>
 </ul>
 </div>
 <div class="section" id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Ryan Coe, Sandia National Laboratories</li>
-<li>Carlos Michelen, Sandia National Laboratories</li>
-<li>Aubrey Eckert-Gallup, Sandia National Laboratories</li>
-<li>Nevin Martin, Sandia National Laboratories</li>
-<li>Vince Neary, Sandia National Laboratories</li>
-<li>Annie Dallman, Sandia National Laboratories</li>
-<li>Jennifer van Rij, National Renewable Energy Laboratory</li>
-<li>Yi-Hsiang Yu, National Renewable Energy Laboratory</li>
-<li>Eliot Quon, National Renewable Energy Laboratory</li>
-<li>Lance Manuel, University of Texas at Austin</li>
-<li>Phong Nguyen, University of Texas at Austin</li>
-<li>Jarred Canning, University of New Mexico</li>
-<li>Tyler Esterly, University of New Mexico</li>
-<li>Bibiana Seng, University of New Mexico</li>
-<li>Zacharia Stuart, University of New Mexico</li>
+<li><p>Ryan Coe, Sandia National Laboratories</p></li>
+<li><p>Carlos Michelen, Sandia National Laboratories</p></li>
+<li><p>Aubrey Eckert-Gallup, Sandia National Laboratories</p></li>
+<li><p>Nevin Martin, Sandia National Laboratories</p></li>
+<li><p>Vince Neary, Sandia National Laboratories</p></li>
+<li><p>Annie Dallman, Sandia National Laboratories</p></li>
+<li><p>Jennifer van Rij, National Renewable Energy Laboratory</p></li>
+<li><p>Yi-Hsiang Yu, National Renewable Energy Laboratory</p></li>
+<li><p>Eliot Quon, National Renewable Energy Laboratory</p></li>
+<li><p>Lance Manuel, University of Texas at Austin</p></li>
+<li><p>Phong Nguyen, University of Texas at Austin</p></li>
+<li><p>Jarred Canning, University of New Mexico</p></li>
+<li><p>Tyler Esterly, University of New Mexico</p></li>
+<li><p>Bibiana Seng, University of New Mexico</p></li>
+<li><p>Zacharia Stuart, University of New Mexico</p></li>
 </ul>
 </div>
 </div>
@@ -295,6 +275,18 @@
 
   
   
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-97337554-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
     
    
 

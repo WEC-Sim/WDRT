@@ -15,11 +15,10 @@ Downloading Python
 If you're new to Python, we suggest one of the following Python distributions:
 
 	* `Anaconda <http://continuum.io/downloads>`_ (Linux, Mac, Windows)
-	* `PythonXY <https://code.google.com/p/pythonxy/>`_ (Windows)
 
 .. note::
 
-	`WDRT` is currently designed to run with **Python 2.7.x**. `WDRT` currently will not fully run on Python 3.5.x. 
+	`WDRT` is designed to run with **Python 3** 
 
 Install options
 ---------------
@@ -27,33 +26,29 @@ This page outlines two options for installing the `WDRT`. The first option (`Ins
 
 Installing WDRT for Python beginners
 ````````````````````````````````````
-**Step 1** It can be a pain to install Python, NumPy, SciPy, Matplotlib, h5py and other dependencies that are needed to run `WDRT`. If you're new to Python, the easiest approach is to start by installing the 2.7.x version of either of the following Python distributions:
+**Step 1** It can be a pain to install Python, NumPy, SciPy, Matplotlib, h5py and other dependencies that are needed to run `WDRT`. If you're new to Python, the easiest approach is to start by installing the version of either of the following Python distributions:
 
-	* `Anaconda <http://continuum.io/downloads>`_ (Linux, Mac, Windows)
-	* `PythonXY <https://code.google.com/p/pythonxy/>`_ (Windows)
+	* `Anaconda <https://www.anaconda.com/products/individual>`_ (Linux, Mac, Windows)
 
-.. Note::
-
-	If you are using Anaconda, PythonXY or another non-Python.org distribution, you may need to install one of the packages identified in the `Dependencies`_ section. If you need to do so, you should install any needed modules via your distribution's package manager.
 
 **Step 2** Download `WDRT` from the `WDRT GitHub repository <https://github.com/WEC-Sim/WDRT/>`_
 
 .. Note:: 
 
-	There may be several branches open on the repository at any given time for the purpose of developing new features. ONLY the Master branch is meant to be used outside of our development team. There is no guarantee that the toolbox will work as expected, or at all, if you are working with a non-master branch.
+	There may be several branches open on the repository for the purpose of developing new features. 
+        The default branch for new users to download is the "master" branch.
+        There is no guarantee that the toolbox will work as expected, or at all, if you are working with a non-master branch.
 
-**Step 3** Open a command window (Windows) or terminal window (OSX and Linux) and navigate to ``$WDRT_SOURCE``. Once inside the ``$WDRT_SOURCE`` directory execute the following command to install `WDRT`::
+**Step 3** Open a command window (Windows) or terminal window (OSX and Linux) and navigate to ``$WDRT_SOURCE``. 
+Once inside the ``$WDRT_SOURCE`` directory execute the following command to install `WDRT`::
 
-	python setup.py install --user
+	pip install .
 
-**Step 4:** Verify the installation's functionality by running the examples located in``$WDRT_SOURCE/examples``
+**Step 4:** Verify the installation's functionality by running an example located in``$WDRT_SOURCE/examples``
 
 .. code-block:: none
 
 	cd examples
-	python example_envSamplying.py
-	python example_contourApproach.py
-	python example_shortTermExtreme.py
 	python example_fatigue.py
 
 Installing WDRT for experienced Python users
@@ -64,19 +59,16 @@ The following installation procedure allows for easier updating of the code with
 
 	git clone https://github.com/WEC-Sim/WDRT $WDRT_SOURCE
 
-**Step 2:** Add the ``$WDRT_SOURCE`` directory to your `PYTHONPATH <https://docs.python.org/2/using/cmdline.html#environment-variables>`_ environment variable (`Windows <https://docs.python.org/2/using/windows.html#excursus-setting-environment-variables>`_, `Mac OSX <https://docs.python.org/2/using/mac.html?highlight=pythonpath#configuration>`_, `Linux <https://wiki.archlinux.org/index.php/Environment_variables>`_). 
+**Step 2:** Add the ``$WDRT_SOURCE`` directory to your `PYTHONPATH <https://docs.python.org/3.8/using/cmdline.html?highlight=pythonpath#envvar-PYTHONPATH>`_ `environment variable <https://docs.python.org/3.8/using/cmdline.html?highlight=pythonpath#environment-variables>`_. 
 
-**Step 3:** Verify the installation's functionality by running the examples located in``$WDRT_SOURCE/examples``
+**Step 3:** Verify the installation's functionality by running an example located in``$WDRT_SOURCE/examples``
 
 .. code-block:: none
 
 	cd examples
-	python example_envSamplying.py
-	python example_contourApproach.py
-	python example_shortTermExtreme.py
 	python example_fatigue.py
 
-Configuring your PYTHONPTH
+Configuring your PYTHONPATH
 ````````````````````````````
 The following instructions will help you configure your PYTHONPATH, which is a search path Python uses for 
 importing other python modules.
@@ -85,7 +77,7 @@ importing other python modules.
 			| 1.) Navigate to Control Panel -> System -> Advanced system settings -> Environment Variables 
 			| 2.) Click "New..." 
 			| 3.) Under "Variable Name" type: PYTHONPATH 
-			| 4.) Under "Variable Value" enter the location of your Python source directory (i.e "C:\Python27")
+			| 4.) Under "Variable Value" enter the location of your Python source directory (i.e "C:\Python")
 **Linux/OS X**
 			| 1.) Navigate to your home directory
 			| 2.) Add a line such as "export PYTHONPATH=“/path/where/your/modules/are/located" to your .bash_rc file if running Linux, or .bash_profile if running OS X
@@ -94,8 +86,8 @@ importing other python modules.
 
 Dependencies
 -------------
-`Python 2.7.x <https://www.python.org/downloads/>`_ and the following Python packages are required to run `WDRT`. `WDRT` currently will not fully run on Python 3.5.x.
-These packages can easily be installed using using `pip <https://pypi.python.org/pypi/pip>`_  or your preferred package installation method:
+`Python 3 <https://www.python.org/downloads/>`_ and the following Python packages are required to run `WDRT`. 
+These packages should be installed using `pip <https://pypi.python.org/pypi/pip>`_  or your preferred package manager:
 
 	* `numpy <http://www.numpy.org>`_
 	* `scipy <http://www.scipy.org>`_
@@ -107,6 +99,8 @@ These packages can easily be installed using using `pip <https://pypi.python.org
 	* `netCDF4  <http://unidata.github.io/netcdf4-python/>`_
 	* `statsmodels <http://www.statsmodels.org/>`_
 	* `lxml <http://lxml.de/>`_
+
+
 
 .. Note::
 
@@ -123,8 +117,3 @@ Troubleshooting
 
 **Solution:** Check your proxy/firewall settings. If you can download data from elsewhere through your proxy/firewall, check the status of the NDBC website with `Down for Everyone <http://downforeveryoneorjustme.com/>`_.
 
-**Problem:** I want to use the MLER toolbox, but it's in an .egg file. 
-
-**Solution:** Make sure you have the easy install package, `which can be downloaded here <https://pypi.python.org/pypi/setuptools>`_. Then, run the following command in the command line::
-
-	Python -m easy_install C:\path\to\mler.egg
