@@ -10,7 +10,7 @@ The following procedure is similar to that used for the WEC-Sim users guide.
 1. Sphinx
   1. Install using ``pip install sphinx``
   1. Install sphinx extensions 
-      1. ``pip install pip install sphinx_rtd_theme sphinxcontrib-bibtex''
+      1. ``pip install pip install sphinx_rtd_theme sphinxcontrib-bibtex``
 
 
 ### Edit and update html users guide
