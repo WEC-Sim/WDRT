@@ -5,18 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-97337554-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>WDRT.ESSC &mdash; WDRT 1.0 documentation</title>
@@ -31,21 +20,12 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'1.0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -199,17 +179,17 @@
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
-<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span> <span class="k">as</span> <span class="n">skPCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span> <span class="k">as</span> <span class="n">skPCA</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">bs4</span>
-<span class="kn">import</span> <span class="nn">urllib2</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">date</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
-<span class="kn">from</span> <span class="nn">statsmodels</span> <span class="k">import</span> <span class="n">robust</span>
+<span class="kn">from</span> <span class="nn">statsmodels</span> <span class="kn">import</span> <span class="n">robust</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 
@@ -221,7 +201,7 @@
 <span class="sd">    (getContourPoints), calculate the wave breaking steepness curve (steepness)</span>
 <span class="sd">    and/or use the bootstrap method to calculate 95% confidence bounds about  </span>
 <span class="sd">    the contours (bootStrap).&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">():</span>
         <span class="k">return</span>
 <div class="viewcode-block" id="EA.getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.EA.getContours">[docs]</a>    <span class="k">def</span> <span class="nf">getContours</span><span class="p">():</span>
         <span class="sd">&#39;&#39;&#39;Points to the getContours function in whatever contouring method is used&#39;&#39;&#39;</span>
@@ -248,40 +228,100 @@
             <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">file_extension</span><span class="p">:</span>
                 <span class="n">fileName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span>
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
-            <span class="n">gp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">fileName</span><span class="p">);</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span><span class="p">(</span><span class="s1">&#39;method&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">):</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;method&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+            
+            <span class="k">if</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">):</span>
+                <span class="n">gp</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">)</span>
+            
             <span class="bp">self</span><span class="o">.</span><span class="n">_saveParams</span><span class="p">(</span><span class="n">gp</span><span class="p">)</span>
 
             <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">grc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;ReturnContours&#39;</span><span class="p">)</span>
-                <span class="n">f_T_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_Return&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;ReturnContours&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">):</span>                
+                    <span class="n">grc</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;ReturnContours&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>                   
+                    <span class="n">grc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;ReturnContours&#39;</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;T_Return&#39;</span> <span class="ow">in</span> <span class="n">grc</span><span class="p">):</span>
+                    <span class="n">f_T_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="p">[</span><span class="s1">&#39;T_Return&#39;</span><span class="p">]</span>
+                    <span class="n">f_T_Return</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_T_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_Return&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="p">)</span>                
+                
                 <span class="n">f_T_Return</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
                 <span class="n">f_T_Return</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;contour, energy period&#39;</span>
-                <span class="n">f_Hs_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_Return&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Hs_Return&#39;</span> <span class="ow">in</span> <span class="n">grc</span><span class="p">):</span>
+                    <span class="n">f_Hs_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="p">[</span><span class="s1">&#39;Hs_Return&#39;</span><span class="p">]</span>
+                    <span class="n">f_Hs_Return</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_Hs_Return</span> <span class="o">=</span> <span class="n">grc</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_Return&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)</span>
+                
                 <span class="n">f_Hs_Return</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
                 <span class="n">f_Hs_Return</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;contours, significant wave height&#39;</span>
 
             <span class="c1"># Samples for full sea state long term analysis</span>
             <span class="k">if</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Hs_SampleFSS&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleFSS</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">gfss</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;Samples_FullSeaState&#39;</span><span class="p">)</span>
-                <span class="n">f_Hs_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleFSS</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Samples_FullSeaState&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">):</span>
+                    <span class="n">gfss</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;Samples_FullSeaState&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="n">gfss</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;Samples_FullSeaState&#39;</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Hs_SampleFSS&#39;</span> <span class="ow">in</span> <span class="n">gfss</span><span class="p">):</span>
+                    <span class="n">f_Hs_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="p">[</span><span class="s1">&#39;Hs_SampleFSS&#39;</span><span class="p">]</span>
+                    <span class="n">f_Hs_SampleFSS</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleFSS</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_Hs_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleFSS</span><span class="p">)</span>
+                
                 <span class="n">f_Hs_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
                 <span class="n">f_Hs_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;full sea state significant wave height samples&#39;</span>
-                <span class="n">f_T_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_SampleFSS</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;T_SampleFSS&#39;</span> <span class="ow">in</span> <span class="n">gfss</span><span class="p">):</span>
+                    <span class="n">f_T_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="p">[</span><span class="s1">&#39;T_SampleFSS&#39;</span><span class="p">]</span>
+                    <span class="n">f_T_SampleFSS</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_SampleFSS</span>
+                <span class="k">else</span><span class="p">:</span>   
+                    <span class="n">f_T_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_SampleFSS</span><span class="p">)</span>                
+                
                 <span class="n">f_T_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
-                <span class="n">f_T_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;full sea state energy period samples&#39;</span>
-                <span class="n">f_Weight_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Weight_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Weight_SampleFSS</span><span class="p">)</span>
+                <span class="n">f_T_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;full sea state energy period samples&#39;</span>                
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Weight_SampleFSS&#39;</span> <span class="ow">in</span> <span class="n">gfss</span><span class="p">):</span>
+                    <span class="n">f_Weight_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="p">[</span><span class="s1">&#39;Weight_SampleFSS&#39;</span><span class="p">]</span>
+                    <span class="n">f_Weight_SampleFSS</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Weight_SampleFSS</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_Weight_SampleFSS</span> <span class="o">=</span> <span class="n">gfss</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Weight_SampleFSS&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Weight_SampleFSS</span><span class="p">)</span>
+                
                 <span class="n">f_Weight_SampleFSS</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;full sea state relative weighting samples&#39;</span>
 
             <span class="c1"># Samples for contour approach long term analysis</span>
             <span class="k">if</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Hs_SampleCA&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleCA</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">gca</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;Samples_ContourApproach&#39;</span><span class="p">)</span>
-                <span class="n">f_Hs_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_SampleCA&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleCA</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Samples_ContourApproach&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">):</span>
+                    <span class="n">gca</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;Samples_ContourApproach&#39;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">gca</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;Samples_ContourApproach&#39;</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;Hs_SampleCA&#39;</span> <span class="ow">in</span> <span class="n">gca</span><span class="p">):</span>
+                    <span class="n">f_Hs_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="p">[</span><span class="s1">&#39;Hs_SampleCA&#39;</span><span class="p">]</span>
+                    <span class="n">f_Hs_sampleCA</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleCA</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_Hs_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Hs_SampleCA&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_SampleCA</span><span class="p">)</span>
+                
                 <span class="n">f_Hs_sampleCA</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
                 <span class="n">f_Hs_sampleCA</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;contour approach significant wave height samples&#39;</span>
-                <span class="n">f_T_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_SampleCA&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_SampleCA</span><span class="p">)</span>
+                
+                <span class="k">if</span><span class="p">(</span><span class="s1">&#39;T_SampleCA&#39;</span> <span class="ow">in</span> <span class="n">gca</span><span class="p">):</span>
+                    <span class="n">f_T_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="p">[</span><span class="s1">&#39;T_SampleCA&#39;</span><span class="p">]</span>
+                    <span class="n">f_T_sampleCA</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_SampleCA</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f_T_sampleCA</span> <span class="o">=</span> <span class="n">gca</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T_SampleCA&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T_SampleCA</span><span class="p">)</span>
+                
                 <span class="n">f_T_sampleCA</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
                 <span class="n">f_T_sampleCA</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;contour approach energy period samples&#39;</span></div>
 
@@ -418,7 +458,8 @@
 <span class="sd">            pca46022 = ESSC.PCA(buoy46022)</span>
 <span class="sd">            </span>
 <span class="sd">            T_vals = np.arange(0.1, np.amax(buoy46022.T), 0.1)</span>
-<span class="sd">            SteepMax = 0.07  # Enter estimate of breaking steepness</span>
+<span class="sd">            # Enter estimate of breaking steepness</span>
+<span class="sd">            SteepMax = 0.07  # Reference DNV-RP-C205</span>
 <span class="sd">            </span>
 <span class="sd">            # Declare required parameters</span>
 <span class="sd">            depth = 391.4  # Depth at measurement point (m)</span>
@@ -1009,7 +1050,7 @@
         <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>        </div>
 
 <div class="viewcode-block" id="PCA"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.PCA">[docs]</a><span class="k">class</span> <span class="nc">PCA</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">size_bin</span><span class="o">=</span><span class="mf">250.</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">size_bin</span><span class="o">=</span><span class="mf">250.</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create a PCA EA class for a buoy object. Contours generated under this</span>
 <span class="sd">        class will use principal component analysis (PCA) with improved </span>
@@ -1026,7 +1067,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">buoy</span> <span class="o">=</span> <span class="n">buoy</span>
         <span class="k">if</span> <span class="n">size_bin</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size_bin</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span>
-            <span class="nb">print</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the max bin size for this buoy. The bin size has been set to this amount.&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the max bin size for this buoy. The bin size has been set to this amount.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size_bin</span> <span class="o">=</span> <span class="n">size_bin</span>
             
@@ -1088,14 +1129,45 @@
         <span class="k">return</span> <span class="n">coeff</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">comp1_params</span><span class="p">,</span> <span class="n">sigma_param</span><span class="p">,</span> <span class="n">mu_param</span>
 
     <span class="k">def</span> <span class="nf">_saveParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groupObj</span><span class="p">):</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nb_steps&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;time_r&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_r</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;time_ss&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;coeff&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coeff</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;shift&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;comp1_params&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp1_params</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;sigma_param&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_param</span><span class="p">)</span>
-        <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;mu_param&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_param</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;nb_steps&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;nb_steps&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;nb_steps&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_steps</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;time_r&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;time_r&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_r</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;time_r&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_r</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;time_ss&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;time_ss&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span>
+        <span class="k">else</span><span class="p">:</span>       
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;time_ss&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time_ss</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;coeff&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;coeff&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coeff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;coeff&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coeff</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;shift&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;shift&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;shift&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;comp1_params&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;comp1_params&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp1_params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;comp1_params&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp1_params</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;sigma_param&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;sigma_param&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_param</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;sigma_param&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_param</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="s1">&#39;mu_param&#39;</span> <span class="ow">in</span> <span class="n">groupObj</span><span class="p">):</span>
+            <span class="n">groupObj</span><span class="p">[</span><span class="s1">&#39;mu_param&#39;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_param</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groupObj</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;mu_param&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_param</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PCA.getContours"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.PCA.getContours">[docs]</a>    <span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_ss</span><span class="p">,</span> <span class="n">time_r</span><span class="p">,</span> <span class="n">nb_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;WDRT Extreme Sea State PCA Contour function</span>
@@ -1614,7 +1686,7 @@
 <div class="viewcode-block" id="GaussianCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.GaussianCopula">[docs]</a><span class="k">class</span> <span class="nc">GaussianCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a GaussianCopula EA class for a buoy object. Contours generated </span>
 <span class="sd">    under this class will use a Gaussian copula.&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1738,7 +1810,7 @@
 <div class="viewcode-block" id="Rosenblatt"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Rosenblatt">[docs]</a><span class="k">class</span> <span class="nc">Rosenblatt</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a Rosenblatt EA class for a buoy object. Contours generated </span>
 <span class="sd">    under this class will use a Rosenblatt transformation and the I-FORM.&#39;&#39;&#39;</span>    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1756,19 +1828,19 @@
         
         <span class="k">if</span> <span class="n">n_size</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_size</span> <span class="o">=</span> <span class="mi">100</span>
-            <span class="nb">print</span> <span class="mi">100</span><span class="p">,</span><span class="s1">&#39;is the maximum &quot;minimum bin size&quot; for this buoy. The minimum bin size has been set to this amount.&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;is the maximum &quot;minimum bin size&quot; for this buoy. The minimum bin size has been set to this amount.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_size</span> <span class="o">=</span> <span class="n">n_size</span>
         
         <span class="k">if</span> <span class="n">bin_step</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bin_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">1</span>
-            <span class="nb">print</span> <span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the maximum bin overlap for this buoy. The bin overlap has been set to this amount.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bin_step</span> <span class="o">=</span> <span class="n">bin_step</span>
 
         <span class="k">if</span> <span class="n">bin_1_limit</span>  <span class="o">&gt;</span> <span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">25</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bin_1_limit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">25</span>
-            <span class="nb">print</span> <span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">25</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">buoy</span><span class="o">.</span><span class="n">Hs</span><span class="p">)</span><span class="o">*.</span><span class="mi">25</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;is the maximum limit for the first for this buoy. The first bin limit has been set to this amount.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bin_1_limit</span> <span class="o">=</span> <span class="n">bin_1_limit</span>           
         
@@ -1878,7 +1950,7 @@
 <div class="viewcode-block" id="ClaytonCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.ClaytonCopula">[docs]</a><span class="k">class</span> <span class="nc">ClaytonCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a ClaytonCopula EA class for a buoy object. Contours generated </span>
 <span class="sd">    under this class will use a Clayton copula.&#39;&#39;&#39;</span>    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2002,7 +2074,7 @@
 <div class="viewcode-block" id="GumbelCopula"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.GumbelCopula">[docs]</a><span class="k">class</span> <span class="nc">GumbelCopula</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a GumbelCopula EA class for a buoy object. Contours generated </span>
 <span class="sd">    under this class will use a Gumbel copula.&#39;&#39;&#39;</span>    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">n_size</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span> <span class="n">bin_1_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">bin_step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2157,7 +2229,7 @@
     <span class="sd">&#39;&#39;&#39;Create a NonParaGaussianCopula EA class for a buoy object. Contours</span>
 <span class="sd">    generated under this class will use a Gaussian copula with non-parametric</span>
 <span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2311,7 +2383,7 @@
     <span class="sd">&#39;&#39;&#39;Create a NonParaClaytonCopula EA class for a buoy object. Contours</span>
 <span class="sd">    generated under this class will use a Clayton copula with non-parametric</span>
 <span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2465,7 +2537,7 @@
     <span class="sd">&#39;&#39;&#39;Create a NonParaGumbelCopula EA class for a buoy object. Contours</span>
 <span class="sd">    generated under this class will use a Gumbel copula with non-parametric</span>
 <span class="sd">    marginal distribution fits.&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">Ndata</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2630,7 +2702,7 @@
 <div class="viewcode-block" id="BivariateKDE"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.BivariateKDE">[docs]</a><span class="k">class</span> <span class="nc">BivariateKDE</span><span class="p">(</span><span class="n">EA</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Create a BivariateKDE EA class for a buoy object. Contours</span>
 <span class="sd">    generated under this class will use a non-parametric KDE to fit the joint distribution.&#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">bw</span><span class="p">,</span> <span class="n">NData</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">logTransform</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoy</span><span class="p">,</span> <span class="n">bw</span><span class="p">,</span> <span class="n">NData</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">logTransform</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_Hs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2774,10 +2846,10 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">allsegs</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
-        
+<span class="c1">#        </span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hs_ReturnContours</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T_ReturnContours</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-            
+<span class="c1">#        self.vals = vals    </span>
 <span class="c1">#        contourVals = np.empty((0,2))</span>
 <span class="c1">#        for seg in vals.allsegs[0]:</span>
 <span class="c1">#            contourVals = np.append(contourVals,seg, axis = 0)</span>
@@ -2813,7 +2885,7 @@
 
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoyNum</span><span class="p">,</span> <span class="n">buoyType</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buoyNum</span><span class="p">,</span> <span class="n">buoyType</span><span class="p">):</span>
 
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Parameters</span>
@@ -2917,12 +2989,12 @@
             <span class="n">dataLink</span> <span class="o">=</span> <span class="s2">&quot;https://ndbc.noaa.gov&quot;</span> <span class="o">+</span> <span class="n">link</span>
 
             <span class="n">fileName</span> <span class="o">=</span> <span class="n">dataLink</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;download_data&#39;</span><span class="p">,</span> <span class="s1">&#39;view_text_file&#39;</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
-            <span class="nb">print</span> <span class="s2">&quot;Reading from:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">geturl</span><span class="p">()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading from:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">geturl</span><span class="p">())</span>
 
             <span class="c1">#First Line of every file contains the frequency data</span>
             <span class="n">frequency</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">frequency</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mm&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frequency</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;mm&#39;</span><span class="p">:</span>
                 <span class="n">numDates</span> <span class="o">=</span> <span class="mi">5</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -2935,7 +3007,7 @@
                 <span class="n">currentLine</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                 <span class="n">numCols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">currentLine</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">numCols</span> <span class="o">-</span> <span class="n">numDates</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequency</span><span class="p">):</span>
-                    <span class="nb">print</span> <span class="s2">&quot;NDBC File is corrupted - Skipping and deleting data&quot;</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NDBC File is corrupted - Skipping and deleting data&quot;</span><span class="p">)</span>
                     <span class="n">spectralVals</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="n">dateVals</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">break</span>
@@ -3009,7 +3081,7 @@
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;No NDBC data files found in &quot;</span> <span class="o">+</span> <span class="n">dirPath</span><span class="p">)</span>
         <span class="c1">#reads in the files</span>
         <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="s1">&#39;Reading from: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading from: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileName</span><span class="p">))</span>
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
             <span class="n">frequency</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="n">numCols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
@@ -3077,7 +3149,7 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file_extension</span><span class="p">:</span>
             <span class="n">fileName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span>
-        <span class="nb">print</span> <span class="s2">&quot;Reading from: &quot;</span><span class="p">,</span> <span class="n">fileName</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading from: &quot;</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -3086,7 +3158,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;buoy_Data/Te&#39;</span><span class="p">][:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dateNum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;buoy_Data/dateNum&#39;</span><span class="p">][:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dateList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;buoy_Data/dateList&#39;</span><span class="p">][:])</span>
-        <span class="nb">print</span> <span class="s2">&quot;----&gt; SUCCESS&quot;</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----&gt; SUCCESS&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Buoy.saveAsH5"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.saveAsH5">[docs]</a>    <span class="k">def</span> <span class="nf">saveAsH5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileName</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -3117,7 +3189,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">file_extension</span><span class="p">:</span>
                 <span class="n">fileName</span> <span class="o">=</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_saveData</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_saveData</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved buoy data&quot;</span><span class="p">);</span></div>
      
 <div class="viewcode-block" id="Buoy.saveAsTxt"><a class="viewcode-back" href="../../modules.html#WDRT.ESSC.Buoy.saveAsTxt">[docs]</a>    <span class="k">def</span> <span class="nf">saveAsTxt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savePath</span> <span class="o">=</span> <span class="s2">&quot;./Data/&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -3142,7 +3216,7 @@
         <span class="n">dateIndexDiff</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">bFile</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#NDBC sometimes splits years into two files, the second one titled &quot;YYYYb&quot;</span>
         <span class="n">saveDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">savePath</span><span class="p">,</span> <span class="s1">&#39;NDBC</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">))</span>
-        <span class="nb">print</span> <span class="s2">&quot;Saving in :&quot;</span><span class="p">,</span> <span class="n">saveDir</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saving in :&quot;</span><span class="p">,</span> <span class="n">saveDir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">saveDir</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">saveDir</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swdList</span><span class="p">)):</span>
@@ -3262,9 +3336,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://thredds.cdip.ucsd.edu/thredds/fileServer/cdip/archive/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;p1/&quot;</span> <span class="o">+</span> \
                <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span><span class="s2">&quot;p1_historic.nc&quot;</span>        
-        <span class="nb">print</span> <span class="s2">&quot;Downloading data from: &quot;</span> <span class="o">+</span> <span class="n">url</span>    
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading data from: &quot;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>    
         <span class="n">filePath</span> <span class="o">=</span> <span class="n">savePath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buoyNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-CDIP.nc&quot;</span>
-        <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filePath</span><span class="p">)</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filePath</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__processCDIPData</span><span class="p">(</span><span class="n">filePath</span><span class="p">)</span>
 
@@ -3438,6 +3512,18 @@
 
   
   
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-97337554-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
     
    
 
