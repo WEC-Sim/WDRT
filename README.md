@@ -21,11 +21,20 @@ After building the HTML users guide, you can view the local copy of the document
 
 ### Update the documentation on the http://wec-sim.github.io/wdrt website
 The github.io website renders the documentation in the ``gh-pages`` branch as a website located at http://wec-sim.github.io/wdrt.
-Here are the steps to do this in a Linux/Mac Terminal, note that windows instructions are very similar:
+Here are the steps to do this in a terminal:
 
   ```Shell
-  # Switch to the gh-pages branch
-  git checkout gh-pages
+  # Create a gh-pages branch in your repository
+  git checkout --orphan gh-pages
+  
+  # Remove all files from the repository
+  git rm -rf .
+
+  # pull the gh-pages branch from master
+  git pull gh-pages
+  
+  # push to the gh-pages branch on your fork
+  git push -u remoteName gh-pages
 
   # Make your changes
 
