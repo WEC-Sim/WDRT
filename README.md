@@ -31,7 +31,7 @@ Here are the steps to do this in a terminal:
   git rm -rf .
 
   # pull the gh-pages branch from master
-  git pull gh-pages
+  git pull origin gh-pages
   
   # push to the gh-pages branch on your fork
   git push -u remoteName gh-pages
