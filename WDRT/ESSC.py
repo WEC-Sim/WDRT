@@ -412,6 +412,11 @@ class EA:
             # Calculate boostrap confidence interval
             contourmean_Hs, contourmean_T = pca46022.bootStrap(boot_size=10)
         '''
+        if (self.method == "Bivariate KDE, Log Transform" or
+            self.method == "Bivariate KDE"):
+            msg = 'WDRT does not support the bootstrap method for this Bivariate KDE (See Issue #47).'
+            print(msg)
+            return None, None
         #preallocates arrays
         n = len(self.buoy.Hs)
         Hs_Return_Boot = np.zeros([self.nb_steps,boot_size])
