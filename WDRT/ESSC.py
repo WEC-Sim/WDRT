@@ -414,7 +414,7 @@ class EA:
         '''
         if (self.method == "Bivariate KDE, Log Transform" or
             self.method == "Bivariate KDE"):
-            msg = 'WDRT does not support the bootstrap method for this Bivariate KDE (See Issue #46).'
+            msg = 'WDRT does not support the bootstrap method for this Bivariate KDE (See Issue #47).'
             print(msg)
             return None, None
         #preallocates arrays
