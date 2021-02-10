@@ -21,7 +21,7 @@ Contributors
 ------------
 * Ryan Coe, Sandia National Laboratories
 * Carlos Michelen, Sandia National Laboratories
-* Aubrey Eckert-Gallup, Sandia National Laboratories
+* Aubrey Eckert, Sandia National Laboratories
 * Nevin Martin, Sandia National Laboratories
 * Vince Neary, Sandia National Laboratories
 * Annie Dallman, Sandia National Laboratories
