@@ -37,7 +37,7 @@ for i in range(h):
                           'T' + str(int(Te[i][j])) + '.txt')
         # Equivalent fatigue load for a 1 hour timeframe
         Feq_1h[i][j] = fatigue.EqLoad(Fpto, N1h, m)
-        Feq_1y = Feq_1y + (Feq_1h[i][j]**m) * N1h * P[i][j]
+        Feq_1y = Feq_1y + (Feq_1h[i][j]**m) * N1y * P[i][j]
 # Equivalent fatigue load for a 1 year timeframe
 Feq_1y = (Feq_1y / N1y)**(1 / m)
 
