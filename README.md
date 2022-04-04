@@ -1,6 +1,12 @@
-[![Build Status](https://travis-ci.com/ssolson/WDRT.svg?branch=CI)](https://travis-ci.com/ssolson/WDRT)
+The functionality of WDRT has been incorporated as a part of MHKiT and this repo is no longer supported. 
 
-[![Coverage Status](https://coveralls.io/repos/github/ssolson/WDRT/badge.svg?branch=test_long)](https://coveralls.io/github/ssolson/WDRT?branch=test_long) 
+Please check out the following examples in MHKiT and ask any questions you may have on the MHKiT repository.
+
+https://github.com/MHKiT-Software/MHKiT-Python/blob/master/examples/environmental_contours_example.ipynb
+https://github.com/MHKiT-Software/MHKiT-Python/blob/master/examples/extreme_response_MLER_example.ipynb
+https://github.com/MHKiT-Software/MHKiT-Python/blob/master/examples/extreme_response_contour_example.ipynb
+https://github.com/MHKiT-Software/MHKiT-Python/blob/master/examples/extreme_response_full_sea_state_example.ipynb
+
 
 # http://wec-sim.github.io/WDRT/
  
